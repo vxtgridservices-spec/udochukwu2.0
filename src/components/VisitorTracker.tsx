@@ -93,45 +93,47 @@ export default function VisitorTracker() {
   const [deviceFilter, setDeviceFilter] = useState<string>('all');
   const [browserFilter, setBrowserFilter] = useState<string>('all');
 
-  // Dynamic high-fidelity procedural notification synthesizer chime (Dual-Tone E5 -> A5)
+  // Extremely loud procedural notification synthesizer alarm for waking up
   const playIncomingChime = () => {
     try {
       const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
       if (!AudioContextClass) return;
-      const ctx = new AudioContextClass();
       
-      // Tone 1: E5 (659.25 Hz)
-      const osc1 = ctx.createOscillator();
-      const gain1 = ctx.createGain();
-      osc1.type = 'sine';
-      osc1.frequency.setValueAtTime(659.25, ctx.currentTime);
-      gain1.gain.setValueAtTime(0.12, ctx.currentTime);
-      gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
-      
-      osc1.connect(gain1);
-      gain1.connect(ctx.destination);
-      osc1.start();
-      osc1.stop(ctx.currentTime + 0.35);
+      if (!(window as any).__vxtAudioCtx) {
+        (window as any).__vxtAudioCtx = new AudioContextClass();
+      }
+      const ctx = (window as any).__vxtAudioCtx;
 
-      // Tone 2: A5 (880.00 Hz) with an elegant micro-offset dynamic transition delay
-      setTimeout(() => {
-        try {
-          if (ctx.state === 'closed') return;
-          const osc2 = ctx.createOscillator();
-          const gain2 = ctx.createGain();
-          osc2.type = 'sine';
-          osc2.frequency.setValueAtTime(880.00, ctx.currentTime);
-          gain2.gain.setValueAtTime(0.12, ctx.currentTime);
-          gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
-          
-          osc2.connect(gain2);
-          gain2.connect(ctx.destination);
-          osc2.start();
-          osc2.stop(ctx.currentTime + 0.45);
-        } catch (e) {
-          // Safety fallback for closed contexts
-        }
-      }, 100);
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+      
+      const now = ctx.currentTime;
+      
+      // 🚨 High-Volume Alarm Pattern to wake up from sleep
+      const playLoudBeep = (freq: number, startTime: number, duration: number) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'square'; // Harsh, piercing wave
+        osc.frequency.setValueAtTime(freq, startTime);
+        
+        // Maxed out volume
+        gain.gain.setValueAtTime(1.0, startTime);
+        // Keep it pinned at max volume for 80% of the duration
+        gain.gain.setValueAtTime(0.5, startTime + duration * 0.8); 
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+        
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + duration);
+      };
+
+      // Play an aggressive multi-beep alarm sequence (Emergency Pager Style)
+      // 3 fast beeps, pause, 3 fast beeps
+      [0, 0.15, 0.3, 0.8, 0.95, 1.1, 1.6, 1.75, 1.9, 2.4, 2.55, 2.7].forEach(delay => {
+        playLoudBeep(880.00, now + delay, 0.1); 
+      });
 
     } catch (e) {
       console.warn('Audio Context interaction limited by client autoplay policies:', e);
@@ -152,10 +154,7 @@ export default function VisitorTracker() {
 
   // Chronological chime listener trigger
   useEffect(() => {
-    if (sessions.length === 0) {
-      hasInitializedSessions.current = true;
-      return;
-    }
+    if (isLoading) return;
 
     const currentIds = sessions.map(s => s.sessionId);
 
@@ -176,7 +175,7 @@ export default function VisitorTracker() {
     }
 
     knownSessionIds.current = new Set(currentIds);
-  }, [sessions, soundEnabled]);
+  }, [sessions, soundEnabled, isLoading]);
 
   const fetchSessionsDirect = async () => {
     try {

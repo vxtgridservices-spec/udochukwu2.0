@@ -5,11 +5,11 @@
     "country": "United Kingdom",
     "device": "Tablet",
     "screenSize": "1280x720",
-    "path": "/contact",
-    "title": "Book a Consultation / Drop a Line | Udochukwu",
-    "lastPing": 1781741122633,
+    "path": "/dashboard",
+    "title": "Interactive Client Transparencies Milestones Portal | Udochukwu",
+    "lastPing": 1781776971074,
     "joinedAt": 1781741106803,
-    "durationSeconds": 16,
+    "durationSeconds": 35864,
     "actions": [
       {
         "timestamp": "00:05:06",
@@ -26,9 +26,161 @@
       {
         "timestamp": "00:05:22",
         "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "09:25:54",
+        "action": "Arrived on HOME"
+      },
+      {
+        "timestamp": "09:26:01",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "09:52:11",
+        "action": "Arrived on HOME"
+      },
+      {
+        "timestamp": "09:52:20",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "09:56:33",
+        "action": "Scrolled to bottom footer section"
+      },
+      {
+        "timestamp": "09:56:35",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "09:56:38",
+        "action": "Arrived on DASHBOARD"
+      },
+      {
+        "timestamp": "09:56:38",
+        "action": "Clicked: \"[VXT-Console]\""
+      },
+      {
+        "timestamp": "09:56:42",
+        "action": "Scrolled 25% down the page"
+      },
+      {
+        "timestamp": "09:56:46",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "09:56:53",
+        "action": "Scrolled to bottom footer section"
+      },
+      {
+        "timestamp": "09:56:54",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "10:00:32",
+        "action": "Scrolled 25% down the page"
+      },
+      {
+        "timestamp": "10:00:38",
+        "action": "Clicked: \"Devices: All Platform\nTablet\nMobile\""
+      },
+      {
+        "timestamp": "10:00:38",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "10:00:39",
+        "action": "Scrolled 25% down the page"
+      },
+      {
+        "timestamp": "10:00:46",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "10:00:48",
+        "action": "Scrolled 25% down the page"
+      },
+      {
+        "timestamp": "10:00:52",
+        "action": "Scrolled 50% down the page"
+      },
+      {
+        "timestamp": "10:00:54",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "10:00:57",
+        "action": "Scrolled 50% down the page"
+      },
+      {
+        "timestamp": "10:01:02",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "10:01:03",
+        "action": "Scrolled 50% down the page"
+      },
+      {
+        "timestamp": "10:01:10",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "10:01:17",
+        "action": "Scrolled 50% down the page"
+      },
+      {
+        "timestamp": "10:01:18",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "10:01:19",
+        "action": "Scrolled 25% down the page"
+      },
+      {
+        "timestamp": "10:01:25",
+        "action": "Scrolled 50% down the page"
+      },
+      {
+        "timestamp": "10:01:26",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "10:01:36",
+        "action": "Scrolled 25% down the page"
+      },
+      {
+        "timestamp": "10:01:42",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "10:01:52",
+        "action": "Scrolled 25% down the page"
+      },
+      {
+        "timestamp": "10:01:58",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "10:02:04",
+        "action": "Scrolled 25% down the page"
+      },
+      {
+        "timestamp": "10:02:06",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "10:02:43",
+        "action": "Scrolled 50% down the page"
+      },
+      {
+        "timestamp": "10:02:46",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "10:02:51",
+        "action": "Scrolled 50% down the page"
       }
     ],
-    "scrollPercent": 0,
+    "scrollPercent": 57,
     "geo": {
       "ip": "37.221.113.203",
       "country": "United Kingdom",
@@ -56,42 +208,214 @@
     "country": "Nigeria",
     "device": "Mobile",
     "screenSize": "384x854",
-    "path": "/contact",
-    "title": "Book a Consultation / Drop a Line | Udochukwu",
-    "lastPing": 1781741241668,
+    "path": "/faq",
+    "title": "Resolving Objections & SLA Support Pricing | Udochukwu",
+    "lastPing": 1781776963892,
     "joinedAt": 1781741219429,
-    "durationSeconds": 22,
+    "durationSeconds": 35744,
     "actions": [
-      {
-        "timestamp": "00:06:59",
-        "action": "Arrived on HOME"
-      },
-      {
-        "timestamp": "00:07:07",
-        "action": "Still active - exploring page"
-      },
-      {
-        "timestamp": "00:07:08",
-        "action": "Scrolled 50% down the page"
-      },
-      {
-        "timestamp": "00:07:15",
-        "action": "Still active - exploring page"
-      },
-      {
-        "timestamp": "00:07:16",
-        "action": "Arrived on CONTACT"
-      },
-      {
-        "timestamp": "00:07:16",
-        "action": "Clicked: \"Book Free Consultation\""
-      },
       {
         "timestamp": "00:07:21",
         "action": "Scrolled 50% down the page"
+      },
+      {
+        "timestamp": "09:23:57",
+        "action": "Arrived on HOME"
+      },
+      {
+        "timestamp": "09:24:05",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "09:28:00",
+        "action": "Clicked: \"U\n\nUdochukwu\n\nVXTGRID SERVICES\""
+      },
+      {
+        "timestamp": "09:28:03",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "09:35:59",
+        "action": "Scrolled 25% down the page"
+      },
+      {
+        "timestamp": "09:36:11",
+        "action": "Clicked: \"Learn with Udochukwu →\""
+      },
+      {
+        "timestamp": "09:36:11",
+        "action": "Arrived on LEARN"
+      },
+      {
+        "timestamp": "09:36:14",
+        "action": "Scrolled 50% down the page"
+      },
+      {
+        "timestamp": "09:36:19",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "09:36:20",
+        "action": "Scrolled 50% down the page"
+      },
+      {
+        "timestamp": "09:36:27",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "09:36:50",
+        "action": "Scrolled 25% down the page"
+      },
+      {
+        "timestamp": "09:36:51",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "09:37:01",
+        "action": "Scrolled 50% down the page"
+      },
+      {
+        "timestamp": "09:37:03",
+        "action": "Scrolled to bottom footer section"
+      },
+      {
+        "timestamp": "09:37:07",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "09:37:10",
+        "action": "Scrolled to bottom footer section"
+      },
+      {
+        "timestamp": "09:37:15",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "09:37:16",
+        "action": "Scrolled to bottom footer section"
+      },
+      {
+        "timestamp": "09:37:21",
+        "action": "Scrolled 25% down the page"
+      },
+      {
+        "timestamp": "09:37:23",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "09:44:08",
+        "action": "Scrolled 25% down the page"
+      },
+      {
+        "timestamp": "09:44:09",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "09:44:10",
+        "action": "Scrolled 25% down the page"
+      },
+      {
+        "timestamp": "09:44:17",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "09:53:49",
+        "action": "Arrived on HOME"
+      },
+      {
+        "timestamp": "09:53:58",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "09:54:30",
+        "action": "Deep reading - Scrolled 75% down"
+      },
+      {
+        "timestamp": "09:54:32",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "09:54:32",
+        "action": "Arrived on DASHBOARD"
+      },
+      {
+        "timestamp": "09:54:32",
+        "action": "Clicked: \"[VXT-Console]\""
+      },
+      {
+        "timestamp": "09:54:40",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "09:54:44",
+        "action": "Clicked: \"Inbox Inquiries\n2\""
+      },
+      {
+        "timestamp": "09:54:47",
+        "action": "Clicked: \"BUTTON\""
+      },
+      {
+        "timestamp": "09:54:47",
+        "action": "Scrolled 25% down the page"
+      },
+      {
+        "timestamp": "09:54:48",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "09:54:58",
+        "action": "Scrolled 25% down the page"
+      },
+      {
+        "timestamp": "09:55:04",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "09:58:19",
+        "action": "Arrived on HOME"
+      },
+      {
+        "timestamp": "09:58:26",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "10:02:00",
+        "action": "Arrived on CONTACT"
+      },
+      {
+        "timestamp": "10:02:08",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "10:02:13",
+        "action": "Clicked: \"Switch to High-Contrast Light Mode\""
+      },
+      {
+        "timestamp": "10:02:16",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "10:02:23",
+        "action": "Arrived on BLOG"
+      },
+      {
+        "timestamp": "10:02:30",
+        "action": "Arrived on LEARN"
+      },
+      {
+        "timestamp": "10:02:33",
+        "action": "Clicked: \"Expand side menu...\""
+      },
+      {
+        "timestamp": "10:02:35",
+        "action": "Arrived on FAQ"
+      },
+      {
+        "timestamp": "10:02:43",
+        "action": "Still active - exploring page"
       }
     ],
-    "scrollPercent": 50,
+    "scrollPercent": 0,
     "geo": {
       "ip": "102.90.125.175",
       "country": "Nigeria",
