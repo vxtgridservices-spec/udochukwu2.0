@@ -8,7 +8,7 @@ interface AboutProps {
 }
 
 export default function About({ onNavigate }: AboutProps) {
-  const [aboutImageUrl, setAboutImageUrl] = useState('https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=800&q=80');
+  const [aboutImageUrl, setAboutImageUrl] = useState('https://res.cloudinary.com/drghjqbak/image/upload/q_auto/f_auto/v1781784160/1781783831624_2_u3nqbc.jpg');
 
   useEffect(() => {
     const settings = getSiteSettings();

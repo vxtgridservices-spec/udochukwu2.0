@@ -27,7 +27,7 @@ interface HomeProps {
 }
 
 export default function Home({ onNavigate }: HomeProps) {
-  const [heroImageUrl, setHeroImageUrl] = useState('https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=800&q=80');
+  const [heroImageUrl, setHeroImageUrl] = useState('https://res.cloudinary.com/drghjqbak/image/upload/q_auto/f_auto/v1781784160/1781783831624_2_u3nqbc.jpg');
   const { formatCurrency, currencySymbol } = useCurrency();
 
   useEffect(() => {
