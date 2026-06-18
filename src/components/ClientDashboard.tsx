@@ -25,9 +25,11 @@ import {
   Copy, 
   Check, 
   AlertCircle,
-  Eye
+  Eye,
+  Brain
 } from 'lucide-react';
 import VisitorTracker from './VisitorTracker';
+import AIConversionMonitor from './AIConversionMonitor';
 
 export default function ClientDashboard() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('vxt_admin_logged') === 'true');
@@ -40,7 +42,7 @@ export default function ClientDashboard() {
   const [contacts, setContacts] = useState<any[]>(() => getContacts());
   const [audits, setAudits] = useState<any[]>(() => getAudits());
   const [subscribers, setSubscribers] = useState<string[]>(() => getNewsletterSubscribers());
-  const [adminTab, setAdminTab] = useState<'overview' | 'visitorTracker' | 'bookings' | 'contacts' | 'audits' | 'subscribers' | 'settings' | 'blogPost' | 'siteAssets'>('overview');
+  const [adminTab, setAdminTab] = useState<'overview' | 'visitorTracker' | 'aiMonitor' | 'bookings' | 'contacts' | 'audits' | 'subscribers' | 'settings' | 'blogPost' | 'siteAssets'>('overview');
   const [copiedSubscribers, setCopiedSubscribers] = useState(false);
   
   // Blog form states
@@ -268,6 +270,7 @@ export default function ClientDashboard() {
                 {[
                   { id: 'overview', label: 'Console Overview', icon: Activity },
                   { id: 'visitorTracker', label: 'Monitor Live', icon: Eye },
+                  { id: 'aiMonitor', label: 'AI Analytics Insights', icon: Brain },
                   { id: 'bookings', label: 'Consultations booked', icon: Calendar, badge: bookings.length },
                   { id: 'contacts', label: 'Inbox Inquiries', icon: Mail, badge: contacts.length },
                   { id: 'audits', label: 'Audit Submissions', icon: FileText, badge: audits.length },
@@ -303,14 +306,20 @@ export default function ClientDashboard() {
               </div>
 
               {/* Console Active Panel Screen */}
+              {/* VISITOR TRACKER LIVE MONITOR TAB (Always mounted outside AnimatePresence to run background audio persistently) */}
+              <div className={adminTab === 'visitorTracker' ? 'block' : 'hidden'}>
+                <VisitorTracker />
+              </div>
+
               <AnimatePresence mode="wait">
-                <motion.div
-                  key={adminTab}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="space-y-6"
-                >
+                {adminTab !== 'visitorTracker' && (
+                  <motion.div
+                    key={adminTab}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="space-y-6"
+                  >
                   
                   {/* OVERVIEW TAB */}
                   {adminTab === 'overview' && (
@@ -354,9 +363,9 @@ export default function ClientDashboard() {
                     </div>
                   )}
 
-                  {/* VISITOR TRACKER LIVE MONITOR TAB */}
-                  {adminTab === 'visitorTracker' && (
-                    <VisitorTracker />
+                  {/* AI MONITOR TAB */}
+                  {adminTab === 'aiMonitor' && (
+                    <AIConversionMonitor />
                   )}
 
                   {/* BOOKINGS CORNER TAB */}
@@ -762,6 +771,7 @@ export default function ClientDashboard() {
                   )}
 
                 </motion.div>
+                )}
               </AnimatePresence>
 
             </motion.div>

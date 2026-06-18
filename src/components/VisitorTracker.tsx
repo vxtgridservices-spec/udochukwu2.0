@@ -86,6 +86,7 @@ export default function VisitorTracker() {
   // Trackers to detect changes without triggering chime on initial loaded sessions list
   const hasInitializedSessions = useRef(false);
   const knownSessionIds = useRef<Set<string>>(new Set());
+  const knownActionCounts = useRef<Record<string, number>>({});
 
   // Filtering / Search state
   const [searchTerm, setSearchTerm] = useState('');
@@ -152,6 +153,37 @@ export default function VisitorTracker() {
     });
   };
 
+  useEffect(() => {
+    // Attempt to "Prime" the audio context on the first user interaction 
+    // so background notifications work reliably without being blocked by autoplay policies
+    const primeAudioContext = () => {
+      try {
+        const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+        if (!AudioContextClass) return;
+        
+        if (!(window as any).__vxtAudioCtx) {
+          (window as any).__vxtAudioCtx = new AudioContextClass();
+        }
+        const ctx = (window as any).__vxtAudioCtx;
+        if (ctx.state === 'suspended') {
+          ctx.resume();
+        }
+      } catch (e) {
+        // Ignore priming errors
+      }
+    };
+
+    window.addEventListener('click', primeAudioContext, { once: true });
+    window.addEventListener('keydown', primeAudioContext, { once: true });
+    window.addEventListener('touchstart', primeAudioContext, { once: true });
+
+    return () => {
+      window.removeEventListener('click', primeAudioContext);
+      window.removeEventListener('keydown', primeAudioContext);
+      window.removeEventListener('touchstart', primeAudioContext);
+    };
+  }, []);
+
   // Chronological chime listener trigger
   useEffect(() => {
     if (isLoading) return;
@@ -159,15 +191,27 @@ export default function VisitorTracker() {
     const currentIds = sessions.map(s => s.sessionId);
 
     if (hasInitializedSessions.current) {
-      let containsNew = false;
-      for (const id of currentIds) {
-        if (!knownSessionIds.current.has(id)) {
-          containsNew = true;
+      let shouldChime = false;
+      for (const session of sessions) {
+        const id = session.sessionId;
+        const isNewSession = !knownSessionIds.current.has(id);
+        
+        if (isNewSession) {
+          shouldChime = true;
           break;
+        }
+
+        const prevCount = knownActionCounts.current[id] || 0;
+        if (session.actions.length > prevCount) {
+          const newActions = session.actions.slice(prevCount);
+          if (newActions.some(a => a.action.startsWith('Arrived on'))) {
+            shouldChime = true;
+            break;
+          }
         }
       }
 
-      if (containsNew && soundEnabled) {
+      if (shouldChime && soundEnabled) {
         playIncomingChime();
       }
     } else {
@@ -175,6 +219,11 @@ export default function VisitorTracker() {
     }
 
     knownSessionIds.current = new Set(currentIds);
+    const newCounts: Record<string, number> = {};
+    sessions.forEach(s => {
+      newCounts[s.sessionId] = s.actions.length;
+    });
+    knownActionCounts.current = newCounts;
   }, [sessions, soundEnabled, isLoading]);
 
   const fetchSessionsDirect = async () => {
