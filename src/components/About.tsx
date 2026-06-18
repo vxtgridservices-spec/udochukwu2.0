@@ -8,7 +8,7 @@ interface AboutProps {
 }
 
 export default function About({ onNavigate }: AboutProps) {
-  const [aboutImageUrl, setAboutImageUrl] = useState('/assets/images/udochukwu_portrait_1781715122799.jpg');
+  const [aboutImageUrl, setAboutImageUrl] = useState('https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=800&q=80');
 
   useEffect(() => {
     const settings = getSiteSettings();

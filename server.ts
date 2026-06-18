@@ -127,7 +127,8 @@ async function startServer() {
   loadHistoryLog();
 
   const app = express();
-  const PORT = 3000;
+  // Use 3000 in AI Studio environments, but allow dynamic PORT for Railway/Heroku deployments
+  const PORT = process.env.PORT && !process.env.NG_ALLOWED_HOSTS ? parseInt(process.env.PORT) : 3000;
 
   app.use(express.json());
 

@@ -18,7 +18,7 @@ export default function Testimonials({ onNavigate }: TestimonialsProps) {
       role: 'MD, Eko Haven Luxury Suites (Lagos)',
       type: 'Video Testimonial',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80',
-      thumbnail: '/assets/images/project01_mockup_1781715139906.jpg', // can use mockup
+      thumbnail: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
       quote: 'Direct bedside reservations grew by 295%. Handing over 18% of our cash to international booking aggregators was slowly eroding our margins. Udochukwu hand-coded our portal from scratch. MTN mobile guests book suites from bed under 1 second.',
       googleRating: 5,
       achievement: '₦24.8M direct direct boking savings',
@@ -30,7 +30,7 @@ export default function Testimonials({ onNavigate }: TestimonialsProps) {
       role: 'Founder, Landstone Premium Properties (Abuja)',
       type: 'Written Case Study',
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80',
-      thumbnail: '/assets/images/project02_mockup_1781715156232.jpg',
+      thumbnail: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80',
       quote: 'Diaspora investors usually doubt local builders due to subpar slow websites. Udochukwus team didn’t just build a real estate grid—they styled a prestige lifestyle collection. In four months, target Google terms landed us ₦180M in direct diaspora wire queries.',
       googleRating: 5,
       achievement: '₦180M diaspora sales pipeline',

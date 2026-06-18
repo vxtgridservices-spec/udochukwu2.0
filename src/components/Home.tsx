@@ -27,7 +27,7 @@ interface HomeProps {
 }
 
 export default function Home({ onNavigate }: HomeProps) {
-  const [heroImageUrl, setHeroImageUrl] = useState('/assets/images/udochukwu_portrait_1781715122799.jpg');
+  const [heroImageUrl, setHeroImageUrl] = useState('https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=800&q=80');
   const { formatCurrency, currencySymbol } = useCurrency();
 
   useEffect(() => {
@@ -405,7 +405,7 @@ export default function Home({ onNavigate }: HomeProps) {
             
             <div className="lg:col-span-5 relative h-64 sm:h-[400px] rounded-3xl overflow-hidden border shadow-2xl order-last lg:order-first">
               <img 
-                src="/assets/images/project01_mockup_1781715139906.jpg" 
+                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" 
                 alt="Case Study Showcase Mockup" 
                 className="absolute inset-0 w-full h-full object-cover filter contrast-[1.04]"
                 referrerPolicy="no-referrer"

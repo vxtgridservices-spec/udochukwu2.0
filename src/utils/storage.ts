@@ -27,7 +27,7 @@ export const PRELOADED_CASE_STUDIES: CaseStudy[] = [
       revenueGrowth: '₦24.8M Saved in annual commissions'
     },
     beforeImage: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=50', // placeholder or we can use project mockup
-    afterImage: '/assets/images/project01_mockup_1781715139906.jpg', // Our generated asset!
+    afterImage: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80', // Our generated asset!
     liveUrl: '#live-preview',
     highlightText: 'The redesign transformed their brand image, making them look like a five-star global destination, while transferring critical profits back to their local operations.'
   },
@@ -46,7 +46,7 @@ export const PRELOADED_CASE_STUDIES: CaseStudy[] = [
       revenueGrowth: '₦180M generated in organic sales pipeline'
     },
     beforeImage: 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=800&q=50',
-    afterImage: '/assets/images/project02_mockup_1781715156232.jpg', // Our generated luxury real estate asset!
+    afterImage: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80', // Our generated luxury real estate asset!
     liveUrl: '#live-preview',
     highlightText: 'Udochukwu understood our elite customer profile. Every element on the platform exudes trust, making diaspora wire transfers frictionless.'
   }
@@ -515,14 +515,17 @@ export interface SiteSettings {
 }
 
 const DEFAULT_SETTINGS: SiteSettings = {
-  aboutImageUrl: '/assets/images/udochukwu_portrait_1781715122799.jpg',
-  heroImageUrl: '/assets/images/udochukwu_portrait_1781715122799.jpg'
+  aboutImageUrl: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=800&q=80',
+  heroImageUrl: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=800&q=80'
 };
 
 export const getSiteSettings = (): SiteSettings => {
   try {
     const s = localStorage.getItem('vxt_site_settings');
-    return s ? JSON.parse(s) : DEFAULT_SETTINGS;
+    let parsed = s ? JSON.parse(s) : DEFAULT_SETTINGS;
+    if (parsed.aboutImageUrl?.startsWith('/assets/images/')) parsed.aboutImageUrl = DEFAULT_SETTINGS.aboutImageUrl;
+    if (parsed.heroImageUrl?.startsWith('/assets/images/')) parsed.heroImageUrl = DEFAULT_SETTINGS.heroImageUrl;
+    return parsed;
   } catch (e) {
     return DEFAULT_SETTINGS;
   }

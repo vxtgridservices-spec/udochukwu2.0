@@ -1,0 +1,116 @@
+[
+  {
+    "sessionId": "vxt_sess_17p3t10km",
+    "ip": "37.221.113.203",
+    "country": "United Kingdom",
+    "device": "Tablet",
+    "screenSize": "1280x720",
+    "path": "/contact",
+    "title": "Book a Consultation / Drop a Line | Udochukwu",
+    "lastPing": 1781741122633,
+    "joinedAt": 1781741106803,
+    "durationSeconds": 16,
+    "actions": [
+      {
+        "timestamp": "00:05:06",
+        "action": "Arrived on HOME"
+      },
+      {
+        "timestamp": "00:05:14",
+        "action": "Clicked: \"Book Free Consultation\""
+      },
+      {
+        "timestamp": "00:05:14",
+        "action": "Arrived on CONTACT"
+      },
+      {
+        "timestamp": "00:05:22",
+        "action": "Still active - exploring page"
+      }
+    ],
+    "scrollPercent": 0,
+    "geo": {
+      "ip": "37.221.113.203",
+      "country": "United Kingdom",
+      "city": "London",
+      "region": "England",
+      "org": "M247 Europe SRL",
+      "timezone": "Europe/London",
+      "latitude": 51.50853,
+      "longitude": -0.12574,
+      "postal": "EC1A"
+    },
+    "system": {
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+      "language": "en-US",
+      "referrer": "https://aistudio.google.com/",
+      "browser": "Chrome",
+      "os": "Windows",
+      "cores": 4,
+      "memory": "8 GB"
+    }
+  },
+  {
+    "sessionId": "vxt_sess_fkxfwphkb",
+    "ip": "102.90.125.175",
+    "country": "Nigeria",
+    "device": "Mobile",
+    "screenSize": "384x854",
+    "path": "/contact",
+    "title": "Book a Consultation / Drop a Line | Udochukwu",
+    "lastPing": 1781741241668,
+    "joinedAt": 1781741219429,
+    "durationSeconds": 22,
+    "actions": [
+      {
+        "timestamp": "00:06:59",
+        "action": "Arrived on HOME"
+      },
+      {
+        "timestamp": "00:07:07",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "00:07:08",
+        "action": "Scrolled 50% down the page"
+      },
+      {
+        "timestamp": "00:07:15",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "00:07:16",
+        "action": "Arrived on CONTACT"
+      },
+      {
+        "timestamp": "00:07:16",
+        "action": "Clicked: \"Book Free Consultation\""
+      },
+      {
+        "timestamp": "00:07:21",
+        "action": "Scrolled 50% down the page"
+      }
+    ],
+    "scrollPercent": 50,
+    "geo": {
+      "ip": "102.90.125.175",
+      "country": "Nigeria",
+      "city": "Port Harcourt",
+      "region": "Rivers State",
+      "org": "MTN NIGERIA Communication limited",
+      "timezone": "Africa/Lagos",
+      "latitude": 4.7731,
+      "longitude": 7.0085,
+      "postal": "100001"
+    },
+    "system": {
+      "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Mobile Safari/537.36",
+      "language": "en-GB",
+      "referrer": "https://aistudio.google.com/",
+      "browser": "Chrome",
+      "os": "Android",
+      "cores": 8,
+      "memory": "8 GB"
+    }
+  }
+]
