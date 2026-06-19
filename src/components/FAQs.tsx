@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { HelpCircle, ChevronDown, Sparkles } from 'lucide-react';
+import { ChevronDown, Sparkles } from 'lucide-react';
 
 interface FAQsProps {
   onNavigate: (page: string) => void;
@@ -37,41 +37,43 @@ export default function FAQs({ onNavigate }: FAQsProps) {
   ];
 
   return (
-    <div className="py-12 md:py-20 bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+    <div className="py-16 md:py-24 bg-slate-950 text-slate-100 min-h-screen">
+      <div className="max-w-4xl mx-auto px-6 sm:px-8">
         
         {/* Intro */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-xs font-mono text-blue-600 dark:text-blue-400 uppercase tracking-widest bg-blue-100 dark:bg-blue-950 px-3 py-1.5 rounded-full font-medium">
+        <div className="text-left md:text-center max-w-2xl mx-auto mb-16">
+          <span className="text-[10px] font-mono text-blue-400 font-bold uppercase tracking-[0.25em] block mb-3">
             RESOLVING OBJECTIONS
           </span>
-          <h2 className="text-3xl md:text-4xl font-serif text-slate-900 dark:text-white mt-4 font-normal tracking-tight">
+          <h2 className="text-3xl md:text-5xl font-serif text-white mt-1 font-semibold tracking-tight uppercase leading-none">
             Frequently Asked Objections
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 mt-3 text-xs sm:text-sm">
+          <p className="text-slate-400 mt-4 text-xs sm:text-sm font-sans leading-relaxed">
             Everything you need to know about our visual craft, local optimization architectures, and payment parameters.
           </p>
         </div>
 
-        {/* FAQ Accordions stack */}
-        <div className="space-y-4">
+        {/* FAQ Accordions stack - Pure list line dividers style (matching layout and current style) */}
+        <div className="divide-y divide-white/10 border-t border-b border-white/10 mt-12 mb-20">
           {faqs.map((f, idx) => {
             const isOpen = openIndex === idx;
             return (
               <div
                 key={idx}
                 id={`faq-item-${idx}`}
-                className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-205 dark:border-slate-700/50 overflow-hidden transition-all shadow-xs"
+                className="group overflow-hidden transition-colors duration-200"
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : idx)}
-                  className="w-full text-left p-6 flex justify-between items-center gap-4 focus:outline-hidden cursor-pointer group"
+                  className="w-full text-left py-6 sm:py-8 flex justify-between items-start gap-4 focus:outline-hidden cursor-pointer group"
                 >
-                  <span className="font-serif font-semibold text-slate-900 dark:text-white text-sm sm:text-base leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors flex items-center gap-3">
-                    <HelpCircle className="w-4 h-4 text-blue-500 shrink-0" />
-                    {f.q}
+                  <span className="font-serif font-medium text-slate-200 group-hover:text-white text-base sm:text-lg leading-tight transition-colors flex items-start gap-4">
+                    <span className="font-mono text-xs text-blue-400 font-bold tracking-widest shrink-0 mt-1">
+                      {(idx + 1).toString().padStart(2, '0')}.
+                    </span>
+                    <span className="leading-snug">{f.q}</span>
                   </span>
-                  <div className={`p-1.5 rounded-lg bg-slate-50 dark:bg-slate-900 text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-all transform shrink-0 ${isOpen ? 'rotate-180 bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400' : ''}`}>
+                  <div className={`p-1.5 text-slate-400 group-hover:text-white transition-all transform shrink-0 mt-1 ${isOpen ? 'rotate-180 text-blue-400' : ''}`}>
                     <ChevronDown className="w-4 h-4" />
                   </div>
                 </button>
@@ -84,7 +86,7 @@ export default function FAQs({ onNavigate }: FAQsProps) {
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.25, ease: 'easeInOut' }}
                     >
-                      <div className="px-6 pb-6 pt-1 text-slate-500 dark:text-slate-350 text-xs sm:text-sm leading-relaxed border-t border-slate-100 dark:border-slate-750">
+                      <div className="pl-10 pr-6 pb-8 text-slate-400 text-xs sm:text-sm leading-relaxed font-sans">
                         {f.a}
                       </div>
                     </motion.div>
@@ -95,24 +97,27 @@ export default function FAQs({ onNavigate }: FAQsProps) {
           })}
         </div>
 
-        {/* Objections Bottom Banner */}
-        <div className="mt-16 bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200/60 dark:border-slate-755/50 shadow-xs flex flex-col sm:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-4">
-            <div className="h-10 w-10 bg-blue-100 dark:bg-blue-950 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400">
+        {/* Objections Bottom Banner - Flat minimalist theme-aligned design */}
+        <div className="bg-[#131620]/50 p-8 border border-white/10 flex flex-col sm:flex-row justify-between items-center gap-8 backdrop-blur-xs">
+          <div className="flex items-center gap-4 text-left">
+            <div className="h-10 w-10 bg-blue-950/40 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-sm font-serif font-semibold text-slate-900 dark:text-white">Have a highly tailored corporate concern?</h4>
-              <p className="text-xs text-slate-500 mt-0.5">Let's hop on a brief call and resolve it in 5 minutes.</p>
+              <h4 className="text-[11px] sm:text-xs font-mono font-bold uppercase tracking-[0.18em] text-white">Have a highly tailored corporate concern?</h4>
+              <p className="text-[10px] text-slate-400 font-mono mt-1 uppercase tracking-wider">Let's hop on a brief call and resolve it in 5 minutes.</p>
             </div>
           </div>
 
           <button
-            onClick={() => onNavigate('contact')}
+            onClick={() => {
+              onNavigate('contact');
+              window.scrollTo({ top: 0, behavior: 'instant' });
+            }}
             id="faq-objection-banner-book"
-            className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-5 py-3 rounded-xl transition-all shadow-md shrink-0 cursor-pointer"
+            className="w-full sm:w-auto bg-white text-slate-950 hover:bg-slate-100 text-[10px] font-mono font-bold uppercase tracking-[0.22em] px-6 py-4 border border-white transition-all duration-200 shrink-0 cursor-pointer text-center"
           >
-            Ask Udochukwu Directly
+            Ask Directly
           </button>
         </div>
 

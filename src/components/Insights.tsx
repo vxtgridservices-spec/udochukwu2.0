@@ -2,13 +2,14 @@ import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getBlogs, saveBlogComment } from '../utils/storage';
 import { BlogPost, BlogComment } from '../types';
-import { Search, Flame, ThumbsUp, Eye, Calendar, MessageSquare, CornerDownRight, User, Send, ArrowLeft, BookOpen } from 'lucide-react';
+import { Search, Flame, ThumbsUp, Eye, Calendar, MessageSquare, CornerDownRight, User, Send, ArrowLeft, BookOpen, ArrowRight } from 'lucide-react';
 
 interface BlogProps {
   onNavigate: (page: string) => void;
+  isHome?: boolean;
 }
 
-export default function Insights({ onNavigate }: BlogProps) {
+export default function Insights({ onNavigate, isHome }: BlogProps) {
   const [blogs, setBlogs] = useState<BlogPost[]>(() => getBlogs());
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -24,6 +25,9 @@ export default function Insights({ onNavigate }: BlogProps) {
 
   // Filtered post calculation
   const filteredBlogs = useMemo(() => {
+    if (isHome) {
+      return blogs.slice(0, 2);
+    }
     return blogs.filter((post) => {
       const matchCategory = selectedCategory === 'All' || post.category === selectedCategory;
       const matchSearch = 
@@ -32,7 +36,7 @@ export default function Insights({ onNavigate }: BlogProps) {
         post.content.toLowerCase().includes(searchQuery.toLowerCase());
       return matchCategory && matchSearch;
     });
-  }, [blogs, selectedCategory, searchQuery]);
+  }, [blogs, selectedCategory, searchQuery, isHome]);
 
   // Featured article (always grab the first blog item)
   const featuredArticle = useMemo(() => {
@@ -89,6 +93,11 @@ export default function Insights({ onNavigate }: BlogProps) {
     setBlogs(updated);
     localStorage.setItem('vxt_blogs', JSON.stringify(updated));
     
+    if (isHome) {
+      onNavigate('blog');
+      return;
+    }
+
     const targetPost = updated.find(p => p.id === post.id);
     if (targetPost) {
       setActiveBlogPost(targetPost);
@@ -97,8 +106,8 @@ export default function Insights({ onNavigate }: BlogProps) {
   };
 
   return (
-    <div className="py-12 md:py-20 bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className={`transition-colors duration-300 ${isHome ? 'py-24 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800' : 'py-12 md:py-20 bg-slate-50 dark:bg-slate-900'}`}>
+      <div className={`${isHome ? 'w-full' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'}`}>
         
         <AnimatePresence mode="wait">
           {!activeBlogPost ? (
@@ -108,58 +117,62 @@ export default function Insights({ onNavigate }: BlogProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="space-y-16"
+              className={`space-y-16 ${isHome ? 'w-full px-6 sm:px-8 lg:px-12' : ''}`}
             >
               
               {/* Intro Title */}
-              <div className="text-center max-w-3xl mx-auto">
-                <span className="text-xs font-mono text-blue-600 dark:text-blue-400 uppercase tracking-widest bg-blue-100 dark:bg-blue-950 px-3 py-1.5 rounded-full font-medium">
-                  HIGH-TRACTION ARTICLES
+              <div className={isHome ? "text-center sm:text-left border-b-2 border-slate-800 pb-6 text-slate-900 dark:text-white" : "text-center max-w-3xl mx-auto"}>
+                <span className={`text-xs font-mono uppercase tracking-widest font-bold ${isHome ? 'text-blue-600 dark:text-blue-400' : 'text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-950 px-3 py-1.5 rounded-full'}`}>
+                  {isHome ? 'LATEST ARTICLES' : 'HIGH-TRACTION ARTICLES'}
                 </span>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-slate-900 dark:text-white mt-4 font-medium tracking-tight">
+                <h1 className={`font-sans font-bold tracking-tight uppercase ${isHome ? 'text-3xl sm:text-5xl mt-2' : 'text-3xl sm:text-4xl lg:text-5xl font-serif mt-4 font-medium'}`}>
                   Business Growth & Digital Insights
                 </h1>
-                <p className="text-slate-500 dark:text-slate-400 mt-4 text-sm sm:text-base leading-relaxed">
-                  Deep-dive guides written for African business builders to expand market share, master performance, and capture premium digital opportunities.
-                </p>
+                {!isHome && (
+                  <p className="text-slate-500 dark:text-slate-400 mt-4 text-sm sm:text-base leading-relaxed">
+                    Deep-dive guides written for African business builders to expand market share, master performance, and capture premium digital opportunities.
+                  </p>
+                )}
               </div>
 
               {/* Advanced filter & search dock */}
-              <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-xs flex flex-col md:flex-row items-center gap-4 justify-between">
-                
-                {/* Search Bar */}
-                <div className="relative w-full md:max-w-xs">
-                  <input
-                    type="text"
-                    placeholder="Search masterclasses..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-white pl-10 pr-4 py-2 rounded-xl text-xs border border-slate-200 dark:border-slate-850 focus:ring-2 focus:ring-blue-600 focus:outline-hidden"
-                  />
-                  <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
-                </div>
+              {!isHome && (
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-xs flex flex-col md:flex-row items-center gap-4 justify-between">
+                  
+                  {/* Search Bar */}
+                  <div className="relative w-full md:max-w-xs">
+                    <input
+                      type="text"
+                      placeholder="Search masterclasses..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-white pl-10 pr-4 py-2 rounded-xl text-xs border border-slate-200 dark:border-slate-850 focus:ring-2 focus:ring-blue-600 focus:outline-hidden"
+                    />
+                    <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
+                  </div>
 
-                {/* Categories Scrollbar */}
-                <div className="flex gap-1.5 overflow-x-auto w-full md:w-auto py-1 scrollbar-none">
-                  {categoriesList.map((cat) => (
-                    <button
-                      key={cat}
-                      onClick={() => setSelectedCategory(cat)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium tracking-tight whitespace-nowrap cursor-pointer ${
-                        selectedCategory === cat
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-slate-100 text-slate-600 dark:bg-slate-900 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800'
-                      }`}
-                    >
-                      {cat}
-                    </button>
-                  ))}
-                </div>
+                  {/* Categories Scrollbar */}
+                  <div className="flex gap-1.5 overflow-x-auto w-full md:w-auto py-1 scrollbar-none">
+                    {categoriesList.map((cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => setSelectedCategory(cat)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium tracking-tight whitespace-nowrap cursor-pointer ${
+                          selectedCategory === cat
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:bg-slate-900 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800'
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
 
-              </div>
+                </div>
+              )}
 
               {/* FEATURED ARTICLES FLAGSHIP PANEL */}
-              {searchQuery === '' && selectedCategory === 'All' && featuredArticle && (
+              {!isHome && searchQuery === '' && selectedCategory === 'All' && featuredArticle && (
                 <div 
                   onClick={() => handleOpenPost(featuredArticle)}
                   className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200/60 dark:border-slate-750/50 overflow-hidden shadow-sm hover:shadow-xl transition-all cursor-pointer group grid grid-cols-1 lg:grid-cols-12"
@@ -225,73 +238,94 @@ export default function Insights({ onNavigate }: BlogProps) {
               {/* POSTS GRID LIST */}
               <div>
                 {filteredBlogs.length === 0 ? (
-                  <div className="bg-white dark:bg-slate-800 p-12 rounded-3xl text-center border">
+                  <div className="bg-transparent p-12 text-center border border-slate-300 dark:border-slate-800">
                     <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-4" />
                     <p className="text-slate-900 dark:text-white font-medium text-base">No matching diagnostic articles found</p>
                     <p className="text-slate-500 text-xs mt-1">Try resetting search parameters or browse all categories.</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  <div className={`grid grid-cols-1 md:grid-cols-2 ${isHome ? 'lg:grid-cols-2 gap-8 lg:mx-auto max-w-5xl' : 'lg:grid-cols-3 gap-8'}`}>
                     {filteredBlogs.map((post) => (
                       <div
                         key={post.id}
                         id={`blog-card-${post.id}`}
                         onClick={() => handleOpenPost(post)}
-                        className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200/50 dark:border-slate-750/50 overflow-hidden shadow-xs hover:shadow-lg transition-all cursor-pointer group flex flex-col justify-between"
+                        className={`cursor-pointer group flex flex-col justify-between ${isHome ? 'bg-transparent' : 'bg-transparent border border-slate-300 dark:border-slate-800 p-6'}`}
                       >
                         <div>
                           {/* Image and categories badge wrapper */}
-                          <div className="relative h-48 overflow-hidden">
+                          <div className={`relative ${isHome ? 'h-64 sm:h-80 w-full mb-6 filter grayscale group-hover:grayscale-0 transition-all' : 'h-48 overflow-hidden mb-6'}`}>
                             <img 
                               src={post.image} 
                               alt={post.title}
-                              className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
+                              className={`w-full h-full object-cover ${isHome ? '' : 'group-hover:scale-105 transition-transform duration-500'}`}
                               referrerPolicy="no-referrer"
                             />
-                            <div className="absolute bottom-3 left-3 bg-slate-900/95 text-white text-[9px] font-mono tracking-widest px-2.5 py-1 rounded-sm uppercase font-bold">
-                              {post.category}
-                            </div>
+                            {!isHome && (
+                              <div className="absolute top-4 left-4 bg-slate-950/80 backdrop-blur-md text-white text-[9px] font-mono tracking-widest px-2.5 py-1 rounded-sm shadow-md uppercase">
+                                {post.category}
+                              </div>
+                            )}
                           </div>
-
+                          
                           {/* Content summary */}
-                          <div className="p-6">
-                            <div className="flex gap-2.5 items-center text-slate-400 text-[10px] font-mono">
-                              <Calendar className="w-3 h-3" />
+                          <div className={`${isHome ? '' : ''}`}>
+                            {isHome && (
+                              <div className="mb-4">
+                                <span className="text-[10px] font-mono text-blue-600 dark:text-blue-400 font-bold uppercase tracking-widest">{post.category}</span>
+                              </div>
+                            )}
+                            <div className="flex items-center gap-2.5 text-slate-400 text-[10px] sm:text-xs font-mono uppercase font-semibold">
                               <span>{post.date}</span>
                               <span>•</span>
                               <span>{post.readTime}</span>
                             </div>
-                            
-                            <h3 className="text-base font-serif font-semibold text-slate-900 dark:text-white mt-3 leading-snug group-hover:text-blue-600 transition-colors">
+
+                            <h3 className={`font-sans font-bold text-slate-900 dark:text-white mt-3 group-hover:text-blue-600 transition-colors uppercase ${isHome ? 'text-2xl sm:text-3xl' : 'text-lg sm:text-xl font-serif font-semibold'}`}>
                               {post.title}
                             </h3>
-                            
-                            <p className="text-slate-500 dark:text-slate-400 text-xs mt-3 leading-relaxed font-sans line-clamp-3">
+
+                            <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-3 leading-relaxed font-sans line-clamp-3">
                               {post.excerpt}
                             </p>
                           </div>
                         </div>
 
-                        {/* Read CTA bar */}
-                        <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-750 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/10">
-                          <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">Read Article</span>
-                          
-                          <div className="flex gap-3 text-[10px] text-slate-400 font-mono">
-                            <span className="flex items-center gap-1">
-                              <Eye className="w-3 h-3" />
-                              {post.views}
+                        <div className={`${isHome ? 'mt-8 block' : 'pt-6 border-t border-slate-300 dark:border-slate-800 mt-6'}`}>
+                          <div className="flex items-center justify-between pt-4">
+                            <span className="text-blue-600 dark:text-blue-400 font-bold font-mono tracking-widest uppercase text-[10px] sm:text-xs flex items-center gap-1.5 transition-colors">
+                              READ ANALYSIS <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                             </span>
-                            <span 
-                              onClick={(e) => handleLikePost(post.id, e)}
-                              className="flex items-center gap-1 hover:text-rose-500 transition-colors"
-                            >
-                              <ThumbsUp className="w-3 h-3" />
-                              {post.likes}
-                            </span>
+
+                            <div className="flex gap-3 text-slate-400 text-xs font-mono flex-shrink-0">
+                              <span className="flex items-center gap-1">
+                                <Eye className="w-3 h-3" />
+                                {post.views}
+                              </span>
+                              <span 
+                                onClick={(e) => handleLikePost(post.id, e)}
+                                className="flex items-center gap-1 hover:text-rose-500 transition-colors"
+                              >
+                                <ThumbsUp className="w-3 h-3" />
+                                {post.likes}
+                              </span>
+                            </div>
                           </div>
                         </div>
+
                       </div>
                     ))}
+                  </div>
+                )}
+                
+                {isHome && (
+                  <div className="mt-16 border-t-2 border-slate-800 pt-8 flex justify-center sm:justify-end">
+                    <button
+                      onClick={() => onNavigate('blog')}
+                      className="border-2 border-slate-900 dark:border-white text-slate-900 dark:text-white font-mono uppercase tracking-[0.2em] px-8 py-5 hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-colors flex items-center justify-center gap-4 cursor-pointer font-bold text-sm w-full sm:w-auto"
+                    >
+                      VIEW ALL ARTICLES <ArrowRight className="w-5 h-5 ml-2" />
+                    </button>
                   </div>
                 )}
               </div>

@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Target, Eye, ShieldCheck, HeartPulse, GraduationCap, Award, Briefcase, Sparkles } from 'lucide-react';
+import { Target, Eye, ShieldCheck, HeartPulse, Award, Sparkles, ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { getSiteSettings } from '../utils/storage';
 
@@ -12,7 +12,9 @@ export default function About({ onNavigate }: AboutProps) {
 
   useEffect(() => {
     const settings = getSiteSettings();
-    setAboutImageUrl(settings.aboutImageUrl);
+    if (settings && settings.aboutImageUrl) {
+      setAboutImageUrl(settings.aboutImageUrl);
+    }
   }, []);
 
   const values = [
@@ -66,127 +68,124 @@ export default function About({ onNavigate }: AboutProps) {
   ];
 
   return (
-    <div className="py-12 md:py-20 bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Intro Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center mb-24">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
+    <div className="bg-[#1E2333] min-h-screen text-slate-100 transition-colors duration-300">
+      
+      {/* 1. ELON-STYLE HEADER SPLASH (Muted Slate-Purple Banner) */}
+      <section className="relative min-h-[50vh] flex flex-col justify-center items-start px-6 sm:px-12 md:px-24 py-20 bg-[#6B6899] overflow-hidden">
+        {/* Grayscale Background portrait overlay */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src={aboutImageUrl} 
+            alt="Udochukwu Background" 
+            className="w-full h-full object-cover object-top filter grayscale contrast-125 brightness-[0.45] opacity-25 mix-blend-luminosity"
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute inset-0 bg-[#6B6899]/50 mix-blend-multiply" />
+        </div>
+
+        {/* Text Area */}
+        <div className="relative z-10 w-full max-w-6xl">
+          <motion.h1 
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="lg:col-span-5 relative"
+            className="text-4xl sm:text-5xl md:text-6xl text-white font-serif tracking-[0.01em] leading-tight font-medium"
           >
-            <div className="relative group rounded-3xl overflow-hidden bg-slate-950 shadow-2xl border-4 border-white dark:border-slate-800 transition-transform hover:scale-[1.01]">
-              <img 
-                src={aboutImageUrl} 
-                alt="Udochukwu Portrait" 
-                className="w-full h-auto object-cover object-top filter contrast-[1.05]"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60"></div>
-              <div className="absolute bottom-6 left-6 right-6 text-white">
-                <span className="text-xs font-mono text-blue-400 bg-blue-950/80 px-2.5 py-1 rounded-full border border-blue-900/50 backdrop-blur-xs">
-                  FOUNDER & DIGITAL STRATEGIST
-                </span>
-                <p className="text-xl font-serif mt-2 font-medium">Udochukwu</p>
-                <p className="text-xs text-slate-300 mt-1">Premium Digital Strategy Consultant</p>
-              </div>
-            </div>
-            
-            {/* Ambient visual badge */}
-            <div className="absolute -top-4 -right-4 bg-blue-600 text-white p-4 rounded-2xl shadow-xl z-10 hidden sm:flex items-center gap-3 animate-bounce" style={{ animationDuration: '6s' }}>
-              <div className="bg-blue-500/50 p-2 rounded-xl">
-                <Award className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-xs font-mono text-blue-100 leading-none">STRATEGY RATING</p>
-                <p className="text-lg font-bold leading-tight">100% Growth</p>
-              </div>
-            </div>
-          </motion.div>
+            Who is mister <br className="hidden sm:inline" /> Udochukwu
+          </motion.h1>
+          
+          <div className="w-full max-w-2xl h-[1px] bg-white/40 my-6"></div>
+          
+          <motion.p 
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="text-white text-xs sm:text-sm md:text-base tracking-[0.24em] font-mono uppercase font-bold opacity-95 [text-shadow:_0_1px_2px_rgba(0,0,0,0.4)]"
+          >
+            VISIONARY STRATEGIST REVOLUTIONIZING DIGITAL SYSTEMS
+          </motion.p>
+        </div>
+      </section>
 
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="lg:col-span-7"
-          >
-            <div className="flex items-center gap-2 mb-4">
-              <span className="h-px w-8 bg-blue-600"></span>
-              <span className="text-xs font-mono text-blue-600 dark:text-blue-400 tracking-widest uppercase">STRATEGY & DIGITAL PARTNER</span>
+      {/* 2. BIOGRAPHY SECTION WITH WHITE UNDERLINE CONTAINER */}
+      <section className="py-16 sm:py-24 px-6 sm:px-12 md:px-24 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          
+          {/* Biography text block */}
+          <div className="lg:col-span-8 space-y-8">
+            <div className="border-b border-white/20 pb-4 mb-8">
+              <h2 className="text-2xl sm:text-3xl font-serif text-white tracking-wide uppercase relative inline-block pb-3 whitespace-nowrap">
+                Udochukwu biography
+                <span className="absolute bottom-0 left-0 w-full h-[2px] bg-white"></span>
+              </h2>
             </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-slate-900 dark:text-white font-medium tracking-tight leading-tight">
-              I don't just build websites. I construct digital systems that scale African businesses.
-            </h1>
-            
-            <div className="mt-6 space-y-4 text-slate-600 dark:text-slate-300 font-sans text-base leading-relaxed">
+
+            <div className="space-y-6 text-slate-300 font-sans text-sm sm:text-base leading-relaxed tracking-wide">
               <p>
-                My name is <strong className="text-slate-900 dark:text-white font-medium">Udochukwu</strong>, and I am the founder of <strong className="text-blue-600 dark:text-blue-400 font-medium">VXTGrid Services</strong>. My work is dedicated to helping ambitious African brands build world-class digital experiences that drive measurable growth.
+                Udochukwu, a name synonymous with digital systems innovation and forward-thinking engineering, has become an influential figure in the digital landscape of African business. Driven by an insatiable curiosity and a relentless pursuit of high-performance architecture, his journey is marked by a refusal to build standard templates, choosing instead to engineer conversion systems with pristine code structure.
               </p>
               <p>
-                I have seen too many promising brands held back by digital platforms that are slow, uninspiring, or disconnected from the reality of their customers. High-value clients and corporate partners require immediacy, and they require unwavering trust. If your digital presence doesn't load instantly and communicate authority instantly, they will look elsewhere.
+                From an early age, Udochukwu exhibited an exceptional aptitude for systems thinking, digital strategy, and high-impact web design. This passion led to the founding of VXTGrid Services, a premier consultancy that has revitalized the digital sales pipelines of luxury real estate, hospitality, and B2B corporate enterprises across the continent.
               </p>
               <p>
-                My consultancy combines high-stakes conversion strategy, elite design, and ultra-performing infrastructure. We create clear, high-speed, and high-trust digital assets that translate visitor interest into concrete business outcomes.
+                Today, he continues to bridge the gap between high-stakes marketing science and clean code execution. His vision remains resolute: to build digital platforms that establish unquestionable authority, command investment trust, and enable African organizations to compete confidently on a global stage.
               </p>
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-4">
+            <div className="pt-6 flex flex-wrap gap-4">
               <button 
                 onClick={() => onNavigate('contact')}
                 id="about-cta-book"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-md hover:shadow-lg flex items-center gap-2 group cursor-pointer"
+                className="bg-white text-[#1E2333] hover:bg-slate-100 px-6 py-3 font-mono font-bold tracking-widest text-[#1E2333] text-xs uppercase transition-all shadow-md flex items-center gap-2 cursor-pointer border border-white"
               >
-                Book Free Consultation
-                <Sparkles className="w-4 h-4 text-white group-hover:animate-pulse" />
+                BOOK CONSULTATION
+                <Sparkles className="w-4 h-4 text-[#1E2333]" />
               </button>
               <button 
                 onClick={() => onNavigate('portfolio')}
                 id="about-cta-portfolio"
-                className="px-6 py-3 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium transition-all cursor-pointer"
+                className="px-6 py-3 border border-white/30 hover:border-white hover:bg-white/5 text-white font-mono font-bold tracking-widest text-xs uppercase transition-all cursor-pointer"
               >
-                View Case Studies
+                VIEW PORTFOLIO
               </button>
             </div>
-          </motion.div>
-        </div>
-
-        {/* Mission / Vision Statement Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
-          <div className="bg-white dark:bg-slate-800 p-8 sm:p-10 rounded-3xl border border-slate-200/60 dark:border-slate-700/50 shadow-xs">
-            <div className="h-12 w-12 bg-blue-100 dark:bg-blue-900/40 rounded-2xl flex items-center justify-center text-blue-600 dark:text-blue-400 mb-6">
-              <Target className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-serif font-medium text-slate-900 dark:text-white mb-3">Our Core Mission</h3>
-            <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
-              To empower elite corporate businesses and ambitious local agencies in Africa to double their revenue using optimized speed, clear positioning, and world-class conversion engineering, completely removing dependence on costly booking platforms and unstable advertisement spikes.
-            </p>
           </div>
 
-          <div className="bg-white dark:bg-slate-800 p-8 sm:p-10 rounded-3xl border border-slate-200/60 dark:border-slate-700/50 shadow-xs">
-            <div className="h-12 w-12 bg-blue-100 dark:bg-blue-900/40 rounded-2xl flex items-center justify-center text-blue-600 dark:text-blue-400 mb-6">
-              <Eye className="w-6 h-6" />
+          {/* Right sidebar profile card */}
+          <div className="lg:col-span-4 lg:sticky lg:top-28">
+            <div className="bg-[#23293D] rounded-2xl border border-white/10 p-6 shadow-xl relative overflow-hidden group">
+              <div className="relative rounded-xl overflow-hidden aspect-[4/5] bg-slate-950 mb-6">
+                <img 
+                  src={aboutImageUrl} 
+                  alt="Udochukwu Portrait" 
+                  className="w-full h-full object-cover object-top filter grayscale contrast-110 brightness-90 transition-transform group-hover:scale-[1.02]"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60"></div>
+              </div>
+              <div>
+                <span className="text-[10px] font-mono text-blue-400 tracking-wider">
+                  FOUNDER & DIGITAL STRATEGIST
+                </span>
+                <p className="text-xl font-serif mt-1 font-medium text-white">Udochukwu</p>
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">Premium Digital Strategy Consultant & Principal at VXTGrid Services</p>
+              </div>
             </div>
-            <h3 className="text-xl font-serif font-medium text-slate-900 dark:text-white mb-3">Our Vision</h3>
-            <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
-              To establish VXTGrid Services as the gold standard of high-ticket web engineering in Sub-Saharan Africa. We envision a digital landscape where local products command global trust, backed by speed and design structures that easily match those of Silicon Valley companies.
-            </p>
           </div>
-        </div>
 
-        {/* Core Values Section */}
-        <div className="mb-24">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-xs font-mono text-blue-600 dark:text-blue-400 uppercase tracking-widest bg-blue-100 dark:bg-blue-950 px-3 py-1.5 rounded-full font-medium">
+        </div>
+      </section>
+
+      {/* 3. CORE VALUES SEGMENT */}
+      <section className="bg-[#181C2A] py-16 sm:py-24 border-t border-white/5">
+        <div className="max-w-6xl mx-auto px-6 sm:px-12 md:px-24">
+          <div className="text-left mb-16 max-w-3xl">
+            <span className="text-[10px] font-mono text-blue-400 tracking-[0.25em] uppercase font-bold">
               OPERATIONAL CODE
             </span>
-            <h2 className="text-3xl md:text-4xl font-serif text-slate-900 dark:text-white mt-4 font-medium tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-serif text-white mt-4 font-normal tracking-wide uppercase">
               Four Core Values That Drive 10x ROI
             </h2>
-            <p className="text-slate-500 dark:text-slate-400 mt-3 text-sm sm:text-base">
-              We stand apart because we do not treat code like a commodity, but as a critical revenue activator.
-            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -196,55 +195,55 @@ export default function About({ onNavigate }: AboutProps) {
                 <div 
                   key={i}
                   id={`value-card-${i}`}
-                  className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/60 dark:border-slate-700/50 shadow-xs hover:shadow-md transition-all group hover:-translate-y-1"
+                  className="bg-[#212739] p-6 rounded-xl border border-white/5 hover:border-white/10 shadow-xs hover:shadow-lg transition-all group hover:-translate-y-1"
                 >
-                  <div className="h-10 w-10 bg-slate-100 dark:bg-slate-700 group-hover:bg-blue-600 group-hover:text-white text-slate-700 dark:text-slate-300 rounded-xl flex items-center justify-center transition-colors">
+                  <div className="h-10 w-10 bg-white/5 group-hover:bg-white group-hover:text-slate-900 text-white rounded-lg flex items-center justify-center transition-colors">
                     <Icon className="w-5 h-5" />
                   </div>
-                  <h4 className="text-base font-serif font-semibold text-slate-900 dark:text-white mt-4">{v.title}</h4>
-                  <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-2 leading-relaxed">{v.desc}</p>
+                  <h4 className="text-base font-serif font-bold text-white mt-4 tracking-wide uppercase">{v.title}</h4>
+                  <p className="text-slate-400 text-xs sm:text-sm mt-3 leading-relaxed font-light">{v.desc}</p>
                 </div>
               );
             })}
           </div>
         </div>
+      </section>
 
-        {/* Timeline of Achievements */}
-        <div>
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-xs font-mono text-blue-600 dark:text-blue-400 uppercase tracking-widest bg-blue-100 dark:bg-blue-950 px-3 py-1.5 rounded-full font-medium">
-              THE CHRONICLE
-            </span>
-            <h2 className="text-3xl md:text-4xl font-serif text-slate-900 dark:text-white mt-4 font-medium tracking-tight">
-              A History of Client Wins & Breakthroughs
-            </h2>
-          </div>
-
-          <div className="relative border-l border-slate-300 dark:border-slate-700 ml-4 sm:ml-12 md:max-w-4xl md:mx-auto">
-            {milestones.map((m, idx) => (
-              <div key={idx} className="mb-10 ml-6 sm:ml-10 relative">
-                {/* Year dot label */}
-                <div className="absolute -left-[35px] sm:-left-[51px] top-1.5 bg-blue-600 text-white text-xs font-mono font-bold px-2 py-0.5 rounded-md shadow-sm">
-                  {m.year}
-                </div>
-                
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/60 dark:border-slate-700/50 shadow-xs hover:border-blue-400 transition-colors">
-                  <span className="text-xs font-mono font-semibold text-slate-400 inline-block uppercase">
-                    {m.company}
-                  </span>
-                  <h3 className="text-lg font-serif font-medium text-slate-900 dark:text-white mt-1">
-                    {m.title}
-                  </h3>
-                  <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-2 leading-relaxed">
-                    {m.desc}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+      {/* 4. HISTORIC MILESTONES (CHRONICLE) */}
+      <section className="py-16 sm:py-24 max-w-6xl mx-auto px-6 sm:px-12 md:px-24">
+        <div className="text-left mb-16 max-w-3xl">
+          <span className="text-[10px] font-mono text-blue-400 tracking-[0.25em] uppercase font-bold">
+            THE CHRONICLE
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-serif text-white mt-4 font-normal tracking-wide uppercase">
+            A History of Client Wins & Breakthroughs
+          </h2>
         </div>
 
-      </div>
+        <div className="relative border-l border-white/10 ml-4 sm:ml-12">
+          {milestones.map((m, idx) => (
+            <div key={idx} className="mb-10 ml-6 sm:ml-10 relative">
+              {/* Year dot label */}
+              <div className="absolute -left-[35px] sm:-left-[51px] top-1.5 bg-white text-slate-950 text-[10px] font-mono font-bold px-2 py-0.5 shadow-sm">
+                {m.year}
+              </div>
+              
+              <div className="bg-[#23293D] p-6 rounded-xl border border-white/5 hover:border-white/20 transition-all">
+                <span className="text-[10px] font-mono font-semibold text-slate-400 inline-block uppercase tracking-wider">
+                  {m.company}
+                </span>
+                <h3 className="text-base sm:text-lg font-serif font-medium text-white mt-1">
+                  {m.title}
+                </h3>
+                <p className="text-slate-400 text-xs sm:text-sm mt-2 leading-relaxed">
+                  {m.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
     </div>
   );
 }

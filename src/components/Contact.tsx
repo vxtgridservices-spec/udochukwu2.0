@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { saveContact, saveBooking, getBookings } from '../utils/storage';
+import { saveContact, saveBooking } from '../utils/storage';
 import { trackAction } from '../utils/tracker';
 import { 
   Phone, 
@@ -12,11 +12,10 @@ import {
   Instagram, 
   Calendar, 
   Clock, 
-  CheckCircle, 
-  Send, 
   Check, 
-  Sparkles, 
-  AlertCircle 
+  Sparkles,
+  ArrowRight,
+  Send
 } from 'lucide-react';
 import { ContactPreFill } from '../types';
 
@@ -72,7 +71,6 @@ export default function Contact({ preFill }: { preFill?: ContactPreFill }) {
     trackAction(`Submitted an Inbound Inquiry: Subject: "${cSubject}" by ${cName}`);
 
     setIsContactSubmitted(true);
-    // Reset
     setCName('');
     setCEmail('');
     setCPhone('');
@@ -106,403 +104,463 @@ export default function Contact({ preFill }: { preFill?: ContactPreFill }) {
     setBookingRedirectUrl(waUrl);
     setIsBookingSubmitted(true);
 
-    // Dynamic direct redirection
     try {
       window.open(waUrl, '_blank');
     } catch (err) {
       window.location.href = waUrl;
     }
 
-    // Reset
     setBName('');
     setBEmail('');
     setBNotes('');
   };
 
   return (
-    <div className="py-12 md:py-20 bg-white dark:bg-slate-950 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="bg-slate-950 text-slate-100 min-h-screen py-24 sm:py-32 transition-colors duration-300">
+      <div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 text-left">
         
         {/* Intro */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-xs font-mono text-blue-600 dark:text-blue-400 uppercase tracking-widest bg-blue-100 dark:bg-blue-950 px-3 py-1.5 rounded-full font-medium">
+        <div className="mb-16">
+          <span className="text-[10px] font-mono text-blue-400 tracking-[0.25em] block uppercase font-bold mb-2">
             CLIENT ONBOARDING CHANNELS
           </span>
-          <p className="text-slate-500 dark:text-slate-400 mt-4 text-xs sm:text-sm leading-relaxed">
-            Ready to secure actual conversions? Select an available calendar hour slot to schedule a precise Zoom session with Udochukwu, or request feedback via our secure portal form.
+          <div className="border-b border-white/20 pb-4 mb-8">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif text-white tracking-wide uppercase relative inline-block pb-3 whitespace-normal">
+              Get in Touch
+              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-white"></span>
+            </h1>
+          </div>
+          <p className="text-slate-400 text-xs sm:text-sm tracking-[0.12em] font-mono leading-relaxed max-w-3xl font-bold uppercase">
           </p>
         </div>
 
-        {/* Contact info vertical flow - ordered by user specification:
-            1. Standard Project Form (First)
-            2. Consultation Booking Calendar (Second)
-            3. Principal Office & Contact Details + Map (Last)
-        */}
-        <div className="max-w-4xl mx-auto space-y-12">
+        {/* Outer Grid spacing without rounded box cards */}
+        <div className="space-y-24">
           
-          {/* 1. STANDARD PROJECT FORM */}
-          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-10 shadow-xs">
-            
-            <div className="flex items-center gap-3 mb-6">
-              <Phone className="w-5 h-5 text-blue-600 animate-pulse" />
-              <div>
-                <span className="text-[10px] font-mono text-blue-600 dark:text-blue-400 font-extrabold uppercase tracking-widest block">GET RESPONSIVE RESPONSE</span>
-                <h3 className="text-lg font-serif font-semibold text-slate-900 dark:text-white leading-none">Standard Project Form</h3>
+          {/* SECTION 1: STANDARD PROJECT FORM */}
+          <div className="border-t border-white/10 pt-12">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+              
+              <div className="lg:col-span-4 space-y-4">
+                <span className="text-xs font-mono text-blue-400 font-extrabold tracking-widest block uppercase">
+                  01 // RESPONSIVE PORTAL
+                </span>
+                <h3 className="text-xl sm:text-2xl font-serif font-bold text-white uppercase tracking-wide">
+                  Standard Project Form
+                </h3>
+                <p className="text-slate-400 text-[11px] font-mono leading-relaxed uppercase tracking-wider">
+                  Fill out your corporate profiles and project goals. We audit and reply directly within 3 business hours.
+                </p>
               </div>
-            </div>
 
-            <AnimatePresence mode="wait">
-              {!isContactSubmitted ? (
-                <motion.form 
-                  key="contact-editor"
-                  onSubmit={handleContactSubmit}
-                  className="space-y-4 animate-fade-in"
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-mono text-slate-400">NAME *</label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="e.g., Kunle Balogun"
-                        value={cName}
-                        onChange={(e) => setCName(e.target.value)}
-                        className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white px-3 py-2.5 border rounded-xl text-xs sm:text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden"
-                      />
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-mono text-slate-400">WORK EMAIL *</label>
-                      <input
-                        type="email"
-                        required
-                        placeholder="kunle@balogunlegal.ng"
-                        value={cEmail}
-                        onChange={(e) => setCEmail(e.target.value)}
-                        className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white px-3 py-2.5 border rounded-xl text-xs sm:text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-mono text-slate-400">PHONE NUMBER</label>
-                      <input
-                        type="tel"
-                        placeholder="+234 809 111 2222"
-                        value={cPhone}
-                        onChange={(e) => setCPhone(e.target.value)}
-                        className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white px-3 py-2.5 border rounded-xl text-xs sm:text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden"
-                      />
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-mono text-slate-400">PROJECT CORE OBJECTIVE</label>
-                      <select
-                        value={cSubject}
-                        onChange={(e) => setCSubject(e.target.value)}
-                        className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white px-3 py-2.5 border rounded-xl text-xs sm:text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden"
-                      >
-                        <option value="Acquiring New Website">Acquiring New Website</option>
-                        <option value="Website Speed Tuneup">Website Speed Overhaul</option>
-                        <option value="Google Local SEO Ranking">Google Local SEO Ranking</option>
-                        <option value="SLA Support Contract">SLA Support Contract</option>
-                        <option value="Learn with Udochukwu">Learn with Udochukwu</option>
-                        <option value="Collaboration Inquiries">Collaboration Inquiries</option>
-                      </select>
-                    </div>
-
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-mono text-slate-400">DETAILED REQUIREMENTS DESCRIPTION *</label>
-                    <textarea
-                      rows={3}
-                      required
-                      placeholder="Write down your exact design needs..."
-                      value={cMessage}
-                      onChange={(e) => setCMessage(e.target.value)}
-                      className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white px-3 py-2 border rounded-xl text-xs sm:text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden"
-                    ></textarea>
-                  </div>
-
-                  <button
-                    type="submit"
-                    id="save-contact-message"
-                    className="w-full bg-slate-900 hover:bg-slate-950 text-white dark:bg-white dark:text-slate-905 dark:hover:bg-slate-100 font-semibold py-3.5 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer text-xs sm:text-sm shadow-md"
-                  >
-                    <Send className="w-4 h-4" />
-                    <span>Send Message</span>
-                  </button>
-
-                </motion.form>
-              ) : (
-                <motion.div
-                  key="contact-success"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="bg-emerald-50 dark:bg-slate-950 p-8 rounded-2xl border border-emerald-300/40 dark:border-emerald-850/60 text-center space-y-4"
-                >
-                  <div className="h-12 w-12 bg-emerald-500 rounded-full flex items-center justify-center mx-auto shadow-md">
-                    <Check className="w-5 h-5 text-white" />
-                  </div>
-                  <h4 className="text-slate-900 dark:text-white font-serif font-bold text-base">Inbound Message Saved!</h4>
-                  <p className="text-slate-600 dark:text-slate-300 text-xs max-w-sm mx-auto leading-relaxed">
-                    Thank you for contacting VXTGrid Services. Udochukwu reviews form entries within 3 hours. An immediate email duplicate listing was queued to your address.
-                  </p>
-                  <button
-                    onClick={() => setIsContactSubmitted(false)}
-                    className="text-xs font-mono border border-slate-300 dark:border-slate-850 hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-500 dark:text-slate-400 px-4 py-2 rounded-lg transition-colors cursor-pointer"
-                  >
-                    Send another message list
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-          </div>
-
-          {/* 2. INTERACTIVE BOOKING PORTAL BLOCK */}
-          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-10 shadow-xs">
-            
-            <div className="flex items-center gap-3 mb-6">
-              <Calendar className="w-5 h-5 text-blue-600" />
-              <div>
-                <span className="text-[10px] font-mono text-blue-600 dark:text-blue-400 font-extrabold uppercase tracking-widest block">SECURE AN IN BOUND SESSION</span>
-                <h3 className="text-lg font-serif font-semibold text-slate-900 dark:text-white leading-none">Instant Booking Calendar</h3>
-              </div>
-            </div>
-
-            <AnimatePresence mode="wait">
-              {!isBookingSubmitted ? (
-                <motion.form 
-                  key="booking-editor"
-                  onSubmit={handleBookingSubmit}
-                  className="space-y-6"
-                >
-                  {/* Day selector step */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-mono font-bold text-slate-500">1. CHOOSE WORK DAY</label>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                      {availableDays.map((d) => (
-                        <button
-                          key={d.dateObj}
-                          type="button"
-                          onClick={() => setSelectedDay(d.dateObj)}
-                          className={`px-3 py-2.5 rounded-lg border text-xs font-bold text-center transition-all cursor-pointer ${
-                            selectedDay === d.dateObj
-                              ? 'bg-blue-600 border-blue-600 text-white shadow-xs'
-                              : 'bg-white text-slate-700 dark:bg-slate-805 dark:text-slate-305 border-slate-205 dark:border-slate-750 hover:bg-slate-100 dark:hover:bg-slate-750'
-                          }`}
-                        >
-                          {d.dateStr}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Time Slot step */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-mono font-bold text-slate-500">2. SELECT TIMER SLOT</label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {timeSlots.map((ts) => (
-                        <button
-                          key={ts}
-                          type="button"
-                          onClick={() => setSelectedSlot(ts)}
-                          className={`px-3 py-2.5 rounded-lg border text-xs font-bold text-center transition-all cursor-pointer ${
-                            selectedSlot === ts
-                              ? 'bg-slate-900 border-slate-900 text-white dark:bg-white dark:text-slate-950 dark:border-white shadow-xs'
-                              : 'bg-white text-slate-705 dark:bg-slate-805 dark:text-slate-305 border-slate-205 dark:border-slate-750 hover:bg-slate-100 dark:hover:bg-slate-755'
-                          }`}
-                        >
-                          <Clock className="w-3.5 h-3.5 inline-block shrink-0 mr-1 opacity-70" />
-                          {ts}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Meeting specifics input */}
-                  <div className="space-y-4 pt-4 border-t border-slate-200/60 dark:border-slate-800">
-                    
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-mono text-slate-400">YOUR CALL SIGN (NAME) *</label>
-                        <input 
-                          type="text"
-                          required
-                          placeholder="e.g., Aliko Dangote"
-                          value={bName}
-                          onChange={(e) => setBName(e.target.value)}
-                          className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white px-3 py-2.5 border rounded-xl text-xs sm:text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden"
-                        />
-                      </div>
-
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-mono text-slate-400">WORK EMAIL *</label>
-                        <input 
-                          type="email"
-                          required
-                          placeholder="ceo@dangotegroup.com"
-                          value={bEmail}
-                          onChange={(e) => setBEmail(e.target.value)}
-                          className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white px-3 py-2.5 border rounded-xl text-xs sm:text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-mono text-slate-400">MEETING GOALS / CHALLENGES NOTES</label>
-                      <textarea
-                        rows={2}
-                        placeholder="e.g., We want to bypass agencies commissions for our Lekki Apartments..."
-                        value={bNotes}
-                        onChange={(e) => setBNotes(e.target.value)}
-                        className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white px-3 py-2 border rounded-xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden"
-                      ></textarea>
-                    </div>
-
-                  </div>
-
-                  <button
-                    type="submit"
-                    id="save-calendar-booking"
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer text-xs sm:text-sm"
-                  >
-                    <Sparkles className="w-4 h-4 text-white" />
-                    <span>Confirm Consultation Hour Slot</span>
-                  </button>
-
-                </motion.form>
-              ) : (
-                <motion.div
-                  key="booking-success"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="bg-emerald-50 dark:bg-slate-950 p-8 rounded-2xl border border-emerald-305/40 dark:border-blue-900/60 text-center space-y-4"
-                >
-                  <div className="h-12 w-12 bg-emerald-500 rounded-full flex items-center justify-center mx-auto shadow-md">
-                    <Check className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="space-y-1">
-                    <h4 className="text-slate-900 dark:text-white font-serif font-bold text-base">Inquiry Saved & Redirecting!</h4>
-                    <p className="text-slate-500 text-xs font-mono">Date: {selectedDay} | Hour: {selectedSlot}</p>
-                  </div>
-                  <p className="text-slate-600 dark:text-slate-300 text-xs max-w-sm mx-auto leading-relaxed">
-                    Your strategic consultation ticket has been successfully logged to our dashboard. We are auto-redirecting you to **WhatsApp** to pick your preferred platform directly over active chat!
-                  </p>
-                  
-                  <a
-                    href={bookingRedirectUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex w-full items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-6 rounded-xl transition-colors text-xs sm:text-sm cursor-pointer shadow-lg mt-2"
-                  >
-                    <MessageCircle className="w-4.5 h-4.5 text-white fill-white" />
-                    <span>Proceed to WhatsApp Chat Now</span>
-                  </a>
-
-                  <div className="pt-2">
-                    <button
-                      onClick={() => setIsBookingSubmitted(false)}
-                      className="text-xs font-mono border border-slate-300 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-500 dark:text-slate-400 px-4 py-2 rounded-lg transition-colors cursor-pointer"
+              <div className="lg:col-span-8">
+                <AnimatePresence mode="wait">
+                  {!isContactSubmitted ? (
+                    <motion.form 
+                      key="contact-editor"
+                      onSubmit={handleContactSubmit}
+                      className="space-y-6"
                     >
-                      Book another auxiliary slot
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-extrabold block">
+                            Name *
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="e.g., Kunle Balogun"
+                            value={cName}
+                            onChange={(e) => setCName(e.target.value)}
+                            className="w-full bg-[#11141d] text-white px-5 py-4 border border-white/10 focus:border-white focus:outline-none font-mono tracking-wider text-xs sm:text-sm rounded-none"
+                          />
+                        </div>
 
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-extrabold block">
+                            Work Email *
+                          </label>
+                          <input
+                            type="email"
+                            required
+                            placeholder="kunle@balogunlegal.ng"
+                            value={cEmail}
+                            onChange={(e) => setCEmail(e.target.value)}
+                            className="w-full bg-[#11141d] text-white px-5 py-4 border border-white/10 focus:border-white focus:outline-none font-mono tracking-wider text-xs sm:text-sm rounded-none"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-extrabold block">
+                            Phone Number
+                          </label>
+                          <input
+                            type="tel"
+                            placeholder="+234 809 111 2222"
+                            value={cPhone}
+                            onChange={(e) => setCPhone(e.target.value)}
+                            className="w-full bg-[#11141d] text-white px-5 py-4 border border-white/10 focus:border-white focus:outline-none font-mono tracking-wider text-xs sm:text-sm rounded-none"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-extrabold block">
+                            Project Objective
+                          </label>
+                          <select
+                            value={cSubject}
+                            onChange={(e) => setCSubject(e.target.value)}
+                            className="w-full bg-[#11141d] text-white px-5 py-4 border border-white/10 focus:border-white focus:outline-none font-mono tracking-wider text-xs sm:text-sm rounded-none cursor-pointer"
+                          >
+                            <option value="Acquiring New Website">Acquiring New Website</option>
+                            <option value="Website Speed Tuneup">Website Speed Overhaul</option>
+                            <option value="Google Local SEO Ranking">Google Local SEO Ranking</option>
+                            <option value="SLA Support Contract">SLA Support Contract</option>
+                            <option value="Learn with Udochukwu">Learn with Udochukwu</option>
+                            <option value="Collaboration Inquiries">Collaboration Inquiries</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-extrabold block">
+                          Detailed Requirements Description *
+                        </label>
+                        <textarea
+                          rows={4}
+                          required
+                          placeholder="Describe your design specifications and speed benchmarks..."
+                          value={cMessage}
+                          onChange={(e) => setCMessage(e.target.value)}
+                          className="w-full bg-[#11141d] text-white px-5 py-4 border border-white/10 focus:border-white focus:outline-none font-mono tracking-wider text-xs sm:text-sm rounded-none min-h-[100px]"
+                        ></textarea>
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="w-full border border-white bg-white text-slate-950 font-mono text-xs font-bold tracking-[0.2em] uppercase py-4 hover:bg-transparent hover:text-white transition-all cursor-pointer rounded-none text-center flex items-center justify-center gap-2"
+                      >
+                        <Send className="w-4 h-4" />
+                        <span>Send Message</span>
+                      </button>
+
+                    </motion.form>
+                  ) : (
+                    <motion.div
+                      key="contact-success"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="border border-white/10 p-8 sm:p-12 text-left space-y-6 rounded-none bg-[#11141d]"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="h-6 w-6 bg-white flex items-center justify-center rounded-none">
+                          <Check className="w-4 h-4 text-slate-950" />
+                        </div>
+                        <h4 className="text-white font-mono text-xs uppercase font-extrabold tracking-widest">
+                          Inbound Message Saved
+                        </h4>
+                      </div>
+                      <p className="text-slate-300 text-xs sm:text-sm font-mono uppercase tracking-wider leading-relaxed">
+                        Thank you for contacting VXTGrid Services. Udochukwu reviews form entries within 3 hours. An immediate email duplicate listing was queued to your address.
+                      </p>
+                      <button
+                        onClick={() => setIsContactSubmitted(false)}
+                        className="inline-block border border-white/30 text-white hover:border-white hover:bg-white hover:text-slate-950 text-[10px] font-mono font-bold tracking-widest uppercase px-6 py-3 transition-colors cursor-pointer rounded-none"
+                      >
+                        Send another message
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+            </div>
           </div>
 
-          {/* 3. PRINCIPAL OFFFICE & CONTACT DETAILS (LAST) */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-stretch pt-4">
-            
-            {/* Contact details Card */}
-            <div className="md:col-span-7 bg-slate-50 dark:bg-slate-900 p-8 rounded-3xl border border-slate-200/60 dark:border-slate-800 flex flex-col justify-between">
-              <div>
-                <h3 className="text-lg font-serif font-semibold text-slate-900 dark:text-white mb-6">Principal Office</h3>
+          {/* SECTION 2: INTERACTIVE CONSULTATION HOUR BOOKING */}
+          <div className="border-t border-white/10 pt-12">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+              
+              <div className="lg:col-span-4 space-y-4">
+                <span className="text-xs font-mono text-blue-400 font-extrabold tracking-widest block uppercase">
+                  02 // DIRECT SESSIONS
+                </span>
+                <h3 className="text-xl sm:text-2xl font-serif font-bold text-white uppercase tracking-wide">
+                  Instant Booking Calendar
+                </h3>
+                <p className="text-slate-400 text-[11px] font-mono leading-relaxed uppercase tracking-wider">
+                  Reserve your hour. Once selected, our engine queues a direct WhatsApp handshake so we discuss on your favorite channels instantly.
+                </p>
+              </div>
+
+              <div className="lg:col-span-8">
+                <AnimatePresence mode="wait">
+                  {!isBookingSubmitted ? (
+                    <motion.form 
+                      key="booking-editor"
+                      onSubmit={handleBookingSubmit}
+                      className="space-y-8"
+                    >
+                      {/* Day selector step */}
+                      <div className="space-y-4">
+                        <label className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-extrabold block">
+                          1. CHOOSE WORK DAY
+                        </label>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                          {availableDays.map((d) => (
+                            <button
+                              key={d.dateObj}
+                              type="button"
+                              onClick={() => setSelectedDay(d.dateObj)}
+                              className={`px-3 py-4 border text-[10px] font-mono font-bold tracking-[0.10em] uppercase text-center transition-all cursor-pointer rounded-none ${
+                                selectedDay === d.dateObj
+                                  ? 'bg-white border-white text-slate-950'
+                                  : 'bg-[#11141d] text-slate-300 border-white/10 hover:border-white/35 hover:text-white'
+                              }`}
+                            >
+                              {d.dateStr}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Time Slot step */}
+                      <div className="space-y-4">
+                        <label className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-extrabold block">
+                          2. SELECT TIMER SLOT
+                        </label>
+                        <div className="grid grid-cols-2 gap-2">
+                          {timeSlots.map((ts) => (
+                            <button
+                              key={ts}
+                              type="button"
+                              onClick={() => setSelectedSlot(ts)}
+                              className={`px-3 py-4 border text-[10px] font-mono font-bold tracking-[0.10em] uppercase text-center transition-all cursor-pointer rounded-none flex items-center justify-center gap-2 ${
+                                selectedSlot === ts
+                                  ? 'bg-white border-white text-slate-950'
+                                  : 'bg-[#11141d] text-slate-300 border-white/10 hover:border-white/35 hover:text-white'
+                              }`}
+                            >
+                              <Clock className="w-3.5 h-3.5" />
+                              <span>{ts}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Meeting specifics input */}
+                      <div className="border-t border-white/10 pt-6 space-y-6">
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-extrabold block">
+                              Your Call Sign (Name) *
+                            </label>
+                            <input 
+                              type="text"
+                              required
+                              placeholder="e.g., Aliko Dangote"
+                              value={bName}
+                              onChange={(e) => setBName(e.target.value)}
+                              className="w-full bg-[#11141d] text-white px-5 py-4 border border-white/10 focus:border-white focus:outline-none font-mono tracking-wider text-xs sm:text-sm rounded-none"
+                            />
+                          </div>
+
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-extrabold block">
+                              Work Email *
+                            </label>
+                            <input 
+                              type="email"
+                              required
+                              placeholder="ceo@dangotegroup.com"
+                              value={bEmail}
+                              onChange={(e) => setBEmail(e.target.value)}
+                              className="w-full bg-[#11141d] text-white px-5 py-4 border border-white/10 focus:border-white focus:outline-none font-mono tracking-wider text-xs sm:text-sm rounded-none"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-extrabold block">
+                            Meeting Goals & Challenges Notes
+                          </label>
+                          <textarea
+                            rows={3}
+                            placeholder="e.g., We want to bypass agencies commissions for our Lekki Apartments..."
+                            value={bNotes}
+                            onChange={(e) => setBNotes(e.target.value)}
+                            className="w-full bg-[#11141d] text-white px-5 py-4 border border-white/10 focus:border-white focus:outline-none font-mono tracking-wider text-xs sm:text-sm rounded-none min-h-[80px]"
+                          ></textarea>
+                        </div>
+
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="w-full border border-white bg-white text-slate-950 font-mono text-xs font-bold tracking-[0.2em] uppercase py-4 hover:bg-transparent hover:text-white transition-all cursor-pointer rounded-none text-center flex items-center justify-center gap-2"
+                      >
+                        <Sparkles className="w-4 h-4 text-slate-950" />
+                        <span>Confirm Consultation Hour Slot</span>
+                      </button>
+
+                    </motion.form>
+                  ) : (
+                    <motion.div
+                      key="booking-success"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="border border-white/10 p-8 sm:p-12 text-left space-y-6 rounded-none bg-[#11141d]"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="h-6 w-6 bg-white flex items-center justify-center rounded-none">
+                          <Check className="w-4 h-4 text-slate-950" />
+                        </div>
+                        <h4 className="text-white font-mono text-xs uppercase font-extrabold tracking-widest">
+                          Session Booked Successfully
+                        </h4>
+                      </div>
+                      
+                      <div className="font-mono text-[11px] uppercase tracking-wider text-slate-400 space-y-1">
+                        <p>Date: <strong className="text-white font-bold">{selectedDay}</strong></p>
+                        <p>Hour: <strong className="text-white font-bold">{selectedSlot}</strong></p>
+                      </div>
+
+                      <p className="text-slate-300 text-xs sm:text-sm font-mono uppercase tracking-wider leading-relaxed">
+                        Your strategic consultation ticket has been logged. We are auto-redirecting you to WhatsApp to connect immediately over chat. If the redirect didn't trigger, proceed manually below.
+                      </p>
+                      
+                      <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                        <a
+                          href={bookingRedirectUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="border border-emerald-500 bg-emerald-500 text-white font-mono text-xs font-bold tracking-widest uppercase px-6 py-4 hover:bg-transparent hover:text-emerald-400 transition-all cursor-pointer rounded-none text-center flex items-center justify-center gap-2"
+                        >
+                          <MessageCircle className="w-4.5 h-4.5 fill-white text-emerald-500" />
+                          <span>Launch WhatsApp Master Desk</span>
+                        </a>
+
+                        <button
+                          onClick={() => setIsBookingSubmitted(false)}
+                          className="border border-white/30 text-white hover:border-white hover:bg-white hover:text-slate-950 text-[10px] font-mono font-bold tracking-widest uppercase px-6 py-3 transition-colors cursor-pointer rounded-none"
+                        >
+                          Book another slot
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+            </div>
+          </div>
+
+          {/* SECTION 3: PRINCIPAL OFFICE DETAILS & SPEC SHEET */}
+          <div className="border-t border-white/10 pt-12">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-stretch">
+              
+              <div className="lg:col-span-4 space-y-4">
+                <span className="text-xs font-mono text-blue-400 font-extrabold tracking-widest block uppercase">
+                  03 // CORE CHANNELS
+                </span>
+                <h3 className="text-xl sm:text-2xl font-serif font-bold text-white uppercase tracking-wide">
+                  Principal Office & Specs
+                </h3>
+                <p className="text-slate-400 text-[11px] font-mono leading-relaxed uppercase tracking-wider">
+                  Full corporate coordination parameters, routing details, geographical anchors, and active live support.
+                </p>
+              </div>
+
+              <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
                 
-                <div className="space-y-5">
-                  <div className="flex gap-4 items-start">
-                    <div className="h-10 w-10 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0 border">
-                      <MapPin className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-mono font-bold text-slate-400">LOCATIONAL BASE</p>
-                      <p className="text-sm text-slate-700 dark:text-slate-200 mt-0.5">Lekki Phase 1, Lagos, Africa</p>
+                {/* Specs Data Sheet */}
+                <div className="border border-white/10 bg-[#11141d]/40 p-8 flex flex-col justify-between rounded-none space-y-8">
+                  <div className="space-y-6">
+                    <h4 className="text-xs font-mono font-extrabold tracking-[0.25em] text-white uppercase border-b border-white/15 pb-2">
+                      SPECIFICATION SHEETS
+                    </h4>
+                    
+                    <div className="space-y-4 font-mono text-[11px] tracking-wider uppercase">
+                      <div>
+                        <span className="text-slate-500 block mb-1">Locational Base</span>
+                        <strong className="text-white font-bold block">Lekki Phase 1, Lagos, Africa</strong>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 block mb-1">Active Hotline</span>
+                        <strong className="text-white font-bold block">+234 (0) 705 219 9651</strong>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 block mb-1">Corporate Inquiries</span>
+                        <strong className="text-white font-bold block">hello@udochukwu.com.ng</strong>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 block mb-1">Project Proposals</span>
+                        <strong className="text-white font-bold block">projects@udochukwu.com.ng</strong>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex gap-4 items-start">
-                    <div className="h-10 w-10 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0 border">
-                      <Phone className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-mono font-bold text-slate-400">CALLS & WHATSAPP</p>
-                      <p className="text-sm text-slate-700 dark:text-slate-200 mt-0.5">+234 (0) 705 219 9651</p>
-                    </div>
-                  </div>
+                  {/* WhatsApp Launcher button */}
+                  <div className="pt-6 border-t border-white/10 space-y-4">
+                    <a
+                      href="https://wa.me/2347052199651?text=Hello%20VXTGrid%20Services,%20I%20am%20visiting%20from%20your%2520premium%2520brand%2520website%2520and%2520want%2520to%2520discuss%2520a%2520new%2520web%2520system."
+                      target="_blank"
+                      rel="noreferrer"
+                      className="border border-emerald-500 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-white font-mono text-[10px] font-bold tracking-widest uppercase px-6 py-4.5 transition-colors cursor-pointer rounded-none text-center flex items-center justify-center gap-2"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      <span>Launch Live WhatsApp Chat</span>
+                    </a>
 
-                  <div className="flex gap-4 items-start">
-                    <div className="h-10 w-10 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0 border">
-                      <Mail className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-mono font-bold text-slate-400">MANAGEMENT INQUIRIES</p>
-                      <p className="text-sm text-slate-700 dark:text-slate-200 mt-0.5">vxtgridservices@gmail.com</p>
+                    <div className="flex gap-2 justify-center">
+                      {[
+                        { href: 'https://www.linkedin.com/in/victor-udochukwu-b34b7a36a', label: 'Linkedin', icon: <Linkedin className="w-3.5 h-3.5" /> },
+                        { href: 'https://www.facebook.com/share/1BnWYPhbzQ/', label: 'Facebook', icon: <Facebook className="w-3.5 h-3.5" /> },
+                        { href: 'https://www.instagram.com/senatorsson001', label: 'Instagram', icon: <Instagram className="w-3.5 h-3.5" /> }
+                      ].map((s) => (
+                        <a
+                          key={s.label}
+                          href={s.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="h-10 w-10 border border-white/10 hover:border-white bg-[#11141d] hover:bg-white text-slate-400 hover:text-slate-950 flex items-center justify-center transition-all rounded-none"
+                          title={s.label}
+                        >
+                          {s.icon}
+                        </a>
+                      ))}
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Instant WhatsApp launcher & social channels */}
-              <div className="mt-8 pt-6 border-t border-slate-200/60 dark:border-slate-800/80 space-y-4">
-                <a
-                  href="https://wa.me/2347052199651?text=Hello%20VXTGrid%20Services,%20I%20am%20visiting%20from%20your%20premium%20brand%20website%20and%20want%20to%20discuss%20a%20new%20web%20system."
-                  target="_blank"
-                  rel="noreferrer"
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl py-3.5 px-4 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-colors cursor-pointer w-full text-center"
-                >
-                  <MessageCircle className="w-5 h-5 fill-white text-emerald-600" />
-                  <span>Launch Live WhatsApp Chat</span>
-                </a>
-
-                <div className="flex justify-center gap-3">
-                  <a href="https://www.linkedin.com/in/victor-udochukwu-b34b7a36a?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noreferrer" className="h-10 w-10 bg-white dark:bg-slate-800 border rounded-lg flex items-center justify-center text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                    <Linkedin className="w-4 h-4" />
-                  </a>
-                  <a href="https://www.facebook.com/share/1BnWYPhbzQ/" target="_blank" rel="noreferrer" className="h-10 w-10 bg-white dark:bg-slate-800 border rounded-lg flex items-center justify-center text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                    <Facebook className="w-4 h-4" />
-                  </a>
-                  <a href="https://www.instagram.com/senatorsson001?igsh=MXg0Njd1a3ZobXlxMA==" target="_blank" rel="noreferrer" className="h-10 w-10 bg-white dark:bg-slate-800 border rounded-lg flex items-center justify-center text-slate-400 hover:text-pink-500 transition-colors">
-                    <Instagram className="w-4 h-4" />
-                  </a>
+                {/* Radar Grid Representation */}
+                <div className="border border-white/10 bg-slate-900 min-h-[250px] flex flex-col justify-center items-center p-8 relative overflow-hidden rounded-none">
+                  <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:12px_12px]"></div>
+                  
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <div className="h-16 w-16 bg-blue-500/25 rounded-full flex items-center justify-center animate-ping"></div>
+                    <div className="h-5 w-5 bg-white rounded-none border border-slate-950 absolute top-5/12 left-5/12"></div>
+                  </div>
+                  
+                  <div className="relative z-10 text-center space-y-2">
+                    <span className="text-[9px] font-mono text-blue-400 tracking-[0.2em] block uppercase font-bold">
+                      INTERACTIVE COORDINATES
+                    </span>
+                    <p className="text-xs font-mono font-bold text-white uppercase tracking-wider">
+                      Lekki Port Grid // 101224
+                    </p>
+                    <p className="text-[10px] font-mono text-slate-500 leading-relaxed uppercase tracking-wide max-w-xs">
+                      Providing sub-millisecond edge routes to active nodes in Lagos Hub.
+                    </p>
+                  </div>
                 </div>
+
               </div>
 
             </div>
-
-            {/* HIGH END MOCK MAP REPRESENTING LAGOS HEADQUARTERS */}
-            <div className="md:col-span-5 bg-slate-900 border border-slate-805 text-white min-h-[300px] rounded-3xl flex flex-col justify-center items-center p-6 relative overflow-hidden shadow-md">
-              {/* Backlit glow map graphics */}
-              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#2563eb_1px,transparent_1px)] [background-size:16px_16px]"></div>
-              
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                <div className="h-12 w-12 bg-blue-600/30 rounded-full flex items-center justify-center animate-ping"></div>
-                <div className="h-4 w-4 bg-blue-600 rounded-full border-2 border-white absolute top-4 left-4"></div>
-              </div>
-              
-              <div className="relative z-10 text-center">
-                <span className="text-[10px] font-mono text-blue-400 tracking-widest block">INTERACTIVE RADAR</span>
-                <p className="text-xs font-bold mt-1 tracking-tight">LAGOS LEKKI DISTRICT</p>
-                <p className="text-[10px] text-slate-450 mt-1 italic leading-relaxed">Providing ultra fast edge-latencies via MainOne broadband loops</p>
-              </div>
-            </div>
-
           </div>
 
         </div>

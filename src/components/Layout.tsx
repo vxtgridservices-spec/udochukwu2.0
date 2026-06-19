@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PageView } from '../types';
 import { getBlogs, PRELOADED_SERVICES } from '../utils/storage';
+import { useTheme } from '../context/ThemeContext';
 import { 
   Sun, 
   Moon, 
@@ -22,23 +23,21 @@ interface LayoutProps {
   children: React.ReactNode;
   activePage: PageView;
   onNavigate: (page: PageView) => void;
-  darkMode: boolean;
-  onToggleDarkMode: () => void;
 }
 
 export default function Layout({ 
   children, 
   activePage, 
-  onNavigate, 
-  darkMode, 
-  onToggleDarkMode 
+  onNavigate 
 }: LayoutProps) {
+  const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   
   // Custom scroll states
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
   
   // Cookie Consent state
   const [showCookieAlert, setShowCookieAlert] = useState(() => {
@@ -50,15 +49,6 @@ export default function Layout({
   const [searchQuery, setSearchQuery] = useState('');
   const blogsList = getBlogs();
 
-  // Handle document elements properties for Dark Mode
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [darkMode]);
-
   // Track page scrolling
   useEffect(() => {
     const handlePageScrolling = () => {
@@ -67,6 +57,7 @@ export default function Layout({
       const progress = totalHeight > 0 ? (scrolled / totalHeight) * 100 : 0;
       setScrollProgress(progress);
       setShowScrollTop(scrolled > 300);
+      setHasScrolled(scrolled > 20);
     };
 
     window.addEventListener('scroll', handlePageScrolling);
@@ -88,7 +79,8 @@ export default function Layout({
       faq: 'Resolving Objections & SLA Support Pricing | Udochukwu',
       contact: 'Book a Consultation / Drop a Line | Udochukwu',
       dashboard: 'Interactive Client Transparencies Milestones Portal | Udochukwu',
-      learn: 'Masterclass Hub: Learn Web Engineering & Strategy | Udochukwu'
+      learn: 'Masterclass Hub: Learn Web Engineering & Strategy | Udochukwu',
+      calculator: 'Advanced Revenue Projection Engine & Estimator | Udochukwu'
     };
 
     const metaDescriptions: Record<PageView, string> = {
@@ -104,7 +96,8 @@ export default function Layout({
       faq: 'Pricing benchmarks, timelines, CMS autonomies, and safety protocol updates. Find clear transparent answers to major objections.',
       contact: 'Reserve a brief exploratory Zoom slot or message Udochukwu directly. Get immediate feedback on web planning pipelines.',
       dashboard: 'VIP login access to upload resources files, print formal invoicing receipts, and audit live timeline developments.',
-      learn: 'Free masterclass content on React layout components, high-speed CSS strategies, and client-acquisition conversion-trigger blueprints.'
+      learn: 'Free masterclass content on React layout components, high-speed CSS strategies, and client-acquisition conversion-trigger blueprints.',
+      calculator: 'Calculate and model VXT production system ROI pipeline enhancements based on customizable organic visitors traffic and category values.'
     };
 
     // Update document head details
@@ -165,6 +158,8 @@ export default function Layout({
     { type: 'Tool', title: 'Free Website Performance Audit', page: 'audit' as const, details: 'Analyze your active domain speed leaks' }
   ];
 
+  const isHome = activePage === 'home';
+
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans flex flex-col justify-between transition-colors duration-300">
       
@@ -175,27 +170,34 @@ export default function Layout({
       ></div>
 
       {/* 2. STICKY GLASSMORPHIC HEADER */}
-      <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/80 transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-18 sm:h-20">
+      <header className={`z-40 transition-all duration-300 ${
+        isHome 
+          ? (hasScrolled 
+              ? 'fixed top-0 left-0 w-full bg-[#141722]/90 backdrop-blur-md border-b border-white/10 shadow-md' 
+              : 'absolute top-0 left-0 w-full bg-transparent border-b-0 shadow-none'
+            ) 
+          : 'sticky top-0 bg-[#141722]/75 backdrop-blur-md border-b border-white/10 shadow-sm'
+      }`}>
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="flex items-center justify-between h-14 md:h-16">
             
-            {/* BRAND LOGO DESIGN */}
+            {/* BRAND LOGO DESIGN (Minimal Badge in Elon Style) */}
             <div 
               onClick={() => { onNavigate('home'); }} 
-              className="flex items-center gap-2.5 cursor-pointer group"
+              className="cursor-pointer group select-none"
               id="header-logo-brand"
             >
-              <div className="h-10 w-10 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl flex items-center justify-center font-bold tracking-tight shadow-md group-hover:bg-blue-600 dark:group-hover:bg-blue-600 transition-colors">
-                <span className="font-serif">U</span>
-              </div>
-              <div>
-                <p className="text-sm font-serif font-black tracking-tight leading-none text-slate-900 dark:text-white">Udochukwu</p>
-                <p className="text-[9px] font-mono font-medium text-slate-400 mt-0.5 tracking-widest leading-none">VXTGRID SERVICES</p>
+              <div className={`px-3 py-1 text-[10px] sm:text-xs font-mono font-bold tracking-[0.25em] uppercase transition-colors whitespace-nowrap ${
+                isHome 
+                  ? 'bg-white text-slate-950 border border-white' 
+                  : 'bg-white text-slate-950 border border-white'
+              }`}>
+                UDOCHUKWU
               </div>
             </div>
 
             {/* DESKTOP NAVIGATION ROW */}
-            <nav className="hidden md:flex items-center gap-6 text-xs font-semibold text-slate-600 dark:text-slate-350">
+            <nav className="hidden md:flex items-center gap-6 text-[10px] sm:text-xs">
               {[
                 { label: 'Case Studies', view: 'portfolio' },
                 { label: 'Services', view: 'services' },
@@ -208,15 +210,13 @@ export default function Layout({
                   key={link.view}
                   onClick={() => onNavigate(link.view as PageView)}
                   id={`nav-link-${link.view}`}
-                  className={`hover:text-blue-600 dark:hover:text-blue-400 py-1 cursor-pointer transition-colors relative ${
-                    activePage === link.view 
-                      ? 'text-blue-600 dark:text-blue-400 font-bold' 
-                      : ''
+                  className={`py-1 cursor-pointer transition-colors relative font-mono font-bold uppercase tracking-widest text-slate-400 hover:text-white ${
+                    activePage === link.view ? 'text-white font-extrabold' : ''
                   }`}
                 >
                   <span>{link.label}</span>
                   {activePage === link.view && (
-                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full animate-pulse"></span>
+                    <span className="absolute bottom-0 left-0 w-full h-[1.5px] rounded-none bg-white"></span>
                   )}
                 </button>
               ))}
@@ -225,34 +225,23 @@ export default function Layout({
             {/* ACTION DOCK */}
             <div className="flex items-center gap-3 md:gap-4">
               
-              {/* Trigger Search Overlays */}
-              <button
-                onClick={() => setSearchOpen(true)}
-                title="Search sites..."
-                id="search-header-trigger"
-                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-500 hover:text-slate-900 dark:hover:text-white cursor-pointer"
-              >
-                <Search className="w-5 h-5" />
-              </button>
-
-
               {/* Day/Night Toggler */}
               <button
-                onClick={onToggleDarkMode}
-                title={darkMode ? "Switch to High-Contrast Light Mode" : "Switch to Immersive Night Mode"}
+                onClick={toggleTheme}
+                title={theme === 'dark' ? "Switch to High-Contrast Light Mode" : "Switch to Immersive Night Mode"}
                 id="darkmode-header-toggle"
-                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer"
+                className="p-2 rounded-none transition-all cursor-pointer text-slate-400 hover:text-white hover:bg-white/5"
               >
-                {darkMode ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5" />}
+                {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-white" />}
               </button>
 
               {/* Free Consult Call to action (High Converting CTA) */}
               <button
                 onClick={() => onNavigate('contact')}
                 id="header-consultation-register"
-                className="hidden sm:inline-flex bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-all shadow-md hover:shadow-lg cursor-pointer"
+                className="hidden sm:inline-flex text-[10px] tracking-[0.2em] font-mono font-bold uppercase cursor-pointer transition-all border border-white text-white px-5 py-2.5 hover:bg-white hover:text-slate-950 rounded-none bg-transparent"
               >
-                Book Free Consultation
+                Consultation
               </button>
 
               {/* Mobile side-bar Menu trigger */}
@@ -260,9 +249,9 @@ export default function Layout({
                 onClick={() => setMobileMenuOpen(true)}
                 title="Expand side menu..."
                 id="mobile-drawer-trigger-btn"
-                className="inline-flex lg:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-500 hover:text-slate-900 dark:hover:text-white cursor-pointer"
+                className="inline-flex lg:hidden p-2 rounded-none cursor-pointer transition-colors text-slate-300 hover:text-white hover:bg-white/5"
               >
-                <Menu className="w-5 h-5" />
+                <Menu className="w-4 h-4" />
               </button>
 
             </div>
@@ -278,33 +267,33 @@ export default function Layout({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-slate-950/80 backdrop-blur-xs z-50 flex justify-end lg:hidden"
+            className="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 flex justify-end lg:hidden"
           >
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'tween', duration: 0.3 }}
-              className="bg-white dark:bg-slate-900 w-full max-w-sm h-full p-8 flex flex-col justify-between shadow-2xl relative border-l border-slate-200 dark:border-slate-800"
+              transition={{ type: 'tween', duration: 0.25 }}
+              className="bg-[#131620] text-slate-100 w-full max-w-sm h-full p-8 flex flex-col justify-between shadow-2xl relative border-l border-white/10 rounded-none"
             >
               
               {/* Close button */}
               <button
                 onClick={() => setMobileMenuOpen(false)}
                 id="mobile-drawer-close"
-                className="absolute top-6 right-6 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                className="absolute top-6 right-6 p-2 rounded-none border border-white/10 text-slate-400 hover:text-white hover:bg-white/5 cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
 
               {/* Links List */}
-              <div className="space-y-8 mt-12">
+              <div className="space-y-8 mt-12 overflow-y-auto pr-2">
                 <div className="space-y-1">
-                  <span className="text-[9px] font-mono text-blue-500 font-extrabold uppercase tracking-widest block">NAVIGATIONAL DIRECTORY</span>
-                  <p className="text-xl font-serif text-slate-900 dark:text-white leading-none font-black">Portal Directory</p>
+                  <span className="text-[9px] font-mono text-blue-400 font-extrabold uppercase tracking-[0.25em] block">NAVIGATIONAL DIRECTORY</span>
+                  <p className="text-xl font-serif text-white leading-none font-black uppercase tracking-wider">Portal Directory</p>
                 </div>
 
-                <nav className="flex flex-col gap-5 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                <nav className="flex flex-col gap-1 text-xs">
                   {[
                     { label: 'Home Page', view: 'home' },
                     { label: 'Case Studies', view: 'portfolio' },
@@ -312,7 +301,7 @@ export default function Layout({
                     { label: 'Services Packages', view: 'services' },
                     { label: 'Performance Audit', view: 'audit' },
                     { label: 'Masterclass Blog', view: 'blog' },
-                    { label: 'Checklists Resources', view: 'resources' },
+                    { label: 'Planning Vault', view: 'resources' },
                     { label: 'Learn Hub', view: 'learn' },
                     { label: 'Frequently Asked FAQs', view: 'faq' },
                     { label: 'Book Consultation', view: 'contact' }
@@ -323,19 +312,24 @@ export default function Layout({
                         onNavigate(x.view as PageView);
                         setMobileMenuOpen(false);
                       }}
-                      className={`text-left hover:text-blue-500 transition-colors flex items-center justify-between cursor-pointer py-1 border-b border-slate-100 dark:border-slate-800/60 ${
-                        activePage === x.view ? 'text-blue-600 font-bold dark:text-blue-400' : ''
+                      className={`text-left hover:text-white transition-all flex items-center justify-between cursor-pointer py-4 border-b border-white/5 font-mono text-[11px] uppercase tracking-[0.15em] font-extrabold ${
+                        activePage === x.view ? 'text-white font-black' : 'text-slate-400'
                       }`}
                     >
-                      <span>{x.label}</span>
-                      <ChevronRight className="w-4 h-4 opacity-40 shrink-0" />
+                      <span className="relative">
+                        {x.label}
+                        {activePage === x.view && (
+                          <span className="absolute -bottom-1 left-0 w-full h-[1px] bg-white"></span>
+                        )}
+                      </span>
+                      <ChevronRight className="w-3.5 h-3.5 opacity-40 shrink-0" />
                     </button>
                   ))}
                 </nav>
               </div>
 
               {/* Drawer Footer info */}
-              <div className="pt-6 border-t font-mono text-[10px] text-slate-400 italic leading-snug">
+              <div className="pt-6 border-t border-white/10 font-mono text-[9px] text-slate-500 uppercase tracking-widest leading-relaxed">
                 VXTGrid Services • Registered under RC-1925048 • Africa
               </div>
 
@@ -485,15 +479,14 @@ export default function Layout({
       <footer className="bg-slate-950 text-slate-400 border-t border-slate-900 py-12 md:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-12">
+          <div className="max-w-3xl space-y-4 mb-12">
             
             {/* Branding Column */}
-            <div className="md:col-span-4 space-y-4">
-              <div className="flex items-center gap-2">
-                <div className="h-8 w-8 bg-white text-slate-950 rounded-lg flex items-center justify-center font-bold font-serif shadow-md shrink-0">
-                  U
+            <div className="space-y-4">
+              <div className="flex items-center">
+                <div className="bg-white text-slate-950 px-3.5 py-1 text-xs font-mono font-bold tracking-[0.25em] uppercase border border-white whitespace-nowrap">
+                  UDOCHUKWU
                 </div>
-                <h3 className="text-white font-serif font-black tracking-tight leading-snug">Udochukwu</h3>
               </div>
               <p className="text-xs text-slate-500 leading-relaxed font-light">
                 Founder, Digital strategist & Principal of VXTGrid Services. We don't build generic brochure templates. We hand-code robust React systems that acquire clients.
@@ -501,46 +494,6 @@ export default function Layout({
               <p className="text-[10px] text-slate-600 font-mono">RC-1925048 | Lekki 1, Lagos, NG</p>
             </div>
 
-            {/* Sitemap Column A */}
-            <div className="md:col-span-3 space-y-3 font-sans text-xs">
-              <h4 className="text-white font-serif font-semibold">Project Channels</h4>
-              <ul className="space-y-2">
-                <li><button onClick={() => onNavigate('portfolio')} className="hover:text-white transition-colors cursor-pointer text-left">Case Studies Dashboard</button></li>
-                <li><button onClick={() => onNavigate('services')} className="hover:text-white transition-colors cursor-pointer text-left">Premium Packages & Prices</button></li>
-                <li><button onClick={() => onNavigate('audit')} className="hover:text-white transition-colors cursor-pointer text-left">Instant Performance Audit</button></li>
-              </ul>
-            </div>
-
-            {/* Sitemap Column B */}
-            <div className="md:col-span-3 space-y-3 font-sans text-xs">
-              <h4 className="text-white font-serif font-semibold">Expertise & Guides</h4>
-              <ul className="space-y-2">
-                <li><button onClick={() => onNavigate('about')} className="hover:text-white transition-colors cursor-pointer text-left">My Story, Team, Mission</button></li>
-                <li><button onClick={() => onNavigate('blog')} className="hover:text-white transition-colors cursor-pointer text-left">Masterclass Tech Blog</button></li>
-                <li><button onClick={() => onNavigate('resources')} className="hover:text-white transition-colors cursor-pointer text-left">Planning Spreadsheets Downloads</button></li>
-                <li><button onClick={() => onNavigate('faq')} className="hover:text-white transition-colors cursor-pointer text-left">Frequently Asked Accordions</button></li>
-              </ul>
-            </div>
-
-            {/* CTAs column */}
-            <div className="md:col-span-2 space-y-4 text-xs">
-              <h4 className="text-white font-serif font-semibold">Immediate Action</h4>
-              <button
-                onClick={() => onNavigate('contact')}
-                id="footer-book-consult-btn"
-                className="w-full bg-blue-600 hover:bg-blue-750 text-white font-bold py-2.5 px-4 rounded-xl transition-all cursor-pointer"
-              >
-                Schedule Session
-              </button>
-              
-              <button
-                onClick={() => onNavigate('audit')}
-                id="footer-get-audit-btn"
-                className="w-full text-slate-205 hover:text-white border border-slate-800 hover:border-slate-500 py-2.5 px-4 rounded-xl transition-all cursor-pointer"
-              >
-                Free Speed Crawl
-              </button>
-            </div>
           </div>
 
           {/* Legal Bar */}

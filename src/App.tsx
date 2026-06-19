@@ -13,7 +13,9 @@ import Contact from './components/Contact';
 import ClientDashboard from './components/ClientDashboard';
 import Testimonials from './components/Testimonials';
 import Learn from './components/Learn';
+import RevenueCalculatorPage from './components/RevenueCalculatorPage';
 import { CurrencyProvider, useCurrency } from './context/CurrencyContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { initTracker } from './utils/tracker';
 
 function TrackerInitializer({ activePage }: { activePage: string }) {
@@ -29,7 +31,7 @@ export default function App() {
   // Navigation active routed page view state
   const [activePage, setActivePage] = useState<PageView>(() => {
     const path = window.location.pathname.replace(/^\/+/, '') || 'home';
-    const validPages: PageView[] = ['home', 'about', 'portfolio', 'services', 'industries', 'testimonials', 'audit', 'blog', 'resources', 'learn', 'faq', 'contact', 'dashboard'];
+    const validPages: PageView[] = ['home', 'about', 'portfolio', 'services', 'industries', 'testimonials', 'audit', 'blog', 'resources', 'learn', 'faq', 'contact', 'dashboard', 'calculator'];
     return validPages.includes(path as PageView) ? (path as PageView) : 'home';
   });
   const [contactPreFill, setContactPreFill] = useState<ContactPreFill | undefined>(undefined);
@@ -38,7 +40,7 @@ export default function App() {
   useEffect(() => {
     const handlePopState = () => {
       const path = window.location.pathname.replace(/^\/+/, '') || 'home';
-      const validPages: PageView[] = ['home', 'about', 'portfolio', 'services', 'industries', 'testimonials', 'audit', 'blog', 'resources', 'learn', 'faq', 'contact', 'dashboard'];
+      const validPages: PageView[] = ['home', 'about', 'portfolio', 'services', 'industries', 'testimonials', 'audit', 'blog', 'resources', 'learn', 'faq', 'contact', 'dashboard', 'calculator'];
       setActivePage(validPages.includes(path as PageView) ? (path as PageView) : 'home');
     };
     window.addEventListener('popstate', handlePopState);
@@ -49,26 +51,6 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, [activePage]);
 
-  // Load and manage Dark Mode preferences
-  const [darkMode, setDarkMode] = useState<boolean>(() => {
-    try {
-      const stored = localStorage.getItem('vxt_dark_mode');
-      if (stored) return stored === 'true';
-      // Force elegant Light theme as the main default theme
-      return false;
-    } catch (e) {
-      return false;
-    }
-  });
-
-  const handleToggleDarkMode = () => {
-    setDarkMode(prev => {
-      const updated = !prev;
-      localStorage.setItem('vxt_dark_mode', String(updated));
-      return updated;
-    });
-  };
-
   // Fluid page switching scroll mechanics
   const handlePageNavigation = (page: string, preFill?: ContactPreFill) => {
     setActivePage(page as PageView);
@@ -78,29 +60,30 @@ export default function App() {
   };
 
   return (
-    <CurrencyProvider>
-      <TrackerInitializer activePage={activePage} />
-      <Layout
-        activePage={activePage}
-        onNavigate={handlePageNavigation}
-        darkMode={darkMode}
-        onToggleDarkMode={handleToggleDarkMode}
-      >
-        {activePage === 'home' && <Home onNavigate={handlePageNavigation} />}
-        {activePage === 'about' && <About onNavigate={handlePageNavigation} />}
-        {activePage === 'portfolio' && <Portfolio onNavigate={handlePageNavigation} />}
-        {activePage === 'services' && <Services onNavigate={handlePageNavigation} />}
-        {activePage === 'industries' && <Services onNavigate={handlePageNavigation} />}
-        {activePage === 'testimonials' && <Testimonials onNavigate={handlePageNavigation} />}
-        {activePage === 'audit' && <FreeAudit onNavigate={handlePageNavigation} />}
-        {activePage === 'blog' && <Insights onNavigate={handlePageNavigation} />}
-        {activePage === 'resources' && <Resources />}
-        {activePage === 'learn' && <Learn onNavigate={handlePageNavigation} />}
-        {activePage === 'faq' && <FAQs onNavigate={handlePageNavigation} />}
-        {activePage === 'contact' && <Contact preFill={contactPreFill} />}
-        {activePage === 'dashboard' && <ClientDashboard />}
-      </Layout>
-    </CurrencyProvider>
+    <ThemeProvider>
+      <CurrencyProvider>
+        <TrackerInitializer activePage={activePage} />
+        <Layout
+          activePage={activePage}
+          onNavigate={handlePageNavigation}
+        >
+          {activePage === 'home' && <Home onNavigate={handlePageNavigation} />}
+          {activePage === 'calculator' && <RevenueCalculatorPage onNavigate={handlePageNavigation} />}
+          {activePage === 'about' && <About onNavigate={handlePageNavigation} />}
+          {activePage === 'portfolio' && <Portfolio onNavigate={handlePageNavigation} />}
+          {activePage === 'services' && <Services onNavigate={handlePageNavigation} />}
+          {activePage === 'industries' && <Services onNavigate={handlePageNavigation} />}
+          {activePage === 'testimonials' && <Testimonials onNavigate={handlePageNavigation} />}
+          {activePage === 'audit' && <FreeAudit onNavigate={handlePageNavigation} />}
+          {activePage === 'blog' && <Insights onNavigate={handlePageNavigation} />}
+          {activePage === 'resources' && <Resources />}
+          {activePage === 'learn' && <Learn onNavigate={handlePageNavigation} />}
+          {activePage === 'faq' && <FAQs onNavigate={handlePageNavigation} />}
+          {activePage === 'contact' && <Contact preFill={contactPreFill} />}
+          {activePage === 'dashboard' && <ClientDashboard />}
+        </Layout>
+      </CurrencyProvider>
+    </ThemeProvider>
   );
 }
 

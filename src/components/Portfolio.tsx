@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PRELOADED_CASE_STUDIES } from '../utils/storage';
 import { CaseStudy } from '../types';
-import { ArrowRight, Sparkles, CheckCircle2, ChevronRight, Share2, PanelLeft, ExternalLink, RefreshCw, X, Monitor, Tablet, Smartphone, Search, Calendar, MapPin, Building, Check, TrendingUp } from 'lucide-react';
+import { ArrowRight, Sparkles, ChevronRight, ExternalLink, RefreshCw, X, Monitor, Tablet, Smartphone, Search, Calendar, Check, TrendingUp } from 'lucide-react';
 
 interface PortfolioProps {
   onNavigate: (page: string) => void;
@@ -97,24 +97,48 @@ export default function Portfolio({ onNavigate }: PortfolioProps) {
   }, []);
 
   return (
-    <div className="py-12 md:py-20 bg-white dark:bg-slate-950 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Header Block */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-xs font-mono text-blue-600 dark:text-blue-400 uppercase tracking-widest bg-blue-100 dark:bg-blue-950 px-3 py-1.5 rounded-full font-medium">
-            OUTCOMES OVER SCREENSHOTS
-          </span>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-slate-900 dark:text-white mt-4 font-medium tracking-tight">
-            Digital Success Stories
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-4 text-sm sm:text-base leading-relaxed">
-            I partner with ambitious brands across Africa to construct high-performing digital systems that drive growth, increase trust, and turn visitors into long-term clients.
-          </p>
+    <div className="bg-[#1E2333] min-h-screen text-slate-100 transition-colors duration-300">
+      
+      {/* 1. ELON-STYLE HEAD SPLASH BANNER */}
+      <section className="relative min-h-[50vh] flex flex-col justify-center items-start px-6 sm:px-12 md:px-24 py-20 bg-[#6B6899] overflow-hidden">
+        {/* Grayscale overlay with project imagery */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src={selectedCase.afterImage} 
+            alt={selectedCase.client} 
+            className="w-full h-full object-cover object-center filter grayscale contrast-125 brightness-[0.4] opacity-35 mix-blend-luminosity"
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute inset-0 bg-[#6B6899]/50 mix-blend-multiply" />
         </div>
 
-        {/* Project Selector Navigation Tab */}
-        <div className="flex flex-wrap justify-center gap-4 mb-16 border-b border-slate-200 dark:border-slate-800 pb-6">
+        {/* Text details */}
+        <div className="relative z-10 w-full max-w-6xl">
+          <motion.h1 
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-3xl sm:text-5xl md:text-6xl text-white font-serif tracking-[0.01em] leading-tight font-medium"
+          >
+            {selectedCase.client.split(' (')[0]}
+          </motion.h1>
+          
+          <div className="w-full max-w-2xl h-[1px] bg-white/40 my-6"></div>
+          
+          <motion.p 
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="text-white text-xs sm:text-sm md:text-base tracking-[0.24em] font-mono uppercase font-bold opacity-95 [text-shadow:_0_1px_2px_rgba(0,0,0,0.4)]"
+          >
+            OUTCOMES OVER SCREENSHOTS • CASE STUDY
+          </motion.p>
+        </div>
+      </section>
+
+      {/* 2. CASE STUDY SELECTOR (Crisp Rectangular Navigation) */}
+      <div className="max-w-6xl mx-auto px-6 sm:px-12 md:px-24 py-12">
+        <div className="flex flex-wrap justify-start gap-3.5 border-b border-white/10 pb-6">
           {PRELOADED_CASE_STUDIES.map((c) => (
             <button
               key={c.id}
@@ -122,692 +146,623 @@ export default function Portfolio({ onNavigate }: PortfolioProps) {
                 setSelectedCase(c);
                 setSliderPosition(50);
               }}
-              className={`px-5 py-3 rounded-xl font-medium tracking-tight text-xs sm:text-sm transition-all duration-200 flex items-center gap-2 cursor-pointer ${
+              className={`px-5 py-2.5 text-xs font-mono font-bold uppercase tracking-widest transition-all duration-200 cursor-pointer border rounded-none ${
                 selectedCase.id === c.id
-                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-md'
-                  : 'bg-slate-100 text-slate-600 dark:bg-slate-900 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
+                  ? 'bg-white text-slate-950 border-white'
+                  : 'bg-[#23293D] text-slate-300 border-white/10 hover:border-white/35 hover:text-white'
               }`}
             >
               <span>{c.client.split(' (')[0]}</span>
-              <ChevronRight className="w-4 h-4 opacity-50" />
             </button>
           ))}
         </div>
+      </div>
 
-        {/* Detailed Case Study Viewer */}
+      {/* 3. CASE STUDY DETAILED CHRONICLE */}
+      <section className="pb-24 px-6 sm:px-12 md:px-24 max-w-6xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           
-          {/* LEFT COLUMN: The metrics, slider & live demo */}
-          <div className="lg:col-span-7 space-y-8">
+          {/* CLIENT BRIEF & STORIES (Left Dynamic Column) */}
+          <div className="lg:col-span-7 space-y-12">
             
-            {/* Interactive Before vs After Visualizer */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-center px-1">
-                <span className="text-xs font-mono font-bold text-slate-500 flex items-center gap-1">
-                  <RefreshCw className="w-3.5 h-3.5 animate-spin-slow" />
-                  SLIDE TO COMPARE
+            {/* White Underlined Layout Title */}
+            <div>
+              <div className="border-b border-white/20 pb-4 mb-8">
+                <span className="text-[10px] font-mono text-blue-400 tracking-[0.25em] block uppercase font-bold mb-1">
+                  THE DIRECT CHRONICLE
                 </span>
-                <span className="text-xs font-mono font-semibold bg-red-100 text-red-700 dark:bg-red-950/50 dark:text-red-400 px-2.5 py-0.5 rounded-md">
-                  BEFORE: Outdated & Slow
-                </span>
-                <span className="text-xs font-mono font-semibold bg-green-100 text-green-700 dark:bg-green-950/50 dark:text-green-400 px-2.5 py-0.5 rounded-md">
-                  AFTER: 100% Coded Client Machine
-                </span>
+                <h2 className="text-2xl sm:text-3xl font-serif text-white tracking-wide uppercase relative inline-block pb-3 whitespace-nowrap">
+                  Digital transformation
+                  <span className="absolute bottom-0 left-0 w-full h-[2px] bg-white"></span>
+                </h2>
               </div>
-              
-              {/* Slider wrapper container */}
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-light">
+                {selectedCase.solution}
+              </p>
+            </div>
+
+            {/* Interactive Before/After Comparisons with minimal borders */}
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <span className="text-[10px] font-mono font-bold text-slate-400 tracking-[0.15em] flex items-center gap-1.5 uppercase">
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin-slow" />
+                  DRAG SLIDER TO VERIFY PERFORMANCE GAP
+                </span>
+                <div className="flex gap-2">
+                  <span className="text-[9px] font-mono font-black bg-rose-950/50 text-rose-300 border border-rose-900/40 px-2.5 py-0.5 uppercase tracking-widest">
+                    Legacy Draft
+                  </span>
+                  <span className="text-[9px] font-mono font-black bg-emerald-950/50 text-emerald-300 border border-emerald-900/40 px-2.5 py-0.5 uppercase tracking-widest">
+                    VXT System
+                  </span>
+                </div>
+              </div>
+
+              {/* Slider viewport box */}
               <div 
                 ref={containerRef}
-                className="relative h-64 sm:h-96 rounded-3xl overflow-hidden shadow-2xl border-4 border-slate-950 dark:border-slate-800 select-none cursor-ew-resize"
+                className="relative h-64 sm:h-96 rounded-none overflow-hidden border border-white/10 select-none cursor-ew-resize"
                 onMouseDown={() => { isDragging.current = true; }}
                 onTouchStart={() => { isDragging.current = true; }}
               >
-                {/* AFTER image (Full cover underlying layer) */}
+                {/* AFTER image */}
                 <img 
                   src={selectedCase.afterImage} 
-                  alt="Optimized Modern Website Redesign" 
-                  className="absolute inset-0 w-full h-full object-cover"
+                  alt="VXT Redesign output" 
+                  className="absolute inset-0 w-full h-full object-cover filter contrast-[1.05]"
                   referrerPolicy="no-referrer"
                 />
                 
-                {/* BEFORE image (Left clipped overlay layer) */}
+                {/* BEFORE image (Left clipped layer) */}
                 <div 
                   className="absolute inset-y-0 left-0 overflow-hidden"
                   style={{ width: `${sliderPosition}%` }}
                 >
                   <img 
                     src={selectedCase.beforeImage} 
-                    alt="Legacy Unoptimized Template website" 
-                    className="absolute inset-0 w-full h-full object-cover max-w-none"
+                    alt="Outdated Legacy Template" 
+                    className="absolute inset-0 w-full h-full object-cover max-w-none filter contrast-90 brightness-75 grayscale"
                     style={{ width: containerRef.current?.getBoundingClientRect().width }}
                     referrerPolicy="no-referrer"
                   />
-                  {/* Before label tag */}
-                  <div className="absolute top-4 left-4 bg-slate-950/80 text-white text-[10px] font-mono tracking-widest px-2 py-1 rounded-sm border border-slate-800">
+                  <div className="absolute top-4 left-4 bg-slate-950/90 text-white text-[9px] font-mono tracking-widest px-2.5 py-1 border border-white/25 rounded-none uppercase">
                     LEGACY BROCHURE
                   </div>
                 </div>
 
-                {/* AFTER label tag (Permanent at the right) */}
-                <div className="absolute top-4 right-4 bg-blue-600 text-white text-[10px] font-mono tracking-widest px-2 py-1 rounded-sm shadow-md">
-                  VXT-SYSTEM
+                <div className="absolute top-4 right-4 bg-white text-slate-950 text-[9px] font-mono tracking-widest px-2.5 py-1 font-bold border border-white rounded-none uppercase">
+                  VXT AUTOMATION
                 </div>
 
-                {/* Slider Handle Divider Line */}
+                {/* Divider Line & Square handle node */}
                 <div 
-                  className="absolute inset-y-0 w-1 bg-white hover:bg-blue-400 cursor-ew-resize shadow-md flex items-center justify-center transition-colors"
+                  className="absolute inset-y-0 w-[2px] bg-white cursor-ew-resize flex items-center justify-center"
                   style={{ left: `${sliderPosition}%` }}
                 >
-                  <div className="h-10 w-10 bg-white hover:bg-blue-500 rounded-full border-4 border-slate-950 shadow-xl flex items-center justify-center transition-colors">
-                    <span className="text-slate-900 font-bold hover:text-white text-xs select-none">↔</span>
+                  <div className="h-8 w-8 bg-white text-slate-950 border border-slate-950 shadow-2xl flex items-center justify-center hover:bg-slate-250 transition-colors">
+                    <span className="text-slate-950 font-bold text-xs">↔</span>
                   </div>
                 </div>
               </div>
-              <p className="text-[11px] text-slate-400 text-center italic mt-1 leading-none">
-                Drag the divider left or right to compare the slow legacy blueprint vs Udochukwu’s high-precision design system
-              </p>
             </div>
 
-            {/* Measurable Results Metrics Grid */}
-            <div className="bg-slate-50 dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200/50 dark:border-slate-800/80">
-              <h3 className="text-xs font-mono font-extrabold text-blue-600 dark:text-blue-400 tracking-wider uppercase mb-6 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 animate-bounce" />
-                VERIFIED CONVERSION METRICS
+            {/* stark Testimonial block */}
+            <div className="border-l-2 border-white pl-6 py-2 italic text-slate-300 font-sans text-sm sm:text-base leading-relaxed tracking-wide">
+              "{selectedCase.highlightText}"
+            </div>
+
+          </div>
+
+          {/* SIDEBAR METRICS & DETAIL DIRECTIVES (Right Column) */}
+          <div className="lg:col-span-5 space-y-10 lg:sticky lg:top-28">
+            
+            {/* Conversion performance stats card */}
+            <div className="bg-[#23293D] p-6 sm:p-8 rounded-none border border-white/10 shadow-xl">
+              <h3 className="text-xs font-mono font-bold text-blue-400 tracking-[0.25em] uppercase mb-6 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-emerald-400" />
+                VERIFIED PERFORMANCE MULTIPLIER
               </h3>
-              <div className="grid grid-cols-2 gap-6">
+              
+              <div className="grid grid-cols-2 gap-y-8 gap-x-6">
                 <div>
-                  <p className="text-2xl sm:text-3xl font-serif font-black text-rose-600 dark:text-rose-500 tracking-tight leading-none">
+                  <p className="text-2xl sm:text-3xl font-serif font-black text-rose-400 tracking-tight leading-none">
                     {selectedCase.results.conversionIncrease.split(' ')[0]}
                   </p>
-                  <p className="text-slate-700 dark:text-slate-300 text-xs mt-1.5 font-sans font-medium">
+                  <p className="text-slate-400 text-[10px] mt-1.5 font-mono uppercase tracking-widest leading-normal font-medium">
                     {selectedCase.results.conversionIncrease.split(' ').slice(1).join(' ')}
                   </p>
                 </div>
                 <div>
-                  <p className="text-2xl sm:text-3xl font-serif font-black text-emerald-600 dark:text-emerald-500 tracking-tight leading-none">
+                  <p className="text-2xl sm:text-3xl font-serif font-black text-emerald-400 tracking-tight leading-none">
                     {selectedCase.results.speedImprovement.split(' ')[0]}
                   </p>
-                  <p className="text-slate-700 dark:text-slate-300 text-xs mt-1.5 font-sans font-medium">
+                  <p className="text-slate-400 text-[10px] mt-1.5 font-mono uppercase tracking-widest leading-normal font-medium">
                     {selectedCase.results.speedImprovement.split(' ').slice(1).join(' ')}
                   </p>
                 </div>
                 <div>
-                  <p className="text-2xl sm:text-3xl font-serif font-black text-blue-600 dark:text-blue-500 tracking-tight leading-none">
+                  <p className="text-2xl sm:text-3xl font-serif font-black text-blue-400 tracking-tight leading-none">
                     {selectedCase.results.trafficIncrease.split(' ')[0]}
                   </p>
-                  <p className="text-slate-700 dark:text-slate-300 text-xs mt-1.5 font-sans font-medium">
+                  <p className="text-slate-400 text-[10px] mt-1.5 font-mono uppercase tracking-widest leading-normal font-medium">
                     {selectedCase.results.trafficIncrease.split(' ').slice(1).join(' ')}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xl sm:text-2xl font-serif font-black text-slate-900 dark:text-white tracking-tight leading-none">
+                  <p className="text-2xl sm:text-3xl font-serif font-black text-white tracking-tight leading-none">
                     {selectedCase.results.revenueGrowth.split(' ')[0]}
                   </p>
-                  <p className="text-slate-700 dark:text-slate-300 text-xs mt-1.5 font-sans font-medium">
+                  <p className="text-slate-400 text-[10px] mt-1.5 font-mono uppercase tracking-widest leading-normal font-medium">
                     {selectedCase.results.revenueGrowth.split(' ').slice(1).join(' ')}
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Testimonial callout inside Case Study */}
-            <div className="border-l-4 border-blue-600 pl-4 sm:pl-6 py-1 italic text-slate-600 dark:text-slate-300 font-sans text-sm sm:text-base">
-              "{selectedCase.highlightText}"
-            </div>
-
-          </div>
-
-          {/* RIGHT COLUMN: Problem, Solution, Tech Stack Case Study Details */}
-          <div className="lg:col-span-5 space-y-6">
-            
-            {/* Meta Tags */}
-            <div>
-              <span className="text-xs font-mono font-medium text-slate-400 uppercase tracking-widest">
-                CLIENT BRIEF
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-serif font-medium text-slate-900 dark:text-white mt-1 leading-tight">
-                {selectedCase.client}
-              </h2>
-              <div className="flex flex-wrap gap-2 mt-3">
-                <span className="text-[11px] font-mono bg-slate-100 text-slate-700 dark:bg-slate-900 dark:text-slate-300 px-2.5 py-1 rounded-md border border-slate-200 dark:border-slate-800">
-                  {selectedCase.industry}
-                </span>
-                <span className="text-[11px] font-mono bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-200 px-2.5 py-1 rounded-md border border-blue-100 dark:border-blue-900/40">
-                  Verified Case Study
-                </span>
+            {/* Narratives of Obstacles vs Solutions */}
+            <div className="space-y-6">
+              
+              {/* Obstacle box */}
+              <div className="space-y-2">
+                <h4 className="text-[10px] font-mono font-bold text-rose-400 uppercase tracking-[0.25em] block">
+                  • THE BLOCKING OBSTACLE
+                </h4>
+                <p className="text-slate-350 text-xs sm:text-sm leading-relaxed font-light">
+                  {selectedCase.problem}
+                </p>
               </div>
-            </div>
 
-            {/* The Problem Narrative */}
-            <div className="space-y-2">
-              <h4 className="text-xs font-mono font-semibold text-rose-500 uppercase tracking-widest flex items-center gap-1.5">
-                ❌ THE OBSTACLE
-              </h4>
-              <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                {selectedCase.problem}
-              </p>
-            </div>
-
-            {/* The Solution Narrative */}
-            <div className="space-y-2">
-              <h4 className="text-xs font-mono font-semibold text-emerald-500 uppercase tracking-widest flex items-center gap-1.5">
-                ✓ THE STRATEGIC APPROACH
-              </h4>
-              <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                {selectedCase.solution}
-              </p>
-            </div>
-
-            {/* Technology Stack Badges */}
-            <div className="space-y-2.5 pt-2">
-              <h4 className="text-xs font-mono font-semibold text-slate-400 uppercase tracking-widest">
-                CORE DIGITAL ASSETS
-              </h4>
-              <div className="flex flex-wrap gap-1.5">
-                {selectedCase.technology.map((tech, idx) => (
-                  <span 
-                    key={idx}
-                    className="text-xs font-mono bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200 px-2.5 py-1 rounded-md"
-                  >
-                    {tech}
-                  </span>
-                ))}
+              {/* Technology details */}
+              <div className="space-y-3 pt-4 border-t border-white/5">
+                <h4 className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-[0.25em] block">
+                  • DIGITAL INFRASTRUCTURE ASSETS
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {selectedCase.technology.map((tech, idx) => (
+                    <span 
+                      key={idx}
+                      className="text-[10px] font-mono bg-white/5 border border-white/10 text-white/90 px-2.5 py-1 rounded-none uppercase tracking-wider"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
               </div>
+
             </div>
 
-            {/* CTA action to drive leads */}
-            <div className="pt-6 border-t border-slate-100 dark:border-slate-900 flex flex-wrap gap-4">
+            {/* STARK ELON-STYLE CTAS */}
+            <div className="pt-6 border-t border-white/5 flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => onNavigate('contact')}
                 id={`case-cta-${selectedCase.id}`}
-                className="bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold px-6 py-3 rounded-xl transition-all shadow-md flex items-center gap-2 group cursor-pointer"
+                className="border border-white bg-white text-slate-950 font-mono text-xs font-bold tracking-[0.2em] uppercase px-6 py-3 hover:bg-transparent hover:text-white transition-all flex items-center justify-center gap-2 cursor-pointer rounded-none flex-1 text-center"
               >
-                Build My Direct Acquisition System
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                BOOK PLANNING SLOT
+                <ArrowRight className="w-4 h-4" />
               </button>
               
-              <button
-                onClick={() => {
-                  setEkoBooked(false);
-                  setLeadSubmitted(false);
-                  setShowcaseOpen(true);
-                }}
-                className="border border-slate-300 dark:border-slate-700 text-xs sm:text-sm text-slate-700 dark:text-slate-300 px-5 py-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors flex items-center gap-2 cursor-pointer"
-              >
-                <span>View Project Showcase</span>
-                <ExternalLink className="w-4 h-4 opacity-70" />
-              </button>
+              {selectedCase.liveUrl !== '#live-preview' ? (
+                <a
+                  href={selectedCase.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="border border-white/20 text-white font-mono text-[11px] font-bold tracking-[0.2em] uppercase px-5 py-3 hover:border-white hover:bg-white/5 transition-all flex items-center justify-center gap-2 cursor-pointer rounded-none"
+                >
+                  <span>LIVE PLATFORM</span>
+                  <ExternalLink className="w-4 h-4 opacity-75" />
+                </a>
+              ) : (
+                <button
+                  onClick={() => {
+                    setEkoBooked(false);
+                    setLeadSubmitted(false);
+                    setShowcaseOpen(true);
+                  }}
+                  className="border border-white/20 text-white font-mono text-[11px] font-bold tracking-[0.2em] uppercase px-5 py-3 hover:border-white hover:bg-white/5 transition-all flex items-center justify-center gap-2 cursor-pointer rounded-none"
+                >
+                  <span>PROJECT SHOWCASE</span>
+                  <ExternalLink className="w-4 h-4 opacity-75" />
+                </button>
+              )}
             </div>
 
           </div>
 
         </div>
+      </section>
 
-        {/* Global Consultation Pitch Banner */}
-        <div className="mt-24 bg-slate-950 text-white rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-2xl border border-slate-800">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/15 rounded-full filter blur-3xl"></div>
-          <div className="relative z-10 max-w-3xl">
-            <span className="text-xs font-mono text-blue-400 uppercase tracking-widest font-semibold">
-              ACQUIRE MORE PAYING CLIENTS
-            </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-normal text-white mt-2 tracking-tight">
-              Ready to double your inbound digital sales?
-            </h2>
-            <p className="text-slate-300 text-sm sm:text-base mt-4 leading-relaxed">
-              Skip lazy templates and brokers. Ensure your hotel, private clinic, realty group, or corporate enterprise commands trust on local speeds. Book an executive planning slot directly with Udochukwu.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4">
+      {/* 4. EXECUTIVE CALL TO ACTION GRID (Stark & Minimal Pitch) */}
+      <section className="bg-[#181C2A] py-16 sm:py-24 border-t border-white/10">
+        <div className="max-w-6xl mx-auto px-6 sm:px-12 md:px-24">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            
+            <div className="lg:col-span-8 space-y-4">
+              <span className="text-[10px] font-mono text-blue-400 tracking-[0.25em] uppercase font-bold">
+                COMMERCE AUTOMATION MODULES
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-serif text-white uppercase tracking-wide">
+                Secure 10X Inbound Acquirers Now
+              </h2>
+              <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-2xl font-light">
+                We bypass broker platforms extracting heavy percentages from your bookings or luxury estates. Every layout is hand-coded to load in milliseconds across remote locations. Book a secure, completely free 30-minute system planning review.
+              </p>
+            </div>
+
+            <div className="lg:col-span-4 flex flex-col gap-3">
               <button 
                 onClick={() => onNavigate('contact')}
                 id="portfolio-banner-book"
-                className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-6 py-3 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
+                className="border border-white bg-white text-slate-950 font-mono text-xs font-bold tracking-[0.2em] uppercase px-6 py-3.5 hover:bg-transparent hover:text-white transition-all text-center cursor-pointer rounded-none"
               >
-                Book My Free Strategy Slot
-                <ArrowRight className="w-4 h-4" />
+                BOOK FREE SLOT
               </button>
               <button 
                 onClick={() => onNavigate('audit')}
                 id="portfolio-banner-audit"
-                className="text-xs sm:text-sm font-medium text-blue-400 hover:text-white px-4 py-3 rounded-xl transition-colors cursor-pointer"
+                className="border border-white/10 hover:border-white bg-transparent text-white font-mono text-[10px] font-bold tracking-[0.2em] uppercase px-6 py-3 transition-all text-center cursor-pointer rounded-none"
               >
-                Request Free Website Audit →
+                REQUEST PERFORMANCE AUDIT
               </button>
             </div>
+
           </div>
         </div>
+      </section>
 
-        {/* Dynamic High-Fidelity Project Showcase Responsive Modal */}
-        <AnimatePresence>
-          {showcaseOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md overflow-y-auto">
-              {/* Outer Centered Backdrop Wrapper */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                transition={{ duration: 0.3 }}
-                className="relative bg-white dark:bg-slate-950 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 w-full max-w-5xl overflow-hidden flex flex-col h-[90vh]"
-              >
-                {/* Modal Top Control Header */}
-                <div className="bg-slate-900 text-white p-4 flex flex-wrap items-center justify-between gap-4 border-b border-slate-850 z-10">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-3 h-3 rounded-full bg-red-500"></span>
-                    <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
-                    <span className="w-3 h-3 rounded-full bg-green-500"></span>
-                    <span className="ml-1.5 font-mono text-[11px] font-bold tracking-widest text-slate-400 uppercase hidden sm:inline">
-                      SECURE BRANDS SIMULATOR
-                    </span>
-                  </div>
+      {/* 5. DYNAMIC SIMULATOR PROJECT SHOWCASE MODAL */}
+      <AnimatePresence>
+        {showcaseOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md overflow-y-auto">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.98, y: 15 }}
+              transition={{ duration: 0.3 }}
+              className="relative bg-[#1E2333] border border-white/10 rounded-none w-full max-w-5xl overflow-hidden flex flex-col h-[90vh]"
+            >
+              
+              {/* Modal Control Header */}
+              <div className="bg-[#23293D] text-white p-4 flex flex-wrap items-center justify-between gap-4 border-b border-white/10 z-10">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 bg-rose-500 rounded-none"></span>
+                  <span className="w-2.5 h-2.5 bg-yellow-500 rounded-none"></span>
+                  <span className="w-2.5 h-2.5 bg-emerald-500 rounded-none"></span>
+                  <span className="ml-2.5 font-mono text-[10px] font-bold tracking-[0.25em] text-slate-400 uppercase hidden sm:inline">
+                    VXT SANDBOX METRIC ENGINE
+                  </span>
+                </div>
 
-                  {/* Responsive Switcher Actions */}
-                  <div className="flex bg-slate-800/80 p-1 rounded-xl">
-                    <button
-                      onClick={() => setShowcaseDevice('desktop')}
-                      className={`p-2 rounded-lg transition-all flex items-center gap-1.5 text-xs font-medium cursor-pointer ${
-                        showcaseDevice === 'desktop'
-                          ? 'bg-blue-600 text-white'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                      title="Desktop Layout Standard View"
-                    >
-                      <Monitor className="w-4 h-4" />
-                      <span className="hidden md:inline">Desktop</span>
-                    </button>
-                    <button
-                      onClick={() => setShowcaseDevice('tablet')}
-                      className={`p-2 rounded-lg transition-all flex items-center gap-1.5 text-xs font-medium cursor-pointer ${
-                        showcaseDevice === 'tablet'
-                          ? 'bg-blue-600 text-white'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                      title="Tablet Layout View"
-                    >
-                      <Tablet className="w-4 h-4" />
-                      <span className="hidden md:inline">Tablet</span>
-                    </button>
-                    <button
-                      onClick={() => setShowcaseDevice('mobile')}
-                      className={`p-2 rounded-lg transition-all flex items-center gap-1.5 text-xs font-medium cursor-pointer ${
-                        showcaseDevice === 'mobile'
-                          ? 'bg-blue-600 text-white'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                      title="Mobile Grid Navigation"
-                    >
-                      <Smartphone className="w-4 h-4" />
-                      <span className="hidden md:inline">Mobile</span>
-                    </button>
-                  </div>
-
-                  {/* Close Icon Button */}
+                {/* Device switches */}
+                <div className="flex bg-[#1E2333] p-1 border border-white/5">
                   <button
-                    onClick={() => setShowcaseOpen(false)}
-                    className="p-1.5 rounded-full bg-slate-800 text-slate-350 hover:bg-slate-700 hover:text-white transition-colors cursor-pointer"
-                    title="Exit Simulator"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-
-                {/* Sub Header / Simulated Web Browser Title Bar */}
-                <div className="bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800/80 px-4 py-2 flex items-center gap-3">
-                  <div className="flex gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-700"></span>
-                    <span className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-700"></span>
-                  </div>
-                  <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex items-center gap-2.5 px-4 py-1 rounded-lg text-slate-400 text-xs font-mono flex-1 overflow-hidden">
-                    <span className="text-emerald-500 font-bold">https://</span>
-                    <span className="text-slate-650 dark:text-slate-300 truncate font-mono">
-                      {selectedCase.id === 'case-01' ? 'eko-haven.vxtgrid.com' : 'landstone.vxtgrid.com'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Simulated Content Frame Canvas Container */}
-                <div className="bg-slate-50 dark:bg-slate-900 p-6 flex-1 overflow-y-auto flex justify-center items-start">
-                  
-                  {/* Viewport resizing wrapper container */}
-                  <div
-                    className={`transition-all duration-500 w-full h-full ${
+                    onClick={() => setShowcaseDevice('desktop')}
+                    className={`px-3 py-1.5 transition-all flex items-center gap-1.5 text-[10px] font-mono font-black uppercase tracking-wider cursor-pointer ${
                       showcaseDevice === 'desktop'
-                        ? 'max-w-4xl'
-                        : showcaseDevice === 'tablet'
-                        ? 'max-w-2xl'
-                        : 'max-w-sm'
-                    } bg-white dark:bg-slate-950 shadow-xl border border-slate-200 dark:border-slate-800 rounded-2xl overflow-y-auto min-h-[500px] flex flex-col`}
+                        ? 'bg-white text-slate-950'
+                        : 'text-slate-450 hover:text-white'
+                    }`}
                   >
-                    
-                    {/* CASE-01: EKO HAVEN LUXURY APARTMENTS AND BOUTIQUE RESORT */}
-                    {selectedCase.id === 'case-01' ? (
-                      <div className="font-sans text-slate-900 dark:text-slate-150 flex flex-col min-h-full">
-                        {/* Simulation Navbar */}
-                        <header className="border-b border-slate-100 dark:border-slate-900/65 bg-white dark:bg-slate-950 px-5 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
-                          <span className="font-serif font-black tracking-widest text-[#1e293b] dark:text-white text-sm">
-                            EKO HAVEN
-                          </span>
-                          <span className="text-[10px] font-mono tracking-wider text-emerald-600 bg-emerald-100 dark:bg-emerald-950/80 px-2 py-0.5 rounded-full font-bold">
-                            Direct Booking Engine
-                          </span>
-                        </header>
-
-                        {/* Simulation Hero Block */}
-                        <div className="p-6 sm:p-10 text-center bg-slate-55 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800/80">
-                          <span className="text-[10px] sm:text-xs font-mono font-bold tracking-widest text-blue-600 dark:text-blue-400 uppercase">
-                            VIP ESCAPE IN LAGOS
-                          </span>
-                          <h3 className="text-2xl sm:text-3xl font-serif text-slate-900 dark:text-white mt-2 font-medium tracking-tight">
-                            Escape to Atlantic Sunset Prestige
-                          </h3>
-                          <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-3 max-w-xl mx-auto leading-relaxed">
-                            Bypass middleman broker channels taking 18% commissions. Grab direct reservation bonuses including priority private airport concierge shuttles and high-speed satellite workspace nodes.
-                          </p>
-                        </div>
-
-                        {/* Interactive Direct Rate Pricing Calculator Widget */}
-                        <div className="p-6 flex-1 space-y-6">
-                          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm">
-                            <h4 className="text-xs font-mono font-extrabold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-4">
-                              Interactive Direct Booking Matrix
-                            </h4>
-                            
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                              {/* Selection 1: Room category */}
-                              <div>
-                                <label className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block mb-1.5">
-                                  SUITE OR RESIDENCE TYPE
-                                </label>
-                                <select
-                                  value={ekoRoom}
-                                  onChange={(e: any) => setEkoRoom(e.target.value)}
-                                  className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-2.5 rounded-xl font-sans text-xs tracking-tight text-slate-800 dark:text-white outline-none focus:border-blue-600"
-                                >
-                                  <option value="deluxe">Deluxe Studio Cabin (₦120k / Night)</option>
-                                  <option value="suite">Ocean Sanctuary Master Suite (₦220k / Night)</option>
-                                  <option value="penthouse">Presidential Signature Penthouse (₦380k / Night)</option>
-                                </select>
-                              </div>
-
-                              {/* Selection 2: Nights Count */}
-                              <div>
-                                <label className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block mb-1.5">
-                                  DURATION OF STAY
-                                </label>
-                                <select
-                                  value={ekoNights}
-                                  onChange={(e: any) => setEkoNights(Number(e.target.value))}
-                                  className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-2.5 rounded-xl font-sans text-xs tracking-tight text-slate-800 dark:text-white outline-none focus:border-blue-600"
-                                >
-                                  <option value={1}>1 Premium Night</option>
-                                  <option value={2}>2 Nights Package</option>
-                                  <option value={3}>3 Nights Getaway (Recommended)</option>
-                                  <option value={5}>5 Complete Vacation Business package</option>
-                                  <option value={7}>7 Weeks Executive Retreat</option>
-                                </select>
-                              </div>
-                            </div>
-
-                            {/* ROI Saving Display Block */}
-                            <div className="mt-6 border-t border-slate-200 dark:border-slate-800 pt-5 grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
-                              <div className="md:col-span-7 space-y-2">
-                                <div className="flex justify-between items-center text-xs text-slate-500">
-                                  <span>Standard OTA Aggregate Listing Rate:</span>
-                                  <span className="line-through">₦{totalRaw.toLocaleString()}</span>
-                                </div>
-                                <div className="flex justify-between items-center text-xs text-slate-500">
-                                  <span>Direct bedside booking discount (10%):</span>
-                                  <span className="text-emerald-600 font-semibold">-₦{directGuestDiscount.toLocaleString()}</span>
-                                </div>
-                                <div className="flex justify-between items-center text-xs font-mono font-bold text-rose-500">
-                                  <span>Middleman Broker Commission Saved:</span>
-                                  <span>₦{otaCom.toLocaleString()} (Saved by Eko Haven!)</span>
-                                </div>
-                              </div>
-
-                              <div className="md:col-span-5 bg-blue-50 dark:bg-blue-950/40 p-4 rounded-xl border border-blue-100 dark:border-blue-900/60 text-center">
-                                <span className="text-[9px] font-mono text-blue-600 dark:text-blue-400 block font-bold uppercase tracking-widest">
-                                  DIRECT PRICE SECURED
-                                </span>
-                                <span className="text-xl sm:text-2xl font-serif font-black text-blue-700 dark:text-blue-300 block mt-1">
-                                  ₦{finalPrice.toLocaleString()}
-                                </span>
-                              </div>
-                            </div>
-
-                            {/* SIMULATION ACTION BUTTON */}
-                            <div className="mt-6">
-                              {ekoBooked ? (
-                                <motion.div
-                                  initial={{ opacity: 0, y: 10 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  className="bg-emerald-50 dark:bg-emerald-950/45 text-emerald-800 dark:text-emerald-300 text-xs p-4 rounded-xl border border-emerald-100 dark:border-emerald-900/80 flex items-start gap-2.5"
-                                >
-                                  <Check className="w-4 h-4 flex-shrink-0 mt-0.5 text-emerald-500" />
-                                  <div>
-                                    <strong className="font-bold block text-emerald-900 dark:text-emerald-200">
-                                      ✓ Direct Rates Reservation Checklist Simulated!
-                                    </strong>
-                                    Saved ₦{otaCom.toLocaleString()} directly back to Eko Haven's treasury. In Udochukwu's actual live setup, this instantly routes a pre-populated secure booking payload to their private front desk WhatsApp node with real credit reservation checks!
-                                  </div>
-                                </motion.div>
-                              ) : (
-                                <button
-                                  onClick={() => setEkoBooked(true)}
-                                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs sm:text-sm py-3 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
-                                >
-                                  <Calendar className="w-4 h-4" />
-                                  <span>Simulate Secure Bedside Booking</span>
-                                </button>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Quick features specs */}
-                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-                            <div className="p-3.5 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200/50 dark:border-slate-800">
-                              <span className="text-slate-450 dark:text-slate-500 font-mono text-[9px] tracking-widest uppercase block">
-                                Load Time
-                              </span>
-                              <span className="text-sm font-bold text-slate-800 dark:text-white block mt-1">
-                                0.7 Seconds
-                              </span>
-                            </div>
-                            <div className="p-3.5 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200/50 dark:border-slate-800">
-                              <span className="text-slate-450 dark:text-slate-500 font-mono text-[9px] tracking-widest uppercase block">
-                                Core Web Vitals
-                              </span>
-                              <span className="text-sm font-bold text-emerald-600 block mt-1">
-                                100/100 Core
-                              </span>
-                            </div>
-                            <div className="p-3.5 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200/50 dark:border-slate-800">
-                              <span className="text-slate-450 dark:text-slate-500 font-mono text-[9px] tracking-widest uppercase block">
-                                Commission Outflow
-                              </span>
-                              <span className="text-sm font-bold text-rose-500 block mt-1">
-                                Slashed 68%
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      
-                      /* CASE-02: LANDSTONE REALTY & PREMIUM INVESTMENTS */
-                      <div className="font-sans text-slate-900 dark:text-slate-150 flex flex-col min-h-full">
-                        {/* Simulation Navbar */}
-                        <header className="border-b border-slate-100 dark:border-slate-900/65 bg-white dark:bg-slate-950 px-5 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
-                          <span className="font-serif font-serif tracking-widest text-[#1e293b] dark:text-white text-sm">
-                            LANDSTONE
-                          </span>
-                          <span className="text-[10px] font-mono tracking-wider text-blue-600 bg-blue-50 dark:bg-blue-950/80 px-2 py-0.5 rounded-full font-bold">
-                            Diaspora Investor Suite
-                          </span>
-                        </header>
-
-                        {/* Simulation Hero Block */}
-                        <div className="p-6 sm:p-10 text-center bg-slate-55 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800/80">
-                          <span className="text-[10px] sm:text-xs font-mono font-bold tracking-widest text-slate-400 uppercase">
-                            HIGH-NET-WORTH CORRIDORS
-                          </span>
-                          <h3 className="text-2xl sm:text-3xl font-serif text-slate-900 dark:text-white mt-1.5 font-medium tracking-tight leading-tight">
-                            Prestige Curated Real Estates
-                          </h3>
-                          <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-3.5 max-w-xl mx-auto leading-relaxed">
-                            A curated lifestyle showcase engineered for the selective Diaspora eye. Hand-styled layouts, custom escrow pathways, and instant geolocational site surveys.
-                          </p>
-                        </div>
-
-                        {/* Practical Property Catalog Filter Component */}
-                        <div className="p-6 flex-1 space-y-6">
-                          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-                            
-                            {/* Filter bar */}
-                            <div className="flex flex-col sm:flex-row gap-3.5 items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
-                              <span className="text-xs font-mono font-bold text-slate-500 self-start sm:self-center uppercase flex items-center gap-1.5">
-                                <Search className="w-3.5 h-3.5" />
-                                Interactive Filter:
-                              </span>
-                              <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-                                <select
-                                  value={landstoneNeighborhood}
-                                  onChange={(e: any) => setLandstoneNeighborhood(e.target.value)}
-                                  className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-xl font-sans text-xs outline-none flex-1 sm:flex-none focus:border-blue-600"
-                                >
-                                  <option value="All">All Regions</option>
-                                  <option value="Lekki Phase 1">Lekki Phase 1</option>
-                                  <option value="Ikoyi">Ikoyi</option>
-                                  <option value="Maitama, Abuja">Maitama, Abuja</option>
-                                </select>
-
-                                <select
-                                  value={landstoneBudget}
-                                  onChange={(e: any) => setLandstoneBudget(e.target.value)}
-                                  className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-xl font-sans text-xs outline-none flex-1 sm:flex-none focus:border-blue-600"
-                                >
-                                  <option value="All">All Budgets</option>
-                                  <option value="₦150M - ₦200M">₦150M - ₦200M</option>
-                                  <option value="₦200M - ₦350M">₦200M - ₦350M</option>
-                                  <option value="₦350M+">₦350M+</option>
-                                </select>
-                              </div>
-                            </div>
-
-                            {/* Dynamic Listings Result Grid */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
-                              {filteredProperties.length > 0 ? (
-                                filteredProperties.map((p) => (
-                                  <div 
-                                    key={p.id}
-                                    className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-white dark:bg-slate-950 shadow-sm hover:shadow-md transition-all flex flex-col"
-                                  >
-                                    <div className="h-28 relative bg-slate-100 overflow-hidden">
-                                      <img src={p.img} alt={p.title} className="w-full h-full object-cover filter contrast-[1.03]" />
-                                      <span className="absolute top-2 left-2 bg-slate-950/75 text-white text-[9px] font-mono px-2 py-0.5 rounded-sm capitalize">
-                                        {p.neighborhood}
-                                      </span>
-                                    </div>
-                                    <div className="p-3.5 flex-1 flex flex-col justify-between">
-                                      <div>
-                                        <h5 className="text-[13px] font-serif font-semibold text-slate-900 dark:text-white truncate">
-                                          {p.title}
-                                        </h5>
-                                        <span className="text-[10px] text-slate-400 font-mono block mt-0.5">{p.beds} Bed • {p.baths} Bath • {p.type}</span>
-                                      </div>
-                                      <span className="text-xs font-bold text-slate-900 dark:text-blue-400 block mt-2 text-right">
-                                        ₦{p.price.toLocaleString()}
-                                      </span>
-                                    </div>
-                                  </div>
-                                ))
-                              ) : (
-                                <div className="sm:col-span-2 text-center py-6 text-xs text-slate-450 italic">
-                                  No simulated boutique listings match your selected values. Reset options to view properties.
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Direct Lead Intake Form Submission */}
-                            <div className="mt-6 border-t border-slate-200 dark:border-slate-800 pt-5 space-y-4">
-                              <h5 className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest">
-                                Simulated Lead Capture Hub
-                              </h5>
-                              
-                              {leadSubmitted ? (
-                                <motion.div
-                                  initial={{ opacity: 0, y: 10 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  className="bg-blue-50 dark:bg-blue-950/45 text-blue-800 dark:text-blue-300 text-xs p-4 rounded-xl border border-blue-100 dark:border-blue-900/80"
-                                >
-                                  <strong className="font-bold block text-blue-905 dark:text-blue-200 mb-1">
-                                    ✓ VIP Lead Capture Successfully Simulated!
-                                  </strong>
-                                  Inbound inquiry logs injected immediately! In Udochukwu's custom full-stack builds, client records are structured securely, routed via secure HTTPS hooks, and saved inside the Administrative Console database for immediate executive follow-up.
-                                </motion.div>
-                              ) : (
-                                <form
-                                  onSubmit={(e) => {
-                                    e.preventDefault();
-                                    if (leadFormData.name && leadFormData.email) {
-                                      setLeadSubmitted(true);
-                                    }
-                                  }}
-                                  className="space-y-3"
-                                >
-                                  <div className="grid grid-cols-2 gap-3">
-                                    <input
-                                      required
-                                      type="text"
-                                      placeholder="Full Name"
-                                      value={leadFormData.name}
-                                      onChange={(e) => setLeadFormData({ ...leadFormData, name: e.target.value })}
-                                      className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-3 py-2 rounded-xl text-xs outline-none focus:border-blue-600"
-                                    />
-                                    <input
-                                      required
-                                      type="email"
-                                      placeholder="Email Address"
-                                      value={leadFormData.email}
-                                      onChange={(e) => setLeadFormData({ ...leadFormData, email: e.target.value })}
-                                      className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-3 py-2 rounded-xl text-xs outline-none focus:border-blue-600"
-                                    />
-                                  </div>
-                                  <button
-                                    type="submit"
-                                    className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-950 text-xs py-2.5 rounded-xl font-semibold hover:bg-slate-800 transition-all cursor-pointer shadow-sm"
-                                  >
-                                    Claim My Diaspora Client Portfolio Guide
-                                  </button>
-                                </form>
-                              )}
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                  </div>
-                </div>
-
-                {/* Modal Footer Description */}
-                <div className="bg-slate-100 dark:bg-slate-900 p-4 border-t border-slate-200 dark:border-slate-800 flex flex-wrap justify-between items-center gap-3">
-                  <div className="flex items-center gap-2 text-[11px] font-mono text-slate-500">
-                    <TrendingUp className="w-4 h-4 text-emerald-500" />
-                    <span>99% conversion fidelity simulated inside VXT Sandbox environment.</span>
-                  </div>
+                    <Monitor className="w-3.5 h-3.5" />
+                    <span className="hidden md:inline">Desktop</span>
+                  </button>
                   <button
-                    onClick={() => onNavigate('contact')}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2 rounded-lg transition-all shadow-sm cursor-pointer"
+                    onClick={() => setShowcaseDevice('tablet')}
+                    className={`px-3 py-1.5 transition-all flex items-center gap-1.5 text-[10px] font-mono font-black uppercase tracking-wider cursor-pointer ${
+                      showcaseDevice === 'tablet'
+                        ? 'bg-white text-slate-950'
+                        : 'text-slate-450 hover:text-white'
+                    }`}
                   >
-                    Build A Similar Pipeline For My Firm
+                    <Tablet className="w-3.5 h-3.5" />
+                    <span className="hidden md:inline">Tablet</span>
+                  </button>
+                  <button
+                    onClick={() => setShowcaseDevice('mobile')}
+                    className={`px-3 py-1.5 transition-all flex items-center gap-1.5 text-[10px] font-mono font-black uppercase tracking-wider cursor-pointer ${
+                      showcaseDevice === 'mobile'
+                        ? 'bg-white text-slate-950'
+                        : 'text-slate-450 hover:text-white'
+                    }`}
+                  >
+                    <Smartphone className="w-3.5 h-3.5" />
+                    <span className="hidden md:inline">Mobile</span>
                   </button>
                 </div>
 
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
-      </div>
+                {/* Close Button */}
+                <button
+                  onClick={() => setShowcaseOpen(false)}
+                  className="p-1 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  title="Exit Simulator"
+                >
+                  <X className="w-5 h-5 bg-white/5 p-1 border border-white/10" />
+                </button>
+              </div>
+
+              {/* URL address box */}
+              <div className="bg-[#181C2A] border-b border-white/10 px-4 py-2 flex items-center gap-3">
+                <div className="bg-[#1E2333] border border-white/10 flex items-center gap-2.5 px-4 py-1 text-slate-400 text-xs font-mono w-full overflow-hidden">
+                  <span className="text-emerald-400 font-bold">HTTPS://</span>
+                  <span className="text-slate-350 truncate font-mono">
+                    {selectedCase.id === 'case-01' ? 'eko-haven.vxtgrid.com' : 'landstone.vxtgrid.com'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Content Frame */}
+              <div className="bg-[#131620] p-6 flex-1 overflow-y-auto flex justify-center items-start">
+                <div
+                  className={`transition-all duration-300 w-full h-full ${
+                    showcaseDevice === 'desktop'
+                      ? 'max-w-4xl'
+                      : showcaseDevice === 'tablet'
+                      ? 'max-w-2xl'
+                      : 'max-w-sm'
+                  } bg-[#1E2333] border border-white/10 rounded-none overflow-y-auto min-h-[500px] flex flex-col`}
+                >
+                  
+                  {/* CASE-01: EKO HAVEN DIRECT RESERVATION ENGINE */}
+                  {selectedCase.id === 'case-01' ? (
+                    <div className="font-sans text-slate-100 flex flex-col min-h-full">
+                      <header className="border-b border-white/10 bg-[#23293D] px-5 py-4 flex items-center justify-between sticky top-0 z-10">
+                        <span className="font-serif tracking-widest text-white text-xs uppercase font-black">
+                          EKO HAVEN
+                        </span>
+                        <span className="text-[9px] font-mono tracking-widest text-[#1E2333] bg-white px-2.5 py-0.5 font-bold uppercase">
+                          Direct Matrix Coded
+                        </span>
+                      </header>
+
+                      <div className="p-6 sm:p-10 text-left bg-[#181C2A] border-b border-white/10">
+                        <h3 className="text-xl sm:text-2xl font-serif text-white tracking-wide uppercase">
+                          Bypass Booking Middlemen
+                        </h3>
+                        <p className="text-slate-400 text-xs sm:text-sm mt-3 leading-relaxed">
+                          We bypass standard OTA broker aggregators who drain up to 18% in commission pipelines. Grab direct exclusive stay parameters instantly here.
+                        </p>
+                      </div>
+
+                      {/* Math Widget */}
+                      <div className="p-6 flex-1 space-y-6">
+                        <div className="bg-[#23293D] border border-white/10 p-5 rounded-none shadow-sm space-y-4">
+                          <h4 className="text-[9px] font-mono font-bold text-blue-400 uppercase tracking-[0.2em]">
+                            CHOOSE PREFERENCE & RESIDENCE TYPE:
+                          </h4>
+                          
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                              <label className="text-[8px] font-mono text-slate-400 uppercase tracking-widest block mb-1">
+                                Suite Category
+                              </label>
+                              <select
+                                value={ekoRoom}
+                                onChange={(e: any) => setEkoRoom(e.target.value)}
+                                className="w-full bg-[#1E2333] border border-white/10 p-2 text-xs font-mono text-white outline-none focus:border-white rounded-none"
+                              >
+                                <option value="deluxe">Deluxe Studio (₦120k / Night)</option>
+                                <option value="suite">Ocean Master Suite (₦220k / Night)</option>
+                                <option value="penthouse">Presidential Penthouse (₦380k / Night)</option>
+                              </select>
+                            </div>
+
+                            <div>
+                              <label className="text-[8px] font-mono text-slate-400 uppercase tracking-widest block mb-1">
+                                Stay Days
+                              </label>
+                              <select
+                                value={ekoNights}
+                                onChange={(e: any) => setEkoNights(Number(e.target.value))}
+                                className="w-full bg-[#1E2333] border border-white/10 p-2 text-xs font-mono text-white outline-none focus:border-white rounded-none"
+                              >
+                                <option value={1}>1 Night</option>
+                                <option value={2}>2 Nights</option>
+                                <option value={3}>3 Nights Getaway</option>
+                                <option value={5}>5 Complete Days Stay</option>
+                                <option value={7}>7 Weeks Luxury Retreat</option>
+                              </select>
+                            </div>
+                          </div>
+
+                          <div className="pt-4 border-t border-white/5 space-y-2">
+                            <div className="flex justify-between items-center text-xs text-slate-400 font-mono">
+                              <span>Broker Listing Estimate:</span>
+                              <span className="line-through">₦{totalRaw.toLocaleString()}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-xs text-slate-400 font-mono">
+                              <span>Direct Client Saving Bonus (10%):</span>
+                              <span className="text-emerald-400 font-bold">-₦{directGuestDiscount.toLocaleString()}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-xs text-rose-400 font-mono font-bold">
+                              <span>Commission Preserved In Group Treasury:</span>
+                              <span>+₦{otaCom.toLocaleString()} (18%)</span>
+                            </div>
+                          </div>
+
+                          <div className="p-4 bg-[#1E2333] border border-white/10 text-center">
+                            <span className="text-[8px] font-mono text-slate-400 block tracking-[0.2em] font-medium uppercase">
+                              CLEAN DIRECT CONTRACT FEE
+                            </span>
+                            <span className="text-2xl font-serif font-bold text-white block mt-1">
+                              ₦{finalPrice.toLocaleString()}
+                            </span>
+                          </div>
+
+                          <div>
+                            {ekoBooked ? (
+                              <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="bg-emerald-950/20 text-emerald-300 border border-emerald-900/40 p-4 text-xs font-mono"
+                              >
+                                ✓ DIRECT SYSTEM BOOKING INITIATED SUCCESSFULLY.<br />
+                                In a live VXT custom system build, this constructs a payload validation that triggers immediate alerts inside Eko Haven's property console.
+                              </motion.div>
+                            ) : (
+                              <button
+                                onClick={() => setEkoBooked(true)}
+                                className="w-full border border-white bg-white text-slate-950 hover:bg-transparent hover:text-white font-mono text-[10px] font-bold tracking-[0.2em] py-3 uppercase cursor-pointer rounded-none"
+                              >
+                                SIMULATE BED RESERVATION
+                              </button>
+                            )}
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    
+                    /* CASE-02: LANDSTONE REALTY DIASPORA PORTFOLIO */
+                    <div className="font-sans text-slate-100 flex flex-col min-h-full">
+                      <header className="border-b border-white/10 bg-[#23293D] px-5 py-4 flex items-center justify-between sticky top-0 z-10">
+                        <span className="font-serif tracking-widest text-white text-xs uppercase font-black">
+                          LANDSTONE
+                        </span>
+                        <span className="text-[9px] font-mono tracking-widest text-slate-400 uppercase font-bold">
+                          Diaspora Gate
+                        </span>
+                      </header>
+
+                      <div className="p-6 sm:p-10 text-left bg-[#181C2A] border-b border-white/10">
+                        <h3 className="text-xl sm:text-2xl font-serif text-white tracking-wide uppercase">
+                          Boutique Real Estate
+                        </h3>
+                        <p className="text-slate-400 text-xs sm:text-sm mt-3 leading-relaxed">
+                          Diaspora-curated premium properties. Clean rectangular layouts, verified escrow tracking milestones, and responsive speeds.
+                        </p>
+                      </div>
+
+                      <div className="p-6 flex-1 space-y-6">
+                        <div className="bg-[#23293D] border border-white/10 p-5 rounded-none space-y-4">
+                          
+                          <div className="flex flex-col sm:flex-row gap-3.5 items-center justify-between pb-3 border-b border-white/5">
+                            <span className="text-[9px] font-mono text-slate-400 uppercase tracking-widest flex items-center gap-1">
+                              <Search className="w-3 h-3" /> Filters:
+                            </span>
+                            <div className="flex gap-2 w-full sm:w-auto">
+                              <select
+                                value={landstoneNeighborhood}
+                                onChange={(e: any) => setLandstoneNeighborhood(e.target.value)}
+                                className="bg-[#1E2333] border border-white/10 p-1.5 text-xs text-white font-mono rounded-none flex-1"
+                              >
+                                <option value="All">All Locations</option>
+                                <option value="Lekki Phase 1">Lekki Phase 1</option>
+                                <option value="Ikoyi">Ikoyi</option>
+                                <option value="Maitama, Abuja">Maitama, Abuja</option>
+                              </select>
+
+                              <select
+                                value={landstoneBudget}
+                                onChange={(e: any) => setLandstoneBudget(e.target.value)}
+                                className="bg-[#1E2333] border border-white/10 p-1.5 text-xs text-white font-mono rounded-none flex-1"
+                              >
+                                <option value="All">All Budgets</option>
+                                <option value="₦150M - ₦200M">₦150M - ₦200M</option>
+                                <option value="₦200M - ₦350M">₦200M - ₦350M</option>
+                                <option value="₦350M+">₦350M+</option>
+                              </select>
+                            </div>
+                          </div>
+
+                          {/* catalog rendering */}
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {filteredProperties.length > 0 ? (
+                              filteredProperties.map((p) => (
+                                <div key={p.id} className="border border-white/5 bg-[#1E2333] p-3 rounded-none">
+                                  <div className="h-24 bg-slate-950 overflow-hidden relative border border-white/5">
+                                    <img src={p.img} alt={p.title} className="w-full h-full object-cover grayscale contrast-110 brightness-90" />
+                                  </div>
+                                  <h5 className="text-xs font-bold text-white uppercase tracking-wide truncate mt-2">
+                                    {p.title}
+                                  </h5>
+                                  <div className="flex justify-between items-center mt-2.5 text-[8px] font-mono text-slate-400">
+                                    <span>{p.neighborhood}</span>
+                                    <span className="text-white font-bold">₦{p.price.toLocaleString()}</span>
+                                  </div>
+                                </div>
+                              ))
+                            ) : (
+                              <div className="sm:col-span-2 text-center py-6 text-xs text-slate-400">
+                                No simulated listings match selection.
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="pt-4 border-t border-white/5">
+                            {leadSubmitted ? (
+                              <div className="bg-blue-950/20 text-blue-300 border border-white/10 p-4 text-[11px] font-mono">
+                                ✓ LEAD CAPTURE SIMULATED.<br />
+                                Diaspora client metadata recorded for immediate VIP concierge follow-up.
+                              </div>
+                            ) : (
+                              <form
+                                onSubmit={(e) => {
+                                  e.preventDefault();
+                                  if (leadFormData.name && leadFormData.email) {
+                                    setLeadSubmitted(true);
+                                  }
+                                }}
+                                className="space-y-2.5"
+                              >
+                                <div className="grid grid-cols-2 gap-2">
+                                  <input
+                                    required
+                                    type="text"
+                                    placeholder="Full Name"
+                                    value={leadFormData.name}
+                                    onChange={(e) => setLeadFormData({ ...leadFormData, name: e.target.value })}
+                                    className="bg-[#1E2333] border border-white/10 p-2 text-xs font-mono text-white outline-none rounded-none"
+                                  />
+                                  <input
+                                    required
+                                    type="email"
+                                    placeholder="Email Address"
+                                    value={leadFormData.email}
+                                    onChange={(e) => setLeadFormData({ ...leadFormData, email: e.target.value })}
+                                    className="bg-[#1E2333] border border-white/10 p-2 text-xs font-mono text-white outline-none rounded-none"
+                                  />
+                                </div>
+                                <button
+                                  type="submit"
+                                  className="w-full border border-white bg-white text-slate-950 font-mono text-[9px] font-bold tracking-[0.2em] py-2.5 uppercase cursor-pointer rounded-none"
+                                >
+                                  DOWNLOAD DIASPORA PORTFOLIO GUIDE
+                                </button>
+                              </form>
+                            )}
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="bg-[#23293D] p-4 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div className="flex items-center gap-2 text-[10px] font-mono text-slate-400">
+                  <TrendingUp className="w-4 h-4 text-emerald-400" />
+                  <span>99% Sandbox conversion fidelity simulated.</span>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowcaseOpen(false);
+                    onNavigate('contact');
+                  }}
+                  className="bg-white hover:bg-transparent hover:text-white text-slate-950 border border-white font-mono text-[9px] font-bold tracking-[0.15em] px-4 py-2 uppercase transition-all rounded-none cursor-pointer"
+                >
+                  ACQUIRE A SIMILAR PLATFORM
+                </button>
+              </div>
+
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }

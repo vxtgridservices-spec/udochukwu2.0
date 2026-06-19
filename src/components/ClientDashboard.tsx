@@ -26,7 +26,10 @@ import {
   Check, 
   AlertCircle,
   Eye,
-  Brain
+  Brain,
+  Send,
+  Paperclip,
+  X
 } from 'lucide-react';
 import VisitorTracker from './VisitorTracker';
 import AIConversionMonitor from './AIConversionMonitor';
@@ -42,7 +45,7 @@ export default function ClientDashboard() {
   const [contacts, setContacts] = useState<any[]>(() => getContacts());
   const [audits, setAudits] = useState<any[]>(() => getAudits());
   const [subscribers, setSubscribers] = useState<string[]>(() => getNewsletterSubscribers());
-  const [adminTab, setAdminTab] = useState<'overview' | 'visitorTracker' | 'aiMonitor' | 'bookings' | 'contacts' | 'audits' | 'subscribers' | 'settings' | 'blogPost' | 'siteAssets'>('overview');
+  const [adminTab, setAdminTab] = useState<'overview' | 'visitorTracker' | 'aiMonitor' | 'bookings' | 'contacts' | 'audits' | 'subscribers' | 'settings' | 'blogPost' | 'siteAssets' | 'emailSender'>('overview');
   const [copiedSubscribers, setCopiedSubscribers] = useState(false);
   
   // Blog form states
@@ -62,12 +65,61 @@ export default function ClientDashboard() {
   const [discordWebhookUrl, setDiscordWebhookUrl] = useState(() => localStorage.getItem('vxt_discord_webhook_url') || '');
   const [discordEnabled, setDiscordEnabled] = useState(() => localStorage.getItem('vxt_discord_webhook_enabled') === 'true');
 
+  // Email form states
+  const [emailTo, setEmailTo] = useState('');
+  const [emailSubject, setEmailSubject] = useState('');
+  const [emailMessage, setEmailMessage] = useState('');
+  const [emailAttachment, setEmailAttachment] = useState<File | null>(null);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [emailStatus, setEmailStatus] = useState<{type: 'success' | 'error', message: string} | null>(null);
+
+  const handleSendEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!emailTo || !emailSubject || !emailMessage) {
+      setEmailStatus({ type: 'error', message: 'Please fill in all required fields.' });
+      return;
+    }
+
+    setIsSendingEmail(true);
+    setEmailStatus(null);
+
+    const formData = new FormData();
+    formData.append('to', emailTo);
+    formData.append('subject', emailSubject);
+    formData.append('message', emailMessage);
+    if (emailAttachment) {
+      formData.append('attachment', emailAttachment);
+    }
+
+    try {
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        body: formData
+      });
+      const result = await response.json();
+      
+      if (response.ok && result.success) {
+        setEmailStatus({ type: 'success', message: 'Email dispatched securely via Resend.' });
+        setEmailTo('');
+        setEmailSubject('');
+        setEmailMessage('');
+        setEmailAttachment(null);
+      } else {
+        setEmailStatus({ type: 'error', message: result.error || 'Failed to send email.' });
+      }
+    } catch (err: any) {
+      setEmailStatus({ type: 'error', message: 'Network integration error.' });
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
+
   const handleAdminLogin = (e: React.FormEvent) => {
     e.preventDefault();
     const email = emailInput.trim().toLowerCase();
     const password = passwordInput.trim();
 
-    if (email === 'vxtgridservices@gmail.com' && password === 'Holy5346') {
+    if (email === 'hello@udochukwu.com.ng' && password === 'Holy5346') {
       localStorage.setItem('vxt_admin_logged', 'true');
       setIsLoggedIn(true);
       setErrorText('');
@@ -76,7 +128,7 @@ export default function ClientDashboard() {
       setContacts(getContacts());
       setAudits(getAudits());
       setSubscribers(getNewsletterSubscribers());
-    } else if (email !== 'vxtgridservices@gmail.com') {
+    } else if (email !== 'hello@udochukwu.com.ng') {
       setErrorText('Access Denied: Unrecognized administrator email credentials.');
     } else {
       setErrorText('Access Denied: Invalid Master Access Key.');
@@ -171,7 +223,7 @@ export default function ClientDashboard() {
   };
 
   return (
-    <div className="py-12 md:py-20 bg-slate-50 dark:bg-slate-900 transition-colors duration-300 min-h-[80vh]">
+    <div className="py-12 md:py-20 bg-[#131620] transition-colors duration-300 min-h-[80vh]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <AnimatePresence mode="wait">
@@ -207,7 +259,7 @@ export default function ClientDashboard() {
                   <input
                     type="email"
                     required
-                    placeholder="vxtgridservices@gmail.com"
+                    placeholder="hello@udochukwu.com.ng"
                     value={emailInput}
                     onChange={(e) => setEmailInput(e.target.value)}
                     className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden"
@@ -244,29 +296,26 @@ export default function ClientDashboard() {
               className="space-y-8"
             >
               {/* Dashboard Console Header */}
-              <div className="bg-slate-900 dark:bg-slate-950 text-white p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
-                <div className="space-y-1 text-center md:text-left">
-                  <div className="flex items-center justify-center md:justify-start gap-2">
-                    <span className="h-2.5 w-2.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                    <span className="text-[10px] font-mono text-blue-400 tracking-widest font-extrabold uppercase">VXT SECURE MASTER CONSOLE</span>
+              <div className="bg-[#1E2333] text-white p-6 sm:p-8 border border-white/10 space-y-4">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                  <div className="space-y-1 text-center md:text-left">
+                    <span className="text-[10px] font-mono text-blue-400 tracking-widest font-extrabold uppercase mb-2 block">VXT SECURE MASTER CONSOLE</span>
+                    <h2 className="text-xl sm:text-2xl font-serif text-white font-medium">Welcome Back, Administrator</h2>
+                    <p className="text-xs text-slate-400 font-mono">LOGGED IN SENDER AS: <strong className="text-blue-400">hello@udochukwu.com.ng</strong></p>
                   </div>
-                  <h2 className="text-xl sm:text-2xl font-serif text-white font-medium">Welcome Back, Administrator</h2>
-                  <p className="text-xs text-slate-400 font-mono">LOGGED IN SENDER AS: <strong className="text-blue-400">vxtgridservices@gmail.com</strong></p>
-                </div>
 
-                <div className="flex items-center gap-3">
                   <button
                     onClick={handleAdminLogout}
-                    className="flex items-center gap-2 bg-slate-800 hover:bg-slate-750 dark:bg-slate-900 dark:hover:bg-slate-800 text-xs font-mono text-slate-350 hover:text-white px-4 py-2.5 rounded-xl transition-colors border border-slate-700/60 cursor-pointer"
+                    className="inline-flex items-center gap-2 border border-white text-white font-mono text-xs font-bold tracking-[0.2em] uppercase px-6 py-2.5 hover:bg-white hover:text-slate-950 transition-all cursor-pointer rounded-none"
                   >
-                    <LogOut className="w-4 h-4 text-rose-450" />
-                    <span>SECURE LOGOUT</span>
+                    <LogOut className="w-4 h-4" />
+                    <span>LOGOUT</span>
                   </button>
                 </div>
               </div>
 
               {/* Console Navigation Tabs */}
-              <div className="flex flex-wrap gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+              <div className="flex flex-wrap gap-0 border-b border-white/10">
                 {[
                   { id: 'overview', label: 'Console Overview', icon: Activity },
                   { id: 'visitorTracker', label: 'Monitor Live', icon: Eye },
@@ -275,6 +324,7 @@ export default function ClientDashboard() {
                   { id: 'contacts', label: 'Inbox Inquiries', icon: Mail, badge: contacts.length },
                   { id: 'audits', label: 'Audit Submissions', icon: FileText, badge: audits.length },
                   { id: 'subscribers', label: 'Newsletter Users', icon: Users, badge: subscribers.length },
+                  { id: 'emailSender', label: 'Send Mail', icon: Send },
                   { id: 'blogPost', label: 'Post New Blog', icon: BookOpen },
                   { id: 'siteAssets', label: 'Site Assets', icon: Sparkles },
                   { id: 'settings', label: 'CRM Alerts Hooks', icon: Sliders },
@@ -285,17 +335,17 @@ export default function ClientDashboard() {
                     <button
                       key={tab.id}
                       onClick={() => setAdminTab(tab.id as any)}
-                      className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all cursor-pointer ${
+                      className={`flex items-center gap-2 px-6 py-4 text-xs font-bold tracking-widest uppercase transition-all cursor-pointer ${
                         isActive 
-                          ? 'bg-blue-600 text-white shadow-md shadow-blue-500/15' 
-                          : 'bg-white dark:bg-slate-850 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200/50 dark:border-slate-800/40'
+                          ? 'bg-[#1E2333] text-white border-t border-r border-l border-white/10' 
+                          : 'bg-[#131620] text-slate-500 hover:text-white hover:bg-[#191d2d] border border-transparent'
                       }`}
                     >
                       <Icon className="w-4 h-4" />
                       <span>{tab.label}</span>
                       {tab.badge !== undefined && tab.badge > 0 && (
-                        <span className={`text-[10px] rounded-full px-1.5 py-0.5 font-bold font-mono ${
-                          isActive ? 'bg-white/20 text-white' : 'bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400'
+                        <span className={`text-[9px] rounded-full px-2 py-0.5 font-bold font-mono ${
+                          isActive ? 'bg-white/20 text-white' : 'bg-white/10 text-slate-400'
                         }`}>
                           {tab.badge}
                         </span>
@@ -325,25 +375,25 @@ export default function ClientDashboard() {
                   {adminTab === 'overview' && (
                     <div className="space-y-6">
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div className="bg-white dark:bg-slate-850 p-6 rounded-2xl border border-slate-200/50 dark:border-slate-800/40 shadow-xs">
-                          <p className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">Consultations</p>
-                          <p className="text-3xl font-bold text-slate-850 dark:text-white mt-1.5">{bookings.length}</p>
-                          <span className="text-[10px] text-emerald-500 font-mono font-semibold block mt-1">● Synced with local database</span>
+                        <div className="bg-[#1E2333] p-6 border border-white/10">
+                          <p className="text-[10px] font-mono font-bold text-blue-400 uppercase tracking-widest">Consultations</p>
+                          <p className="text-3xl font-bold text-white mt-1.5">{bookings.length}</p>
+                          <span className="text-[9px] text-slate-400 font-mono block mt-1">● Synced with local storage</span>
                         </div>
-                        <div className="bg-white dark:bg-slate-850 p-6 rounded-2xl border border-slate-200/50 dark:border-slate-800/40 shadow-xs">
-                          <p className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">Inbox Inquiries</p>
-                          <p className="text-3xl font-bold text-slate-850 dark:text-white mt-1.5">{contacts.length}</p>
-                          <span className="text-[10px] text-blue-500 font-mono font-semibold block mt-1">● Live form listener connected</span>
+                        <div className="bg-[#1E2333] p-6 border border-white/10">
+                          <p className="text-[10px] font-mono font-bold text-blue-400 uppercase tracking-widest">Inbox Inquiries</p>
+                          <p className="text-3xl font-bold text-white mt-1.5">{contacts.length}</p>
+                          <span className="text-[9px] text-slate-400 font-mono block mt-1">● Live form listener active</span>
                         </div>
-                        <div className="bg-white dark:bg-slate-850 p-6 rounded-2xl border border-slate-200/50 dark:border-slate-800/40 shadow-xs">
-                          <p className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">Audit Requests</p>
-                          <p className="text-3xl font-bold text-slate-850 dark:text-white mt-1.5">{audits.length}</p>
-                          <span className="text-[10px] text-indigo-500 font-mono font-semibold block mt-1">● Landing audit flows active</span>
+                        <div className="bg-[#1E2333] p-6 border border-white/10">
+                          <p className="text-[10px] font-mono font-bold text-blue-400 uppercase tracking-widest">Audit Requests</p>
+                          <p className="text-3xl font-bold text-white mt-1.5">{audits.length}</p>
+                          <span className="text-[9px] text-slate-400 font-mono block mt-1">● Landing audit active</span>
                         </div>
-                        <div className="bg-white dark:bg-slate-850 p-6 rounded-2xl border border-slate-200/50 dark:border-slate-800/40 shadow-xs">
-                          <p className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">Subscribers</p>
-                          <p className="text-3xl font-bold text-slate-850 dark:text-white mt-1.5">{subscribers.length}</p>
-                          <span className="text-[10px] text-violet-500 font-mono font-semibold block mt-1">● Active newsletter leads</span>
+                        <div className="bg-[#1E2333] p-6 border border-white/10">
+                          <p className="text-[10px] font-mono font-bold text-blue-400 uppercase tracking-widest">Subscribers</p>
+                          <p className="text-3xl font-bold text-white mt-1.5">{subscribers.length}</p>
+                          <span className="text-[9px] text-slate-400 font-mono block mt-1">● Newsletter leads</span>
                         </div>
                       </div>
 
@@ -370,10 +420,10 @@ export default function ClientDashboard() {
 
                   {/* BOOKINGS CORNER TAB */}
                   {adminTab === 'bookings' && (
-                    <div className="bg-white dark:bg-slate-850 rounded-3xl border border-slate-200/50 dark:border-slate-800/60 shadow-xs overflow-hidden">
-                      <div className="p-6 border-b border-slate-100 dark:border-slate-800/80">
-                        <h3 className="text-base font-serif font-black text-slate-950 dark:text-white">Active Strategic Consultation Bookings</h3>
-                        <p className="text-xs text-slate-500 mt-1">These leads requested live calendar discussions regarding project overhauls.</p>
+                    <div className="bg-[#1E2333] border border-white/10 overflow-hidden">
+                      <div className="p-6 border-b border-white/10">
+                        <h3 className="text-base font-serif font-black text-white">Active Strategic Consultation Bookings</h3>
+                        <p className="text-xs text-slate-400 mt-1">These leads requested live calendar discussions regarding project overhauls.</p>
                       </div>
 
                       <div className="p-6 space-y-4">
@@ -422,10 +472,10 @@ export default function ClientDashboard() {
 
                   {/* INBOX INQUIRIES TAB */}
                   {adminTab === 'contacts' && (
-                    <div className="bg-white dark:bg-slate-850 rounded-3xl border border-slate-200/50 dark:border-slate-800/60 shadow-xs overflow-hidden">
-                      <div className="p-6 border-b border-slate-100 dark:border-slate-800/80">
-                        <h3 className="text-base font-serif font-black text-slate-950 dark:text-white">General Inquiries & Messages Inbox</h3>
-                        <p className="text-xs text-slate-500 mt-1">General questions or custom project messages received via the Contact Form.</p>
+                    <div className="bg-[#1E2333] border border-white/10 overflow-hidden">
+                      <div className="p-6 border-b border-white/10">
+                        <h3 className="text-base font-serif font-black text-white">General Inquiries & Messages Inbox</h3>
+                        <p className="text-xs text-slate-400 mt-1">General questions or custom project messages received via the Contact Form.</p>
                       </div>
 
                       <div className="p-6 space-y-4">
@@ -467,10 +517,10 @@ export default function ClientDashboard() {
 
                   {/* AUDIT REQUESTS TAB */}
                   {adminTab === 'audits' && (
-                    <div className="bg-white dark:bg-slate-850 rounded-3xl border border-slate-200/50 dark:border-slate-800/60 shadow-xs overflow-hidden">
-                      <div className="p-6 border-b border-slate-100 dark:border-slate-800/80">
-                        <h3 className="text-base font-serif font-black text-slate-950 dark:text-white">Lead Magnet: Audit Submission Form Logs</h3>
-                        <p className="text-xs text-slate-500 mt-1">High conversion prospects looking for diagnostic analysis on their business speed parameters.</p>
+                    <div className="bg-[#1E2333] border border-white/10 overflow-hidden">
+                      <div className="p-6 border-b border-white/10">
+                        <h3 className="text-base font-serif font-black text-white">Lead Magnet: Audit Submission Form Logs</h3>
+                        <p className="text-xs text-slate-400 mt-1">High conversion prospects looking for diagnostic analysis on their business speed parameters.</p>
                       </div>
 
                       <div className="p-6 space-y-4">
@@ -529,11 +579,11 @@ export default function ClientDashboard() {
 
                   {/* NEWSLETTER SUBSCRIBERS TAB */}
                   {adminTab === 'subscribers' && (
-                    <div className="bg-white dark:bg-slate-850 p-6 rounded-3xl border border-slate-200/50 dark:border-slate-800/40 shadow-xs space-y-6">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b">
+                    <div className="bg-[#1E2333] p-6 border border-white/10 space-y-6">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-white/10">
                         <div>
-                          <h3 className="text-base font-serif font-black text-slate-950 dark:text-white">Newsletter Leads list ({subscribers.length})</h3>
-                          <p className="text-xs text-slate-500 mt-1">Export list containing emails of subscribers signed up for premium blueprints.</p>
+                          <h3 className="text-base font-serif font-black text-white">Newsletter Leads list ({subscribers.length})</h3>
+                          <p className="text-xs text-slate-400 mt-1">Export list containing emails of subscribers signed up for premium blueprints.</p>
                         </div>
 
                         {subscribers.length > 0 && (
@@ -722,6 +772,104 @@ export default function ClientDashboard() {
                           className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl transition-all cursor-pointer"
                         >
                           Save Layout Assets
+                        </button>
+                      </form>
+                    </div>
+                  )}
+
+                  {/* EMAIL SENDER TAB */}
+                  {adminTab === 'emailSender' && (
+                    <div className="bg-white dark:bg-slate-850 p-6 rounded-3xl border border-slate-200/50 dark:border-slate-800/40 shadow-xs space-y-6">
+                      <div>
+                        <h3 className="text-base font-serif font-black text-slate-950 dark:text-white">Direct Email Dispatch</h3>
+                        <p className="text-xs text-slate-500 mt-1">Send branded, beautifully formatted emails explicitly via Resend API. Supports PDF and document attachments.</p>
+                      </div>
+
+                      {emailStatus && (
+                        <div className={`p-4 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2 ${emailStatus.type === 'success' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 border border-emerald-200/50' : 'bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400 border border-red-200/50'}`}>
+                          {emailStatus.type === 'success' ? <Check className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                          {emailStatus.message}
+                        </div>
+                      )}
+
+                      <form onSubmit={handleSendEmail} className="space-y-5">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-1.5">
+                            <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest block uppercase">Recipient Email</label>
+                            <input 
+                              type="email" 
+                              required
+                              className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden" 
+                              value={emailTo} 
+                              onChange={(e) => setEmailTo(e.target.value)} 
+                              placeholder="client@company.com"
+                            />
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest block uppercase">Subject Line</label>
+                            <input 
+                              type="text" 
+                              required
+                              className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden" 
+                              value={emailSubject} 
+                              onChange={(e) => setEmailSubject(e.target.value)} 
+                              placeholder="Project Proposal & Next Steps"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest block uppercase">Message Content (Appears formatted naturally)</label>
+                          <textarea 
+                            required
+                            rows={8}
+                            className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white p-4 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden resize-y" 
+                            value={emailMessage} 
+                            onChange={(e) => setEmailMessage(e.target.value)} 
+                            placeholder="Hello, I have attached the documents..."
+                          />
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest block uppercase">Attach File (PDF, DOCX, ZIP)</label>
+                          <div className="flex items-center gap-4">
+                            <label className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-medium cursor-pointer transition-colors border border-slate-200 dark:border-slate-700">
+                              <Paperclip className="w-4 h-4" />
+                              <span>{emailAttachment ? 'Change File' : 'Browse File'}</span>
+                              <input 
+                                type="file" 
+                                className="hidden"
+                                onChange={(e) => setEmailAttachment(e.target.files ? e.target.files[0] : null)}
+                              />
+                            </label>
+                            {emailAttachment && (
+                              <div className="flex items-center justify-between gap-3 text-xs px-3 py-1.5 bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-lg border border-blue-200/50 dark:border-blue-800/40">
+                                <span className="truncate max-w-[200px]">{emailAttachment.name}</span>
+                                <button type="button" onClick={() => setEmailAttachment(null)} className="opacity-70 hover:opacity-100">
+                                  <X className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <button 
+                          type="submit" 
+                          disabled={isSendingEmail}
+                          className="bg-slate-900 hover:bg-black dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 w-full md:w-auto"
+                        >
+                          {isSendingEmail ? (
+                            <>
+                              <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                              <span>Dispatching...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Send className="w-4 h-4" />
+                              <span>Send Branded Email</span>
+                            </>
+                          )}
                         </button>
                       </form>
                     </div>

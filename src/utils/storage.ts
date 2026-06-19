@@ -49,6 +49,101 @@ export const PRELOADED_CASE_STUDIES: CaseStudy[] = [
     afterImage: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80', // Our generated luxury real estate asset!
     liveUrl: '#live-preview',
     highlightText: 'Udochukwu understood our elite customer profile. Every element on the platform exudes trust, making diaspora wire transfers frictionless.'
+  },
+  {
+    id: 'case-03',
+    title: 'Engineering Truispay.co: A Secure, High-Velocity Digital Wallet System',
+    client: 'Truispay',
+    industry: 'Fintech & Digital Payments',
+    problem: 'Truispay needed a highly secure, frictionless digital wallet platform capable of handling rapid transaction volumes without latency drops. Building user trust through a bulletproof, modern financial interface was paramount to gaining market share.',
+    solution: 'I engineered a highly responsive fintech portal for Truispay with banking-grade UX interfaces. The platform was designed around a frictionless onboarding flow and lightning-fast transaction dashboards, ensuring users could manage funds and initiate transfers instantly.',
+    technology: ['React', 'Node.js', 'Tailwind', 'Real-time Ledgers', 'Bank APIs'],
+    results: {
+      conversionIncrease: '+85% Registration Rate',
+      speedImprovement: '0.9s Dashboard Load Speed',
+      trafficIncrease: 'Seamless High-Volume Concurrency',
+      revenueGrowth: 'Accelerated Initial User Acquisition'
+    },
+    beforeImage: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=50',
+    afterImage: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=800&q=80', 
+    liveUrl: 'https://truispay.co',
+    highlightText: 'The architecture provided the absolute reliability and institutional-grade trust required to operate a digital wallet at scale.'
+  },
+  {
+    id: 'case-04',
+    title: 'Scaling OmnixMarket.online: A High-Volume SMM & Digital Goods Marketplace',
+    client: 'OmnixMarket',
+    industry: 'Digital Marketing & E-Commerce',
+    problem: 'OmnixMarket required an automated provisioning platform capable of managing thousands of micro-transactions for digital services and SMM panels simultaneously. Existing market solutions suffered from slow load times and confusing checkouts.',
+    solution: 'I built a streamlined, robust marketplace tailored for high-frequency digital purchases. The solution featured a fast, grid-based dashboard for service selection, instant API-driven fulfillment integrations, and automated ledger balancing for high-velocity users.',
+    technology: ['React', 'Next.js', 'Payment Gateways', 'SMM APIs', 'Tailwind CSS'],
+    results: {
+      conversionIncrease: '+140% Daily Transactions',
+      speedImprovement: '1.2s Order Processing Time',
+      trafficIncrease: 'Optimized for high concurrency',
+      revenueGrowth: 'Reduced abandoned carts by 45%'
+    },
+    beforeImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=50',
+    afterImage: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80', 
+    liveUrl: 'https://omnixmarket.online',
+    highlightText: 'By removing the friction from digital micro-transactions, we built a digital engine that processed automated orders smoothly round the clock.'
+  },
+  {
+    id: 'case-05',
+    title: 'Commanding Authority: Enterprise Web Presence for Global Sentinel Group',
+    client: 'Global Sentinel Group',
+    industry: 'Private Security & Risk Management',
+    problem: 'Global Sentinel Group needed a digital presence that immediately communicated absolute authority, reliability, and enterprise-grade security capabilities to high-level corporate and government prospects.',
+    solution: 'I crafted a striking, imposing corporate portal with cinematic visuals and commanding typography. The site was optimized to instantly reassure high-net-worth individuals and corporate risk managers of the firm\'s operational excellence and elite standards.',
+    technology: ['Vite', 'React', 'Framer Motion', 'Tailwind', 'CDN Optimization'],
+    results: {
+      conversionIncrease: 'Higher Quality Enterprise Inquiries',
+      speedImprovement: '99/100 Core Web Vitals',
+      trafficIncrease: 'Expanded global footprint',
+      revenueGrowth: 'Secured high-ticket corporate contracts'
+    },
+    beforeImage: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=50',
+    afterImage: 'https://images.unsplash.com/photo-1557597774-9d22384a56ea?auto=format&fit=crop&w=800&q=80', 
+    liveUrl: 'https://globalsentinelgroup.com',
+    highlightText: 'The new platform positions them flawlessly as top-tier global security providers, matching their digital presence with their operational elite status.'
+  },
+  {
+    id: 'case-06',
+    title: 'Revitalizing Conversions for a Premium African Fashion E-Commerce Brand',
+    client: 'Luxe Wardrobe Africa (E-Commerce)',
+    industry: 'E-Commerce & Retail',
+    problem: 'Despite massive social media engagement, the brand was leaking sales at checkout due to a bloated, slow mobile experience and a confusingly placed local payment gateway integration.',
+    solution: 'I developed a highly-tailored, mobile-first e-commerce experience using modern architecture. The storefront prioritized high-resolution visual merchandising, instant-loading product pages, and a localized one-click checkout system that flawlessly integrated with local payment providers.',
+    technology: ['Headless CMS', 'React', 'Paystack API', 'Tailwind', 'Redux'],
+    results: {
+      conversionIncrease: '+210% Checkout Completion',
+      speedImprovement: '0.8s Mobile Page Load',
+      trafficIncrease: 'High social-to-site retention',
+      revenueGrowth: 'Tripled monthly online revenue'
+    },
+    beforeImage: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=800&q=50',
+    afterImage: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80', 
+    liveUrl: '#live-preview',
+    highlightText: 'The shift from a generic template to a custom customer acquisition portal resulted in explosive revenue growth with local payment processing.'
+  },
+  {
+    id: 'case-07',
+    title: 'Building a High-Performance Digital Storefront for Consumer Electronics',
+    client: 'TechGear Direct (E-Commerce)',
+    industry: 'E-Commerce & Consumer Electronics',
+    problem: 'Selling high-ticket electronics requires absolute domain authority. Customers were abandoning the comparison phase because product filtering was painfully slow and tech specs were poorly formatted on mobile devices.',
+    solution: 'I engineered a technically robust e-commerce catalog featuring instantaneous algorithmic product filtering, side-by-side spec comparisons, and persistent cart features. I also implemented structured schema markup to capture high-intent Google search traffic.',
+    technology: ['React', 'Next.js', 'Algolia Search', 'Stripe/Flutterwave', 'Tailwind'],
+    results: {
+      conversionIncrease: '+165% Add to Cart Rate',
+      speedImprovement: 'Instantaneous Search Results',
+      trafficIncrease: '240% Google organic product traffic',
+      revenueGrowth: 'Massive lift in average order value'
+    },
+    beforeImage: 'https://images.unsplash.com/photo-1550009158-9effb64c7e6b?auto=format&fit=crop&w=800&q=50',
+    afterImage: 'https://images.unsplash.com/photo-1491933382434-500287f9b54b?auto=format&fit=crop&w=800&q=80', 
+    liveUrl: '#live-preview',
+    highlightText: 'Fast search and crystal-clear technical specifications wiped out buyer hesitation and established absolute market dominance.'
   }
 ];
 
@@ -117,6 +212,27 @@ export const PRELOADED_SERVICES: ServicePackage[] = [
       'Modern security architecture (SSL, DDOS protection, Secure headers)'
     ],
     conversionFocus: 'A/B tested lead paths, interactive customer journeys, clear contextual buttons.'
+  },
+  {
+    id: 'svc-04',
+    name: 'Search Engine Optimization (SEO)',
+    tagline: 'Dominating local searches and expanding your organic reach without continuous ad spend.',
+    priceRange: '',
+    timeline: 'Ongoing',
+    targetAudience: 'Established businesses looking to capture high-intent search traffic.',
+    benefits: [
+      'Rank substantially higher for profitable keywords',
+      'Lower overall customer acquisition cost',
+      'Establish long-term domain authority and brand trust'
+    ],
+    features: [
+      'Deep Technical SEO Audits & Fixes',
+      'High-intent Keyword Research & Mapping',
+      'On-Page Optimization (Headers, Meta Data, Schema)',
+      'Local SEO (Google Business Profile, Local Directories)',
+      'Quarterly Performance and Rank Reporting'
+    ],
+    conversionFocus: 'Increasing highly qualified organic traffic that converts passively.'
   }
 ];
 
@@ -161,7 +277,7 @@ By transforming Eko Haven's speed from 6.4 seconds down to **0.7 seconds**, thei
     category: 'Web Design',
     readTime: '5 min read',
     date: 'June 10, 2026',
-    image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=800&q=60',
+    image: 'https://images.unsplash.com/photo-1543269664-76bc3997d9ea?auto=format&fit=crop&w=800&q=60',
     views: 342,
     likes: 88,
     comments: [],
@@ -203,7 +319,7 @@ Want to dominate your niche? Make sure your platform is built on modern code, no
     category: 'SEO',
     readTime: '6 min read',
     date: 'May 24, 2026',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=60',
+    image: 'https://images.unsplash.com/photo-1573164713619-24cb51156161?auto=format&fit=crop&w=800&q=60',
     views: 289,
     likes: 74,
     comments: [],
@@ -243,7 +359,7 @@ If your website looks like it cost ₦50,000 to construct, don't be surprised wh
     category: 'Business Growth',
     readTime: '4 min read',
     date: 'April 19, 2026',
-    image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=60',
+    image: 'https://images.unsplash.com/photo-1522881115392-56434440bcbc?auto=format&fit=crop&w=800&q=60',
     views: 410,
     likes: 120,
     comments: [],

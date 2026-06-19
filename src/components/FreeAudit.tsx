@@ -105,20 +105,23 @@ export default function FreeAudit({ onNavigate }: FreeAuditProps) {
   };
 
   return (
-    <div className="py-12 md:py-20 bg-white dark:bg-slate-950 transition-colors duration-300">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+    <div className="min-h-screen py-16 sm:py-24 bg-[#131620] text-slate-100 transition-colors duration-300">
+      <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16">
         
         {/* Header Block unless completed */}
         {!isSubmitted && !isAnalyzing && (
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <span className="text-xs font-mono text-blue-600 dark:text-blue-400 uppercase tracking-widest bg-blue-100 dark:bg-blue-950 px-3 py-1.5 rounded-full font-medium">
+          <div className="text-left w-full mb-16">
+            <span className="text-[10px] font-mono text-blue-400 tracking-[0.25em] block uppercase font-bold mb-2">
               CONVERSION SCIENTIFIC CHECKUP
             </span>
-            <h1 className="text-3xl sm:text-4xl font-serif text-slate-900 dark:text-white mt-4 font-normal tracking-tight">
-              Discover What's Holding Your Website Back
-            </h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-3 text-xs sm:text-sm leading-relaxed">
-              Submit your business details for a comprehensive audit. I will analyze your website for speed, performance, and conversion friction to show you exactly how to transform it into a powerful lead-generation engine.
+            <div className="border-b border-white/20 pb-4 mb-8">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif text-white tracking-wide uppercase relative inline-block pb-3 whitespace-normal">
+                Discover What's Holding Your Website Back
+                <span className="absolute bottom-0 left-0 w-full h-[2px] bg-white"></span>
+              </h1>
+            </div>
+            <p className="text-slate-400 text-xs sm:text-sm tracking-[0.12em] font-mono leading-relaxed max-w-3xl font-bold uppercase">
+              Submit your corporate domain specs below to trigger a comprehensive system speed index, mobile network latency check, and automated SEO schema audit.
             </p>
           </div>
         )}
@@ -130,15 +133,15 @@ export default function FreeAudit({ onNavigate }: FreeAuditProps) {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
-              className="bg-slate-50 dark:bg-slate-900 p-8 sm:p-10 rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-xs"
+              className="w-full bg-transparent p-0 mt-8"
             >
-              <form onSubmit={handleAuditSubmit} className="space-y-6">
+              <form onSubmit={handleAuditSubmit} className="space-y-8 font-sans">
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {/* Business Name */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300 block">
-                      BUSINESS NAME *
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest uppercase block">
+                      1. Business Name *
                     </label>
                     <input 
                       type="text"
@@ -146,14 +149,14 @@ export default function FreeAudit({ onNavigate }: FreeAuditProps) {
                       placeholder="e.g., Palms Luxury Suites"
                       value={businessName}
                       onChange={(e) => setBusinessName(e.target.value)}
-                      className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 px-4 py-3 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-hidden text-sm"
+                      className="w-full bg-[#1E2333] text-white border border-white/10 px-5 py-4 focus:border-white focus:outline-none font-mono tracking-wider rounded-none text-xs uppercase"
                     />
                   </div>
 
                   {/* Website URL */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300 block">
-                      WEBSITE ADDRESS *
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest uppercase block">
+                      2. Website Address *
                     </label>
                     <input 
                       type="url"
@@ -161,16 +164,16 @@ export default function FreeAudit({ onNavigate }: FreeAuditProps) {
                       placeholder="https://mywebsite.com"
                       value={website}
                       onChange={(e) => setWebsite(e.target.value)}
-                      className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 px-4 py-3 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-hidden text-sm"
+                      className="w-full bg-[#1E2333] text-white border border-white/10 px-5 py-4 focus:border-white focus:outline-none font-mono tracking-wider rounded-none text-xs"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {/* Phone Number */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300 block">
-                      WHATSAPP / PHONE NUMBER *
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest uppercase block">
+                      3. WhatsApp / Phone Number *
                     </label>
                     <input 
                       type="tel"
@@ -178,14 +181,14 @@ export default function FreeAudit({ onNavigate }: FreeAuditProps) {
                       placeholder="+234 803 123 4567"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 px-4 py-3 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-hidden text-sm"
+                      className="w-full bg-[#1E2333] text-white border border-white/10 px-5 py-4 focus:border-white focus:outline-none font-mono tracking-wider rounded-none text-xs uppercase"
                     />
                   </div>
 
                   {/* Email */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300 block">
-                      WORK EMAIL *
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest uppercase block">
+                      4. Work Email *
                     </label>
                     <input 
                       type="email"
@@ -193,20 +196,20 @@ export default function FreeAudit({ onNavigate }: FreeAuditProps) {
                       placeholder="admissions@palms.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 px-4 py-3 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-hidden text-sm"
+                      className="w-full bg-[#1E2333] text-white border border-white/10 px-5 py-4 focus:border-white focus:outline-none font-mono tracking-wider rounded-none text-xs"
                     />
                   </div>
                 </div>
 
                 {/* Industry Dropdown */}
-                <div className="space-y-2">
-                  <label className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300 block">
-                    SECTOR CATEGORY *
+                <div className="space-y-3">
+                  <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest uppercase block">
+                    5. Sector Category *
                   </label>
                   <select
                     value={industry}
                     onChange={(e) => setIndustry(e.target.value)}
-                    className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 px-4 py-3 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-hidden text-sm"
+                    className="w-full bg-[#1E2333] text-white border border-white/10 px-5 py-4 focus:border-white focus:outline-none font-mono tracking-wider rounded-none text-xs uppercase"
                   >
                     <option value="Hotels">Hotels & Apartments</option>
                     <option value="Churches">Churches & Ministries</option>
@@ -223,16 +226,16 @@ export default function FreeAudit({ onNavigate }: FreeAuditProps) {
                 </div>
 
                 {/* Challenges */}
-                <div className="space-y-2">
-                  <label className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300 block">
-                    HOW CAN A BETTER WEBSITE HELP YOUR BUSINESS GROWTH? (YOUR GOALS)
+                <div className="space-y-3">
+                  <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest uppercase block">
+                    6. How can a better website help your business growth? (Your goals)
                   </label>
                   <textarea 
-                    rows={4}
+                    rows={5}
                     placeholder="e.g., Increase online bookings, improve credibility with corporate clients, convert more visitor traffic..."
                     value={challenges}
                     onChange={(e) => setChallenges(e.target.value)}
-                    className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 px-4 py-3 bg-white/60 dark:bg-slate-800/85 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-hidden text-sm"
+                    className="w-full bg-[#1E2333] text-white border border-white/10 px-5 py-4 focus:border-white focus:outline-none font-mono tracking-wider rounded-none text-xs uppercase resize-none"
                   ></textarea>
                 </div>
 
@@ -241,10 +244,9 @@ export default function FreeAudit({ onNavigate }: FreeAuditProps) {
                   <button
                     type="submit"
                     id="submit-audit-form"
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full border border-white bg-white text-slate-950 font-mono text-xs font-bold tracking-[0.2em] uppercase py-4.5 hover:bg-transparent hover:text-white transition-all cursor-pointer rounded-none text-center block"
                   >
-                    <span>Request Audit & Trigger Local Scan</span>
-                    <Send className="w-4 h-4" />
+                    TRIGGER COMPREHENSIVE LATENCY SCAN & AUDIT
                   </button>
                 </div>
 
@@ -255,31 +257,33 @@ export default function FreeAudit({ onNavigate }: FreeAuditProps) {
           {/* 2. THE SCANNING SIMULATOR OVERLAY */}
           {isAnalyzing && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="bg-slate-950 text-white rounded-3xl p-10 text-center min-h-[400px] flex flex-col justify-center items-center shadow-2xl border border-slate-800"
+              className="w-full text-center py-24 min-h-[400px] flex flex-col justify-center items-center font-mono border border-white/10 bg-[#1E2333] p-12 rounded-none animate-pulse"
             >
-              <div className="h-20 w-20 rounded-full border-4 border-slate-800 border-t-blue-500 animate-spin flex items-center justify-center mb-8">
-                <Search className="w-8 h-8 text-blue-500 animate-pulse" />
+              <div className="relative h-16 w-16 mb-8 flex items-center justify-center">
+                <span className="absolute inset-0 border border-white/20 animate-ping rounded-none"></span>
+                <span className="absolute inset-2 border border-blue-400/30 animate-pulse rounded-none"></span>
+                <Search className="w-6 h-6 text-blue-400" />
               </div>
-              <h3 className="text-xl font-serif text-white font-medium">Scanning Digital Architecture</h3>
+              <h3 className="text-sm font-bold text-white uppercase tracking-[0.2em]">Scanning Digital Architecture...</h3>
               
               {/* Dynamic steps slider */}
-              <div className="mt-6 font-mono text-xs text-blue-400 max-w-sm h-12 flex justify-center items-center">
-                <span>{steps[analysisStep]}</span>
+              <div className="mt-8 font-mono text-xs text-blue-400 max-w-lg h-12 flex justify-center items-center tracking-wider uppercase">
+                <span>[LOG] {steps[analysisStep]}</span>
               </div>
 
               {/* Progress bar line */}
-              <div className="w-full max-w-md bg-slate-800 h-1.5 rounded-full mt-4 overflow-hidden">
+              <div className="w-full max-w-sm bg-white/10 h-[1px] mt-6 overflow-hidden rounded-none">
                 <div 
-                  className="bg-blue-500 h-full transition-all duration-700"
+                  className="bg-white h-full transition-all duration-700"
                   style={{ width: `${((analysisStep + 1) / steps.length) * 100}%` }}
                 ></div>
               </div>
               
-              <p className="text-[11px] text-slate-500 mt-6 max-w-xs italic leading-tight">
-                Evaluating locational DNS hops over LAGOS servers to confirm real-time Airtel/MTN mobile loading profiles...
+              <p className="text-[10px] text-slate-500 mt-8 max-w-md tracking-[0.1em] uppercase leading-relaxed font-light">
+                Evaluating network hops over Lagos infrastructure nodes to confirm real-time subscriber load parameters.
               </p>
             </motion.div>
           )}
@@ -292,95 +296,100 @@ export default function FreeAudit({ onNavigate }: FreeAuditProps) {
               className="space-y-8"
             >
               {/* Success confirmation and Badge */}
-              <div className="bg-emerald-50 dark:bg-emerald-950/40 p-6 rounded-2xl border border-emerald-300/40 dark:border-emerald-800/50 flex flex-col sm:flex-row items-center gap-4">
-                <CheckCircle2 className="w-12 h-12 text-emerald-500 shrink-0" />
-                <div className="text-center sm:text-left">
-                  <h3 className="text-lg font-serif font-semibold text-slate-900 dark:text-white">Lead Successfully Logged in VXT Database!</h3>
-                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mt-1">
-                    An email with your formal diagnostic dossier has been queued. An SMS confirmation was sent to <strong className="text-slate-900 dark:text-white">{phone}</strong>.
+              <div className="bg-emerald-950/20 text-emerald-300 border border-emerald-900/40 p-6 rounded-none flex flex-col sm:flex-row items-center gap-5">
+                <div className="h-10 w-10 bg-[#1E2333]/40 border border-emerald-500/40 flex items-center justify-center rounded-none shrink-0 font-bold">
+                  ✓
+                </div>
+                <div className="text-center sm:text-left font-mono">
+                  <h3 className="text-xs font-bold uppercase tracking-[0.18em] text-white">Analysis Pipeline Completed</h3>
+                  <p className="text-[10px] text-slate-350 leading-relaxed mt-1.5 uppercase tracking-wide">
+                    The raw telemetry metrics have been compiled and secure notification sent. ID index saved to workspace registry.
                   </p>
                 </div>
               </div>
 
               {/* Comprehensive Diagnostic Board */}
-              <div className="bg-slate-50 dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800/80 overflow-hidden shadow-md">
+              <div className="bg-[#1E2333] border border-white/10 rounded-none overflow-hidden mt-8 shadow-2xl">
                 
                 {/* Header card with health score */}
-                <div className="bg-slate-900 dark:bg-slate-800 p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 border-b border-slate-800">
-                  <div className="space-y-1">
-                    <span className="text-[10px] font-mono text-blue-400 font-semibold uppercase tracking-widest">{website}</span>
-                    <h4 className="text-2xl font-serif font-normal">{businessName} — Diagnostics</h4>
-                    <p className="text-xs text-slate-400 font-mono">Dossier ID: {generatedReport.reportId} | Logs Saved Locally</p>
+                <div className="bg-[#181C2A] p-8 text-white flex flex-col md:flex-row items-center justify-between gap-8 border-b border-white/10 text-left">
+                  <div className="space-y-2 font-mono">
+                    <span className="text-[10px] font-bold text-blue-400 tracking-[0.2em] block uppercase">{website}</span>
+                    <h4 className="text-xl sm:text-2xl font-serif text-white tracking-wide uppercase">{businessName}</h4>
+                    <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Dossier: {generatedReport.reportId} | Verified VXT Registry Logs</p>
                   </div>
 
-                  {/* Circular Score display */}
-                  <div className="flex items-center gap-4 bg-slate-950 p-4 rounded-2xl border border-slate-800 shadow-inner">
+                  {/* High Tech score frame */}
+                  <div className="flex items-center gap-5 bg-[#131620] p-5 border border-white/10 rounded-none w-full md:w-auto text-left justify-start">
                     <div className="text-center">
-                      <p className="text-4xl font-extrabold text-amber-500 tracking-tight">{generatedReport.score}</p>
-                      <p className="text-[10px] font-mono text-slate-400 font-black tracking-widest">HEALTH SCORE</p>
+                      <p className="text-3xl sm:text-4xl font-serif font-black text-rose-500 leading-none">{generatedReport.score}</p>
+                      <p className="text-[9px] font-mono text-slate-400 mt-2 font-bold tracking-[0.2em]">HEALTH SCORE</p>
                     </div>
-                    <div className="text-slate-500 border-l border-slate-800 pl-4 text-xs font-mono leading-tight max-w-[120px]">
-                      <span className="text-amber-500 font-bold block">⚠️ RISK ALERT:</span>
-                      Optimized for Google but leaks mobile leads.
+                    <div className="text-slate-400 border-l border-white/10 pl-5 text-[10px] font-mono leading-relaxed max-w-[180px] uppercase font-light">
+                      <span className="text-rose-400 font-bold block mb-0.5">⚠️ CRITICAL ALERT:</span>
+                      Core web vitals underperforming Airtel network thresh.
                     </div>
                   </div>
                 </div>
 
                 {/* Audit points list */}
-                <div className="p-8 space-y-8">
+                <div className="p-8 space-y-10 text-left">
                   
                   {/* The key performance benchmarks */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="bg-white dark:bg-slate-850 p-5 rounded-2xl border border-slate-200/40 dark:border-slate-700/50">
-                      <Smartphone className="w-5 h-5 text-rose-500" />
-                      <p className="text-xs font-mono text-slate-400 mt-2">MTN 3G/4G MOBILITY SPEED</p>
-                      <p className="text-xl font-bold text-rose-500 mt-1">{generatedReport.vitals.mtnTime}</p>
-                      <span className="text-[10px] text-slate-500 leading-none">Very Sluggish (Loss Limit: 2.0s)</span>
+                    <div className="bg-[#131620] p-6 border border-white/10 rounded-none flex flex-col justify-between">
+                      <div>
+                        <p className="text-[9px] font-mono text-[#7A889B] tracking-[0.15em] font-medium uppercase">MTN MOBILITY LATENCY</p>
+                        <p className="text-3xl font-serif font-semibold text-rose-405 text-rose-450 mt-3">{generatedReport.vitals.mtnTime}</p>
+                      </div>
+                      <span className="text-[9px] font-mono text-slate-500 mt-4 uppercase tracking-wider">Unacceptable (Loss Limit: 2.0s)</span>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-850 p-5 rounded-2xl border border-slate-200/40 dark:border-slate-700/50">
-                      <Gauge className="w-5 h-5 text-rose-500" />
-                      <p className="text-xs font-mono text-slate-400 mt-2">MOBILE GOOGLE SCORE</p>
-                      <p className="text-xl font-bold text-rose-500 mt-1">{generatedReport.vitals.googlePerformance}</p>
-                      <span className="text-[10px] text-slate-500 leading-none">Low Core Web Vitals performance</span>
+                    <div className="bg-[#131620] p-6 border border-white/10 rounded-none flex flex-col justify-between">
+                      <div>
+                        <p className="text-[9px] font-mono text-[#7A889B] tracking-[0.15em] font-medium uppercase">MOBILE PERFORMANCE SCORE</p>
+                        <p className="text-3xl font-serif font-semibold text-rose-405 text-rose-405 mt-3">{generatedReport.vitals.googlePerformance}</p>
+                      </div>
+                      <span className="text-[9px] font-mono text-slate-500 mt-4 uppercase tracking-wider">Low Core Web Vitals score</span>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-850 p-5 rounded-2xl border border-slate-200/40 dark:border-slate-700/50">
-                      <AlertTriangle className="w-5 h-5 text-rose-500 animate-pulse" />
-                      <p className="text-xs font-mono text-slate-400 mt-2">ESTIMATED VISITOR LOSS</p>
-                      <p className="text-xl font-black text-rose-600 mt-1">{generatedReport.vitals.leakedVisitors}</p>
-                      <span className="text-[10px] text-slate-500 leading-none">Leaving because of load delays</span>
+                    <div className="bg-[#131620] p-6 border border-white/10 rounded-none flex flex-col justify-between">
+                      <div>
+                        <p className="text-[9px] font-mono text-[#7A889B] tracking-[0.15em] font-bold uppercase">ESTIMATED TRAFFIC LEAKS</p>
+                        <p className="text-3xl font-serif font-black text-rose-500 mt-3">{generatedReport.vitals.leakedVisitors}</p>
+                      </div>
+                      <span className="text-[9px] font-mono text-rose-400/90 mt-4 uppercase tracking-wider font-extrabold">Exiting due to delays</span>
                     </div>
                   </div>
 
                   {/* Structural red flags and objections */}
-                  <div>
-                    <h5 className="text-xs font-mono font-black text-slate-400 uppercase tracking-widest mb-4">
-                      CRITICAL ANOMALIES DETECTED ({generatedReport.vitals.warningCount})
+                  <div className="space-y-6">
+                    <h5 className="text-[10px] font-mono font-black text-slate-400 uppercase tracking-[0.25em] block">
+                      • CONVERSION FRICTION DEPRECIATORS ({generatedReport.vitals.warningCount})
                     </h5>
                     
-                    <div className="space-y-3">
-                      <div className="flex gap-3 bg-red-50/50 dark:bg-red-950/20 p-4 rounded-xl border border-red-100/60 dark:border-red-900/40 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
-                        <span className="text-red-500 font-bold font-mono shrink-0">CRIT-A:</span>
+                    <div className="space-y-3 font-mono text-xs">
+                      <div className="flex gap-4 border border-rose-500/20 bg-rose-950/10 p-5 rounded-none text-rose-300">
+                        <span className="text-rose-400 font-bold font-mono text-[10px] tracking-wider uppercase shrink-0 mt-0.5">[CRIT-01]</span>
                         <div>
-                          <strong className="text-slate-900 dark:text-white block font-medium">Missing Lead Generation Structures</strong>
-                          Our scanner checked your checkout widgets and forms. They are too generic—increasing frictional checkout bounces.
+                          <strong className="text-white block font-bold uppercase tracking-wider text-[10px] mb-1">Absence of Direct booking Engines</strong>
+                          Your forms are too generic—not capturing high intent customers immediately. Unoptimized layout friction forces buyers back to OTA aggregators.
                         </div>
                       </div>
 
-                      <div className="flex gap-3 bg-red-50/50 dark:bg-red-950/20 p-4 rounded-xl border border-red-100/60 dark:border-red-900/40 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
-                        <span className="text-red-500 font-bold font-mono shrink-0">CRIT-B:</span>
+                      <div className="flex gap-4 border border-rose-500/20 bg-rose-950/10 p-5 rounded-none text-rose-300">
+                        <span className="text-rose-400 font-bold font-mono text-[10px] tracking-wider uppercase shrink-0 mt-0.5">[CRIT-02]</span>
                         <div>
-                          <strong className="text-slate-900 dark:text-white block font-medium">Unoptimized Visual Assets & Slow Core Styles</strong>
-                          Images on your domain are not served as WebP. Mobile CPUs melt compressing them, causing the {generatedReport.vitals.mtnTime} latency on Airtel network nodes.
+                          <strong className="text-white block font-bold uppercase tracking-wider text-[10px] mb-1">Uncompressed Assets & Heavy Templates</strong>
+                          Images are processed with standard outdated encoders. Loading speeds suffer, triggering the sluggish {generatedReport.vitals.mtnTime} load latencies on Lagos network nodes.
                         </div>
                       </div>
 
-                      <div className="flex gap-3 bg-amber-50/55 dark:bg-amber-950/20 p-4 rounded-xl border border-amber-100/60 dark:border-amber-900/40 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
-                        <span className="text-amber-500 font-bold font-mono shrink-0">WARN-A:</span>
+                      <div className="flex gap-4 border border-blue-500/20 bg-blue-950/10 p-5 rounded-none text-blue-300">
+                        <span className="text-blue-400 font-bold font-mono text-[10px] tracking-wider uppercase shrink-0 mt-0.5">[WARN-01]</span>
                         <div>
-                          <strong className="text-slate-900 dark:text-white block font-medium">Broken JSON-LD Schema indexing structures</strong>
-                          Google’s indexing bots are struggling to understand localized address parameters and target terms, limiting free search hits.
+                          <strong className="text-white block font-bold uppercase tracking-wider text-[10px] mb-1">Sluggish Indexing metadata blocks</strong>
+                          Local address mappings are lacking. Google spiders are unable to map local target terms properly, slashing organic growth opportunities.
                         </div>
                       </div>
                     </div>
@@ -389,28 +398,27 @@ export default function FreeAudit({ onNavigate }: FreeAuditProps) {
                 </div>
 
                 {/* Report Footer Pitch with direct consultation booking */}
-                <div className="bg-slate-100 dark:bg-slate-800/40 p-6 sm:p-8 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6">
-                  <div>
-                    <h5 className="text-sm font-serif font-bold text-slate-900 dark:text-white">Let's fix this speed and convert more customers</h5>
-                    <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">Book an emergency strategy call with Udochukwu. Let’s map a lightweight React replacement.</p>
+                <div className="bg-[#181C2A] p-8 text-center sm:text-left flex flex-col lg:flex-row items-center justify-between gap-8 border-t border-white/10 text-left">
+                  <div className="space-y-2 lg:max-w-xl">
+                    <h5 className="text-sm font-serif font-bold text-white uppercase tracking-wider">Fix Latency Bounces & Accelerate Bookings</h5>
+                    <p className="text-slate-400 font-mono text-[10px] uppercase tracking-wider leading-relaxed">Book a direct, completely free 30-minute system planning review. We'll map out a custom VXT React setup engineered to resolve loading bottlenecks.</p>
                   </div>
                   
                   <button
                     onClick={() => onNavigate('contact')}
                     id="audit-results-book-now"
-                    className="bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold px-5 py-3 rounded-xl transition-all shadow-md shrink-0 flex items-center gap-1.5 cursor-pointer"
+                    className="border border-white bg-white text-slate-950 font-mono text-xs font-bold tracking-[0.2em] uppercase px-8 py-3.5 hover:bg-transparent hover:text-white transition-all cursor-pointer rounded-none text-center block w-full lg:w-auto"
                   >
-                    <span>Discuss My Audit Results</span>
-                    <ArrowRight className="w-4 h-4" />
+                    BOOK SYSTEM PLANNING SLOT
                   </button>
                 </div>
 
               </div>
               
-              <div className="text-center pb-6">
+              <div className="text-center pt-8">
                 <button
                   onClick={handleReset}
-                  className="text-xs font-mono border border-slate-300 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-500 dark:text-slate-400 px-4 py-2.5 rounded-lg transition-colors cursor-pointer"
+                  className="bg-transparent hover:border-white border border-white/10 text-white font-mono text-[9px] font-bold tracking-[0.2em] px-6 py-3 transition-all rounded-none cursor-pointer uppercase"
                 >
                   Analyze another URL domain
                 </button>

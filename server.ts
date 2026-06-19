@@ -1,7 +1,13 @@
 import express from "express";
 import path from "path";
 import fs from "fs";
+import multer from "multer";
+import { Resend } from "resend";
 import { createServer as createViteServer } from "vite";
+
+const upload = multer({ storage: multer.memoryStorage() });
+const resend = new Resend(process.env.RESEND_API_KEY || "fallback_key");
+
 
 // Live Analytics state models
 interface SessionLog {
@@ -258,6 +264,75 @@ async function startServer() {
     
     // Broadcast live event trace
     broadcastSSE("sessions_list", Array.from(activeSessions.values()));
+  });
+
+  // 5. API: Send built-in email with Resend
+  app.post("/api/send-email", upload.single("attachment"), async (req, res) => {
+    try {
+      const { to, subject, message } = req.body;
+      const file = req.file;
+
+      if (!to || !subject || !message) {
+        res.status(400).json({ error: "Missing required fields" });
+        return;
+      }
+
+      if (!process.env.RESEND_API_KEY) {
+        res.status(500).json({ error: "RESEND_API_KEY is not configured on the server." });
+        return;
+      }
+
+      // Branded email template
+      const htmlContent = `
+        <div style="font-family: 'Inter', -apple-system, sans-serif; max-width: 600px; margin: 0 auto; background-color: #020617; color: #f8fafc; padding: 40px; border-radius: 8px; border: 1px solid #1e293b;">
+          <h1 style="color: #ffffff; font-size: 24px; font-weight: bold; margin-bottom: 32px;">Udochukwu | VXTGrid Services</h1>
+          
+          <div style="color: #e2e8f0; font-size: 16px; line-height: 1.7; margin-bottom: 40px;">
+            ${message.replace(/\n/g, '<br>')}
+          </div>
+          
+          <div style="margin-top: 32px; font-size: 14px; color: #94a3b8; border-top: 1px solid #1e293b; padding-top: 24px;">
+            <p style="margin: 0; font-weight: 600; color: #f8fafc;">Udochukwu</p>
+            <p style="margin: 4px 0 0;">Web Designer & Digital Strategist</p>
+            <p style="margin: 4px 0 16px;"><a href="https://udochukwu.com.ng" style="color: #3b82f6; text-decoration: none;">udochukwu.com.ng</a></p>
+            
+            <div style="margin-top: 20px;">
+              <a href="https://linkedin.com/in/" style="color: #64748b; text-decoration: none; margin-right: 14px; font-weight: 500;">LinkedIn</a>
+              <a href="https://instagram.com/" style="color: #64748b; text-decoration: none; margin-right: 14px; font-weight: 500;">Instagram</a>
+              <a href="https://facebook.com/" style="color: #64748b; text-decoration: none; margin-right: 14px; font-weight: 500;">Facebook</a>
+              <a href="https://t.me/vxtstore1" style="color: #3b82f6; text-decoration: none; font-weight: 500;">Telegram</a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      let attachments = [];
+      if (file) {
+        attachments.push({
+          filename: file.originalname,
+          content: file.buffer,
+        });
+      }
+
+      const data = await resend.emails.send({
+        from: "Udochukwu <hi@udochukwu.com.ng>",
+        to: [to],
+        subject: subject,
+        html: htmlContent,
+        attachments: attachments.length > 0 ? attachments : undefined
+      });
+
+      if (data.error) {
+        console.error("Resend Error Context:", data.error);
+        res.status(400).json({ error: data.error.message });
+        return;
+      }
+
+      res.status(200).json({ success: true, data });
+    } catch (error: any) {
+      console.error("Error sending email:", error);
+      res.status(500).json({ error: error.message || "Failed to send email" });
+    }
   });
 
   // Vite middleware or production Static File Routing

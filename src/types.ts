@@ -11,7 +11,8 @@ export type PageView =
   | 'learn'
   | 'faq'
   | 'contact'
-  | 'dashboard';
+  | 'dashboard'
+  | 'calculator';
 
 export interface ContactPreFill {
   subject?: string;

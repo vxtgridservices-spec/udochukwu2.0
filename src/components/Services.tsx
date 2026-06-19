@@ -20,7 +20,8 @@ import {
   Scale, 
   Calendar, 
   DollarSign, 
-  Hourglass 
+  Hourglass,
+  ArrowRight
 } from 'lucide-react';
 
 interface ServicesProps {
@@ -121,99 +122,77 @@ export default function Services({ onNavigate }: ServicesProps) {
   ];
 
   return (
-    <div className="py-12 md:py-20 bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Intro */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-xs font-mono text-blue-600 dark:text-blue-400 uppercase tracking-widest bg-blue-100 dark:bg-blue-950 px-3 py-1.5 rounded-full font-medium">
-            OUTCOME-DRIVEN PRICING PACKAGES
-          </span>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-slate-900 dark:text-white mt-4 font-medium tracking-tight">
-            Premium Packages Built to Spark Performance
+    <div className="w-full bg-slate-950 transition-colors duration-300 overflow-hidden">
+      
+      {/* Intro - Full Bleed */}
+      <section className="relative min-h-[50vh] flex flex-col justify-center items-center text-center px-6 border-b border-white/20">
+        <div className="absolute inset-0 z-0 bg-slate-900"></div>
+        <div className="relative z-10 max-w-4xl mx-auto">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-sans font-bold text-white tracking-tight uppercase">
+            Services & Packages
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-4 text-sm sm:text-base leading-relaxed">
-            We don’t charge hourly rates or sell empty blocks of web layouts. We offer comprehensive customer acquisition funnels mapped to direct business benefits.
+          <div className="w-24 h-1 bg-white my-8 mx-auto"></div>
+          <p className="text-white text-xs sm:text-sm tracking-[0.2em] font-mono leading-relaxed max-w-2xl mx-auto font-bold uppercase">
+            WE DON’T CHARGE HOURLY RATES OR SELL EMPTY BLOCKS OF WEB LAYOUTS. WE OFFER COMPREHENSIVE CUSTOMER ACQUISITION FUNNELS MAPPED TO DIRECT BUSINESS BENEFITS.
           </p>
         </div>
+      </section>
 
-        {/* Mega Packages Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-24">
-          {PRELOADED_SERVICES.map((p, idx) => (
-            <div
-              key={p.id}
-              id={`service-pkg-card-${idx}`}
-              onMouseEnter={() => setHoveredIndex(idx)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              className={`bg-white dark:bg-slate-800 rounded-3xl border border-slate-200/60 dark:border-slate-700/50 p-8 shadow-xs hover:shadow-xl transition-all relative flex flex-col justify-between ${
-                idx === 0 
-                  ? 'ring-2 ring-blue-600 dark:ring-blue-500 lg:scale-[1.03] lg:z-10' 
-                  : 'hover:-translate-y-1'
-              }`}
-            >
+      {/* Mega Packages Block */}
+      <div className="w-full flex flex-col">
+        {PRELOADED_SERVICES.map((p, idx) => (
+          <section
+            key={p.id}
+            id={`service-pkg-row-${idx}`}
+            className="relative min-h-[80vh] flex flex-col justify-center items-start border-b border-white/20 py-24"
+          >
+            <div className="absolute inset-0 z-0">
+              <img 
+                src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1920&q=80" 
+                alt="Service background" 
+                className="w-full h-full object-cover object-center filter opacity-30 mix-blend-luminosity grayscale"
+                referrerPolicy="no-referrer"
+              />
+              <div className={`absolute inset-0 ${idx % 2 === 0 ? 'bg-slate-900/90' : 'bg-blue-950/90'} mix-blend-multiply`} />
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-transparent to-transparent" />
+            </div>
+
+            <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-left">
               {idx === 0 && (
-                <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] font-mono tracking-widest uppercase font-semibold px-4 py-1.5 rounded-full shadow-md">
-                  ★ MOST POPULAR ENTERPRISE SYSTEM
+                <span className="inline-block text-emerald-400 text-sm font-mono tracking-widest uppercase font-bold mb-4 border border-emerald-400/30 px-3 py-1">
+                  ★ MOST POPULAR
                 </span>
               )}
-              
-              <div>
-                {/* Title Block */}
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-sans font-bold text-white tracking-tight">
+                {p.name}
+              </h2>
+              <div className="w-full max-w-2xl h-0.5 bg-white/40 my-6"></div>
+              <p className="text-slate-300 text-sm sm:text-base tracking-[0.1em] font-mono leading-relaxed max-w-3xl font-bold uppercase mb-8">
+                {p.tagline}
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl">
                 <div>
-                  <h3 className="text-xl sm:text-2xl font-serif font-semibold text-slate-900 dark:text-white">
-                    {p.name}
-                  </h3>
-                  <p className="text-slate-500 dark:text-slate-400 text-xs mt-3 leading-relaxed">
-                    {p.tagline}
-                  </p>
-                </div>
-
-                {/* Logistics Badges */}
-                <div className="mt-6 flex flex-wrap gap-2 py-4 border-y border-slate-100 dark:border-slate-700">
-                  <div className="flex items-center gap-1.5 text-xs font-mono text-slate-700 dark:text-slate-300">
-                    <Hourglass className="w-3.5 h-3.5 text-blue-600" />
-                    <span>TIMELINE: <strong>{p.timeline}</strong></span>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-xs font-mono text-slate-700 dark:text-slate-300">
-                    <Calendar className="w-3.5 h-3.5 text-blue-600" />
-                    <span>STARTING AT: <strong className="text-blue-600 dark:text-blue-400 font-bold">{convertNairaString(p.priceRange)}</strong></span>
-                  </div>
-                </div>
-
-                {/* Who is it for */}
-                <div className="mt-6">
-                  <h4 className="text-[10px] font-mono font-black text-slate-400 uppercase tracking-widest mb-1.5">
-                    IDEAL CLIENT MATCH:
+                  <h4 className="text-xs font-mono font-black text-white uppercase tracking-widest mb-4 border-b border-white/20 pb-2">
+                    BUSINESS ADVANTAGES
                   </h4>
-                  <p className="text-slate-800 dark:text-slate-200 text-xs bg-slate-50 dark:bg-slate-900 px-3 py-2 rounded-xl border border-slate-100 dark:border-slate-800/80 leading-relaxed font-sans font-medium">
-                    {p.targetAudience}
-                  </p>
-                </div>
-
-                {/* Benefits / Outcomes */}
-                <div className="mt-6">
-                  <h4 className="text-[10px] font-mono font-black text-blue-500 uppercase tracking-widest mb-3">
-                    BUSINESS ADVANTAGES:
-                  </h4>
-                  <ul className="space-y-2.5">
+                  <ul className="space-y-3">
                     {p.benefits.map((b, bIdx) => (
-                      <li key={bIdx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
-                        <Check className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                      <li key={bIdx} className="flex items-start gap-3 text-sm text-slate-300 font-mono">
+                        <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                         <span>{b}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
-
-                {/* Features included */}
-                <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-700/50">
-                  <h4 className="text-[10px] font-mono font-black text-slate-400 uppercase tracking-widest mb-3">
-                    WHAT IS CODED & REVALUATED:
+                <div>
+                  <h4 className="text-xs font-mono font-black text-white uppercase tracking-widest mb-4 border-b border-white/20 pb-2">
+                    WHAT IS INCLUDED
                   </h4>
-                  <ul className="space-y-2 text-xs text-slate-600 dark:text-slate-300">
+                  <ul className="space-y-3">
                     {p.features.map((f, fIdx) => (
-                      <li key={fIdx} className="flex gap-2 items-center">
-                        <span className="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
+                      <li key={fIdx} className="flex gap-3 items-center text-sm text-slate-300 font-mono">
+                        <span className="w-1.5 h-1.5 bg-white rounded-full shrink-0"></span>
                         <span>{f}</span>
                       </li>
                     ))}
@@ -221,143 +200,95 @@ export default function Services({ onNavigate }: ServicesProps) {
                 </div>
               </div>
 
-              {/* Conversion focus and CTA */}
-              <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-700/50">
-                <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200/50 dark:border-slate-700/50 p-3.5 rounded-xl text-[11px] text-slate-500 leading-relaxed mb-6 font-mono">
-                  <strong className="text-slate-800 dark:text-slate-200 block uppercase mb-1">🎯 Primary Conversion Focus:</strong>
-                  {p.conversionFocus}
-                </div>
-                
+              <div className="mt-12 flex flex-col sm:flex-row gap-6 items-start sm:items-center">
                 <button
                   onClick={() => onNavigate('contact')}
-                  id={`pkg-button-cta-${p.id}`}
-                  className={`w-full py-3.5 rounded-xl font-bold text-xs sm:text-sm tracking-tight transition-all cursor-pointer ${
-                    idx === 0 
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl' 
-                      : 'bg-slate-900 hover:bg-slate-950 text-white dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100'
-                  }`}
+                  className="border-2 border-white text-white font-mono uppercase tracking-[0.2em] px-8 py-4 hover:bg-white hover:text-slate-950 transition-colors flex items-center justify-center gap-4 cursor-pointer font-bold text-sm"
                 >
-                  Acquire This Package System
+                  ACQUIRE SYSTEM <ArrowRight className="w-5 h-5 ml-2" />
                 </button>
+                <div className="flex flex-col gap-1 text-xs font-mono text-slate-400">
+                  <span>TIMELINE: <strong className="text-white">{p.timeline}</strong></span>
+                  {p.priceRange && (
+                    <span>STARTING AT: <strong className="text-white">{convertNairaString(p.priceRange)}</strong></span>
+                  )}
+                </div>
               </div>
-
             </div>
-          ))}
-        </div>
+          </section>
+        ))}
+      </div>
 
         {/* INDUSTRIES SHOWCASE PAGE */}
-        <div className="bg-white dark:bg-slate-950 rounded-3xl p-8 sm:p-12 border border-slate-200/60 dark:border-slate-800/80 shadow-xs mb-16">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <section className="relative min-h-[50vh] flex flex-col justify-center items-start border-b border-white/20 py-24 bg-slate-900">
+          <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-left">
+            <h2 className="text-4xl sm:text-5xl lg:text-5xl font-sans font-bold text-white tracking-tight uppercase">
+              Bespoke Vertical Solutions
+            </h2>
+            <div className="w-full max-w-2xl h-0.5 bg-white/40 my-6"></div>
             
-            {/* Left side info block */}
-            <div className="lg:col-span-4 space-y-6">
-              <div>
-                <span className="text-xs font-mono text-blue-600 dark:text-blue-400 tracking-widest uppercase">
-                  EXPERTISE SPECTRUM
-                </span>
-                <h2 className="text-2xl sm:text-3xl font-serif text-slate-900 dark:text-white mt-1.5 font-medium leading-none">
-                  Tailored To Your Industry
-                </h2>
-                <p className="text-slate-500 dark:text-slate-400 text-sm mt-3 leading-relaxed">
-                  Different sectors appeal to unique customer profiles. We tailor search positioning and layout design to match your specific customer demands.
-                </p>
-              </div>
-
-              {/* Select list of buttons */}
-              <div className="grid grid-cols-2 gap-2 h-72 overflow-y-auto pr-2 border-r border-slate-100 dark:border-slate-800 scrollbar-thin">
-                {industries.map((ind) => {
-                  const Icon = ind.icon;
-                  return (
-                    <button
-                      key={ind.name}
-                      onClick={() => setSelectedIndustry(ind.name)}
-                      className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs font-medium tracking-tight transition-all text-left cursor-pointer ${
-                        selectedIndustry === ind.name
-                          ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 ring-1 ring-blue-600/20'
-                          : 'bg-slate-50 text-slate-600 dark:bg-slate-900 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-                      }`}
-                    >
-                      <Icon className="w-3.5 h-3.5 shrink-0 text-blue-600" />
-                      <span className="truncate">{ind.name}</span>
-                    </button>
-                  );
-                })}
-              </div>
+            <div className="flex flex-wrap gap-2 mb-12 max-w-4xl">
+              {industries.map(ind => (
+                <button
+                  key={ind.name}
+                  onClick={() => setSelectedIndustry(ind.name)}
+                  className={`py-3 px-4 text-xs font-mono font-bold uppercase transition-all tracking-widest border border-white/10 ${
+                    selectedIndustry === ind.name 
+                      ? 'bg-white text-slate-900 border-white' 
+                      : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                  }`}
+                >
+                  {ind.name}
+                </button>
+              ))}
             </div>
 
-            {/* Right side content detailing industry strategies */}
-            <div className="lg:col-span-8 bg-slate-50 dark:bg-slate-900/60 p-6 sm:p-8 rounded-2xl border border-slate-100 dark:border-slate-850/80">
-              <AnimatePresence mode="wait">
-                {industries.map((ind) => {
-                  if (ind.name !== selectedIndustry) return null;
-                  const Icon = ind.icon;
-                  return (
-                    <motion.div
-                      key={ind.name}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.2 }}
-                      className="space-y-6"
-                    >
-                      <div className="flex items-center gap-4 border-b border-slate-200/60 dark:border-slate-800 pb-4">
-                        <div className="h-12 w-12 bg-blue-100 dark:bg-blue-900/50 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400">
-                          <Icon className="w-6 h-6" />
-                        </div>
-                        <div>
-                          <p className="text-[10px] font-mono text-blue-600 dark:text-blue-400 font-bold uppercase tracking-widest">{ind.tagline}</p>
-                          <h3 className="text-xl font-serif text-slate-900 dark:text-white font-medium">{ind.name} Solutions Blueprint</h3>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <span className="text-[10px] font-mono text-rose-500 font-bold uppercase tracking-widest block">⚠️ COMMON SECTOR LEAKS</span>
-                          <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed">{ind.challenge}</p>
-                        </div>
-                        <div className="space-y-2">
-                          <span className="text-[10px] font-mono text-emerald-500 font-bold uppercase tracking-widest block">✓ THE CONVERSION STRATEGY</span>
-                          <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed">{ind.strategy}</p>
-                        </div>
-                      </div>
-
-                      <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200/50 dark:border-slate-700/50 flex flex-wrap justify-between items-center gap-4">
-                        <div>
-                          <p className="text-xs font-mono font-medium text-slate-400">Targeting high-net worth leads in {ind.name}?</p>
-                          <p className="text-xs font-sans text-slate-700 dark:text-slate-300 mt-1">Get an specialized industry blueprint mock for your company.</p>
-                        </div>
-                        <button
-                          onClick={() => onNavigate('contact')}
-                          id="industry-blueprint-cta"
-                          className="bg-slate-900 hover:bg-slate-950 text-white dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100 text-xs font-semibold px-4 py-2.5 rounded-lg transition-colors cursor-pointer"
-                        >
-                          Unlock Industry Strategy
-                        </button>
-                      </div>
-
-                    </motion.div>
-                  );
-                })}
-              </AnimatePresence>
+            <div className="bg-slate-950 p-8 md:p-12 border border-white/10 text-white max-w-4xl">
+              {industries.filter(ind => ind.name === selectedIndustry).map(ind => (
+                <div key={ind.name}>
+                  <h3 className="text-2xl font-bold font-sans uppercase tracking-tight mb-2">{ind.name}: {ind.tagline}</h3>
+                  <p className="text-emerald-400 text-sm font-mono tracking-widest uppercase mb-8">THE STRATEGY</p>
+                  
+                  <div className="space-y-8 text-sm font-mono leading-relaxed text-slate-300">
+                    <div>
+                      <strong className="text-white block mb-2 tracking-widest">THE LEAK:</strong>
+                      {ind.challenge}
+                    </div>
+                    <div>
+                      <strong className="text-white block mb-2 tracking-widest">THE FIX:</strong>
+                      {ind.strategy}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-
+            
           </div>
-        </div>
+        </section>
 
         {/* EXTRA SMALLER SECTOR CHEATS & PLUGINS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {extraServices.map((x, idx) => (
-            <div 
-              key={idx}
-              className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/50 dark:border-slate-750/50 shadow-xs hover:border-blue-400 transition-colors"
-            >
-              <h4 className="text-sm font-serif font-semibold text-slate-900 dark:text-white mb-2">{x.title}</h4>
-              <p className="text-slate-500 dark:text-slate-400 text-xs leading-relaxed">{x.desc}</p>
+        <section className="relative min-h-[50vh] flex flex-col justify-center items-start border-b border-white/20 py-24 bg-slate-950">
+          <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-left">
+            <h2 className="text-3xl sm:text-4xl font-sans font-bold text-white tracking-tight uppercase">
+              Add-On Services
+            </h2>
+            <div className="w-full max-w-2xl h-0.5 bg-white/40 my-6"></div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12 mt-12 max-w-5xl">
+              {extraServices.map((x, idx) => (
+                <div key={idx} className="border-l-2 border-white/20 pl-6 py-2">
+                  <h4 className="text-white font-mono font-bold uppercase tracking-widest mb-3">
+                    {x.title}
+                  </h4>
+                  <p className="text-slate-400 text-sm font-mono leading-relaxed">
+                    {x.desc}
+                  </p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        </section>
 
       </div>
-    </div>
   );
 }
