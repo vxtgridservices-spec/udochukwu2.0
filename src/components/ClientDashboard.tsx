@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSettings } from '../context/ThemeContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   getBookings,
@@ -35,6 +36,7 @@ import VisitorTracker from './VisitorTracker';
 import AIConversionMonitor from './AIConversionMonitor';
 
 export default function ClientDashboard() {
+  const { isWhatsAppEnabled, toggleWhatsApp } = useSettings();
   const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('vxt_admin_logged') === 'true');
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
@@ -374,6 +376,20 @@ export default function ClientDashboard() {
                   {/* OVERVIEW TAB */}
                   {adminTab === 'overview' && (
                     <div className="space-y-6">
+                      {/* System Control Panel */}
+                      <div className="bg-[#1E2333] border border-white/10 p-6 rounded-3xl">
+                        <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4">Live System Controls</h4>
+                        <div className="flex items-center justify-between gap-4">
+                           <p className="text-xs text-slate-400 font-mono">Floating WhatsApp Icon</p>
+                           <button
+                             onClick={toggleWhatsApp}
+                             className={`px-4 py-2 font-mono text-xs font-bold transition-all border cursor-pointer ${isWhatsAppEnabled ? 'bg-emerald-600 text-white border-emerald-500' : 'bg-slate-800 text-slate-400 border-slate-700'}`}
+                           >
+                             {isWhatsAppEnabled ? 'ENABLED' : 'DISABLED'}
+                           </button>
+                        </div>
+                      </div>
+
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div className="bg-[#1E2333] p-6 border border-white/10">
                           <p className="text-[10px] font-mono font-bold text-blue-400 uppercase tracking-widest">Consultations</p>

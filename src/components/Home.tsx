@@ -34,7 +34,7 @@ interface HomeProps {
 }
 
 export default function Home({ onNavigate }: HomeProps) {
-  const [heroImageUrl, setHeroImageUrl] = useState('https://res.cloudinary.com/drghjqbak/image/upload/q_auto/f_auto/v1781784160/1781783831624_2_u3nqbc.jpg');
+  const [heroImageUrl, setHeroImageUrl] = useState('https://res.cloudinary.com/drghjqbak/image/upload/q_auto/f_auto/v1781921383/20260620_030810_tod4tg.jpg');
   const { formatCurrency, currencySymbol } = useCurrency();
 
   useEffect(() => {
@@ -99,7 +99,7 @@ export default function Home({ onNavigate }: HomeProps) {
         {/* Content Container */}
         <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-24 text-left">
           <h2 className="text-3xl sm:text-5xl lg:text-6xl font-sans font-bold text-white tracking-tight">
-            How I Help Businesses Grow
+            I help African businesses build brands people trust online
           </h2>
           
           <div className="w-full max-w-3xl h-0.5 bg-white/40 my-8"></div>
@@ -108,12 +108,20 @@ export default function Home({ onNavigate }: HomeProps) {
             EVERY BUSINESS IS UNIQUE, BUT THE GOAL IS THE SAME—BUILD TRUST, ATTRACT CUSTOMERS, AND GROW ONLINE. I COMBINE PREMIUM DESIGN, AI, AND STRATEGY FOR MEASURABLE RESULTS.
           </p>
 
-          <button
-            onClick={() => onNavigate('services')}
-            className="mt-12 border-2 border-white text-white font-mono uppercase tracking-[0.2em] px-8 py-5 hover:bg-white hover:text-blue-900 transition-colors flex items-center justify-center gap-6 cursor-pointer font-bold text-sm w-full sm:w-auto"
-          >
-            EXPLORE SERVICES <ArrowRight className="w-6 h-6" />
-          </button>
+          <div className="mt-12 flex flex-col sm:flex-row gap-4">
+            <button
+              onClick={() => onNavigate('services')}
+              className="border-2 border-white text-white font-mono uppercase tracking-[0.2em] px-8 py-5 hover:bg-white hover:text-blue-900 transition-colors flex items-center justify-center gap-6 cursor-pointer font-bold text-sm w-full sm:w-auto"
+            >
+              EXPLORE SERVICES <ArrowRight className="w-6 h-6" />
+            </button>
+            <button
+              onClick={() => onNavigate('contact')}
+              className="border-2 border-white bg-white text-blue-900 font-mono uppercase tracking-[0.2em] px-8 py-5 hover:bg-transparent hover:text-white transition-colors flex items-center justify-center gap-6 cursor-pointer font-bold text-sm w-full sm:w-auto"
+            >
+              BOOK FREE STRATEGY CALL <ArrowRight className="w-6 h-6" />
+            </button>
+          </div>
         </div>
       </section>
 

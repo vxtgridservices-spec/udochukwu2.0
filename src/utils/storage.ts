@@ -631,8 +631,8 @@ export interface SiteSettings {
 }
 
 const DEFAULT_SETTINGS: SiteSettings = {
-  aboutImageUrl: 'https://res.cloudinary.com/drghjqbak/image/upload/q_auto/f_auto/v1781784160/1781783831624_2_u3nqbc.jpg',
-  heroImageUrl: 'https://res.cloudinary.com/drghjqbak/image/upload/q_auto/f_auto/v1781784160/1781783831624_2_u3nqbc.jpg'
+  aboutImageUrl: 'https://res.cloudinary.com/drghjqbak/image/upload/q_auto/f_auto/v1781913441/1781783831624_3_a1uctp.jpg',
+  heroImageUrl: 'https://res.cloudinary.com/drghjqbak/image/upload/q_auto/f_auto/v1781921383/20260620_030810_tod4tg.jpg'
 };
 
 export const getSiteSettings = (): SiteSettings => {
@@ -640,8 +640,11 @@ export const getSiteSettings = (): SiteSettings => {
     const s = localStorage.getItem('vxt_site_settings');
     let parsed = s ? JSON.parse(s) : DEFAULT_SETTINGS;
     const oldUnsplashDefault = 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=800&q=80';
-    if (parsed.aboutImageUrl?.startsWith('/assets/images/') || parsed.aboutImageUrl === oldUnsplashDefault) parsed.aboutImageUrl = DEFAULT_SETTINGS.aboutImageUrl;
-    if (parsed.heroImageUrl?.startsWith('/assets/images/') || parsed.heroImageUrl === oldUnsplashDefault) parsed.heroImageUrl = DEFAULT_SETTINGS.heroImageUrl;
+    const oldCloudinaryUrlPart = 'v1781784160';
+    const oldCloudinaryUrlPart2 = 'v1781913441';
+
+    if (parsed.aboutImageUrl?.startsWith('/assets/images/') || parsed.aboutImageUrl === oldUnsplashDefault || parsed.aboutImageUrl?.includes(oldCloudinaryUrlPart)) parsed.aboutImageUrl = DEFAULT_SETTINGS.aboutImageUrl;
+    if (parsed.heroImageUrl?.startsWith('/assets/images/') || parsed.heroImageUrl === oldUnsplashDefault || parsed.heroImageUrl?.includes(oldCloudinaryUrlPart) || parsed.heroImageUrl?.includes(oldCloudinaryUrlPart2)) parsed.heroImageUrl = DEFAULT_SETTINGS.heroImageUrl;
     return parsed;
   } catch (e) {
     return DEFAULT_SETTINGS;

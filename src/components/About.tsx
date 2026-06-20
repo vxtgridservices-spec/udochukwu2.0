@@ -8,7 +8,7 @@ interface AboutProps {
 }
 
 export default function About({ onNavigate }: AboutProps) {
-  const [aboutImageUrl, setAboutImageUrl] = useState('https://res.cloudinary.com/drghjqbak/image/upload/q_auto/f_auto/v1781784160/1781783831624_2_u3nqbc.jpg');
+  const [aboutImageUrl, setAboutImageUrl] = useState('https://res.cloudinary.com/drghjqbak/image/upload/q_auto/f_auto/v1781913441/1781783831624_3_a1uctp.jpg');
 
   useEffect(() => {
     const settings = getSiteSettings();
@@ -77,10 +77,10 @@ export default function About({ onNavigate }: AboutProps) {
           <img 
             src={aboutImageUrl} 
             alt="Udochukwu Background" 
-            className="w-full h-full object-cover object-top filter grayscale contrast-125 brightness-[0.45] opacity-25 mix-blend-luminosity"
+            className="w-full h-full object-cover object-top filter grayscale contrast-125 brightness-[0.7] opacity-[0.4] mix-blend-luminosity"
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-[#6B6899]/50 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-[#6B6899]/30 mix-blend-multiply" />
         </div>
 
         {/* Text Area */}

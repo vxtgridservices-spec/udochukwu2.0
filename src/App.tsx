@@ -15,7 +15,7 @@ import Testimonials from './components/Testimonials';
 import Learn from './components/Learn';
 import RevenueCalculatorPage from './components/RevenueCalculatorPage';
 import { CurrencyProvider, useCurrency } from './context/CurrencyContext';
-import { ThemeProvider } from './context/ThemeContext';
+import { SettingsProvider } from './context/ThemeContext';
 import { initTracker } from './utils/tracker';
 
 function TrackerInitializer({ activePage }: { activePage: string }) {
@@ -60,7 +60,7 @@ export default function App() {
   };
 
   return (
-    <ThemeProvider>
+    <SettingsProvider>
       <CurrencyProvider>
         <TrackerInitializer activePage={activePage} />
         <Layout
@@ -83,7 +83,7 @@ export default function App() {
           {activePage === 'dashboard' && <ClientDashboard />}
         </Layout>
       </CurrencyProvider>
-    </ThemeProvider>
+    </SettingsProvider>
   );
 }
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PageView } from '../types';
 import { getBlogs, PRELOADED_SERVICES } from '../utils/storage';
-import { useTheme } from '../context/ThemeContext';
+import { useSettings } from '../context/ThemeContext';
 import { 
   Sun, 
   Moon, 
@@ -30,7 +30,7 @@ export default function Layout({
   activePage, 
   onNavigate 
 }: LayoutProps) {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, isWhatsAppEnabled } = useSettings();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   
@@ -391,16 +391,18 @@ export default function Layout({
         )}
         
         {/* Persistent bubble pointing to Whatsapp */}
-        <a
-          href="https://wa.me/2347052199651?text=Hello%20VXTGrid%20Services,%20I%20am%20visiting%20from%20your%20premium%20brand%20website%20and%20want%2520to%20discuss%20a%20new%20web%20system."
-          target="_blank"
-          rel="noreferrer"
-          title="Direct WhatsApp chat..."
-          id="whatsapp-sticky-icon-button"
-          className="bg-emerald-600 hover:bg-emerald-700 text-white p-3.5 rounded-full shadow-2xl transition-transform hover:scale-105 flex items-center justify-center cursor-pointer animate-pulse-slow"
-        >
-          <MessageSquare className="w-5 h-5 text-white" />
-        </a>
+        {isWhatsAppEnabled && (
+          <a
+            href="https://wa.me/2347052199651?text=Hello%20VXTGrid%20Services,%20I%20am%20visiting%20from%20your%20premium%20brand%20website%20and%20want%2520to%20discuss%20a%20new%20web%20system."
+            target="_blank"
+            rel="noreferrer"
+            title="Direct WhatsApp chat..."
+            id="whatsapp-sticky-icon-button"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white p-3.5 rounded-full shadow-2xl transition-transform hover:scale-105 flex items-center justify-center cursor-pointer animate-pulse-slow"
+          >
+            <MessageSquare className="w-5 h-5 text-white" />
+          </a>
+        )}
       </div>
 
       {/* 7. GLOBAL EXPLORATORY SEARCH CONSOLE OVERLAY */}

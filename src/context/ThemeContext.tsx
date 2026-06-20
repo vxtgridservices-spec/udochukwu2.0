@@ -2,13 +2,16 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type Theme = 'light' | 'dark';
 
-const ThemeContext = createContext<{
+const SettingsContext = createContext<{
   theme: Theme;
   toggleTheme: () => void;
+  isWhatsAppEnabled: boolean;
+  toggleWhatsApp: () => void;
 } | undefined>(undefined);
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>('light');
+  const [isWhatsAppEnabled, setIsWhatsAppEnabled] = useState(true);
 
   useEffect(() => {
     // Apply theme to document element
@@ -23,15 +26,19 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
+  const toggleWhatsApp = () => {
+    setIsWhatsAppEnabled((prev) => !prev);
+  }
+
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <SettingsContext.Provider value={{ theme, toggleTheme, isWhatsAppEnabled, toggleWhatsApp }}>
       {children}
-    </ThemeContext.Provider>
+    </SettingsContext.Provider>
   );
 };
 
-export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (!context) throw new Error('useTheme must be used within a ThemeProvider');
+export const useSettings = () => {
+  const context = useContext(SettingsContext);
+  if (!context) throw new Error('useSettings must be used within a SettingsProvider');
   return context;
 };
