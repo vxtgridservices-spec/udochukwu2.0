@@ -371,6 +371,7 @@ export const PRELOADED_PRODUCTS: MarketplaceProduct[] = [
       GENERATED_ASSETS.itelPowerTankSetup,
       GENERATED_ASSETS.itelPowerTankDetail,
       GENERATED_ASSETS.itelSolarPanelKit,
+      GENERATED_ASSETS.itelFbAdFlyer,
       GENERATED_ASSETS.itelEnuguFlyer,
     ],
     promoVideoUrl: '',
@@ -478,20 +479,20 @@ export const deleteCaseStudy = (id: string): CaseStudy[] => {
 // --- MARKETPLACE PRODUCTS CRUD & SYNC ---
 export const getMarketplaceProducts = (): MarketplaceProduct[] => {
   try {
-    const seededV5 = localStorage.getItem('vxt_marketplace_seed_v5');
+    const seededV6 = localStorage.getItem('vxt_marketplace_seed_v6');
     const stored = localStorage.getItem('vxt_marketplace_products');
     if (!stored) {
       localStorage.setItem('vxt_marketplace_products', JSON.stringify(PRELOADED_PRODUCTS));
-      localStorage.setItem('vxt_marketplace_seed_v5', 'true');
+      localStorage.setItem('vxt_marketplace_seed_v6', 'true');
       return PRELOADED_PRODUCTS;
     }
     const parsed = JSON.parse(stored) as MarketplaceProduct[];
     if (!Array.isArray(parsed) || parsed.length === 0) {
       localStorage.setItem('vxt_marketplace_products', JSON.stringify(PRELOADED_PRODUCTS));
-      localStorage.setItem('vxt_marketplace_seed_v5', 'true');
+      localStorage.setItem('vxt_marketplace_seed_v6', 'true');
       return PRELOADED_PRODUCTS;
     }
-    if (!seededV5) {
+    if (!seededV6) {
       const itelDefault = PRELOADED_PRODUCTS.find((p) => p.id === 'prod-itel-powertank-full');
       const customItems = parsed.filter(
         (p) =>
@@ -505,7 +506,7 @@ export const getMarketplaceProducts = (): MarketplaceProduct[] => {
       });
       const merged = [...customItems, ...refreshedPreloaded];
       localStorage.setItem('vxt_marketplace_products', JSON.stringify(merged));
-      localStorage.setItem('vxt_marketplace_seed_v5', 'true');
+      localStorage.setItem('vxt_marketplace_seed_v6', 'true');
       return merged;
     }
     return parsed;
@@ -564,7 +565,7 @@ export const syncMarketplaceFromServer = async (): Promise<{
       const data = await prodRes.json();
       if (Array.isArray(data.products) && data.products.length > 0) {
         const itelDefault = PRELOADED_PRODUCTS.find((p) => p.id === 'prod-itel-powertank-full')!;
-        if (!localStorage.getItem('vxt_marketplace_server_v5')) {
+        if (!localStorage.getItem('vxt_marketplace_server_v6')) {
           const withoutOldItel = data.products.filter(
             (p: MarketplaceProduct) => p.id !== 'prod-itel-powertank-full'
           );
@@ -573,7 +574,7 @@ export const syncMarketplaceFromServer = async (): Promise<{
             (p) => p.id !== 'prod-itel-powertank-full' && !existingIds.has(p.id)
           );
           products = [...withoutOldItel, itelDefault, ...missingDefaults];
-          localStorage.setItem('vxt_marketplace_server_v5', 'true');
+          localStorage.setItem('vxt_marketplace_server_v6', 'true');
         } else {
           products = data.products;
         }

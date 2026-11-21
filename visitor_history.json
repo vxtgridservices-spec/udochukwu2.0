@@ -5,96 +5,12 @@
     "country": "Nigeria",
     "device": "Mobile",
     "screenSize": "384x854",
-    "path": "/portfolio",
-    "title": "Portfolio & Live Systems | Udochukwu",
-    "lastPing": 1795224910592,
+    "path": "/buyfromudochukwu",
+    "title": "Buyfromudochukwu — Curated Multi-Category Marketplace",
+    "lastPing": 1795225921578,
     "joinedAt": 1795224691627,
-    "durationSeconds": 219,
+    "durationSeconds": 1230,
     "actions": [
-      {
-        "timestamp": "01:31:31",
-        "action": "Scrolled 50% down the page"
-      },
-      {
-        "timestamp": "01:31:34",
-        "action": "Arrived on HOME"
-      },
-      {
-        "timestamp": "01:31:36",
-        "action": "Arrived on BUYFROMUDOCHUKWU"
-      },
-      {
-        "timestamp": "01:31:37",
-        "action": "Scrolled 50% down the page"
-      },
-      {
-        "timestamp": "01:31:38",
-        "action": "Deep reading - Scrolled 75% down"
-      },
-      {
-        "timestamp": "01:31:43",
-        "action": "Clicked: \"Featured\""
-      },
-      {
-        "timestamp": "01:31:44",
-        "action": "Still active - exploring page"
-      },
-      {
-        "timestamp": "01:31:46",
-        "action": "Scrolled 25% down the page"
-      },
-      {
-        "timestamp": "01:31:52",
-        "action": "Still active - exploring page"
-      },
-      {
-        "timestamp": "01:31:53",
-        "action": "Clicked: \"Featured\""
-      },
-      {
-        "timestamp": "01:31:55",
-        "action": "Deep reading - Scrolled 75% down"
-      },
-      {
-        "timestamp": "01:31:57",
-        "action": "Scrolled to bottom footer section"
-      },
-      {
-        "timestamp": "01:32:00",
-        "action": "Still active - exploring page"
-      },
-      {
-        "timestamp": "01:32:33",
-        "action": "Scrolled 25% down the page"
-      },
-      {
-        "timestamp": "01:32:42",
-        "action": "Still active - exploring page"
-      },
-      {
-        "timestamp": "01:32:42",
-        "action": "Deep reading - Scrolled 75% down"
-      },
-      {
-        "timestamp": "01:33:41",
-        "action": "Scrolled 50% down the page"
-      },
-      {
-        "timestamp": "01:33:41",
-        "action": "Scrolled to bottom footer section"
-      },
-      {
-        "timestamp": "01:33:41",
-        "action": "Still active - exploring page"
-      },
-      {
-        "timestamp": "01:33:41",
-        "action": "Scrolled 50% down the page"
-      },
-      {
-        "timestamp": "01:33:41",
-        "action": "Scrolled 25% down the page"
-      },
       {
         "timestamp": "01:33:44",
         "action": "Still active - exploring page"
@@ -154,9 +70,149 @@
       {
         "timestamp": "01:35:10",
         "action": "Clicked: \"PORTFOLIO & SYSTEMS\""
+      },
+      {
+        "timestamp": "01:49:54",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "01:49:54",
+        "action": "Scrolled to bottom footer section"
+      },
+      {
+        "timestamp": "01:49:56",
+        "action": "Scrolled 25% down the page"
+      },
+      {
+        "timestamp": "01:49:59",
+        "action": "Added \"Aetheris Studio ANC Wireless Headphones\" (x1) to Bag"
+      },
+      {
+        "timestamp": "01:49:59",
+        "action": "Clicked: \"Buy\""
+      },
+      {
+        "timestamp": "01:50:02",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "01:50:02",
+        "action": "Clicked: \"BUTTON\""
+      },
+      {
+        "timestamp": "01:50:04",
+        "action": "Clicked: \"Browse Products\""
+      },
+      {
+        "timestamp": "01:50:05",
+        "action": "Viewed Product Page: Aetheris Studio ANC Wireless Headphones"
+      },
+      {
+        "timestamp": "01:50:08",
+        "action": "Scrolled to bottom footer section"
+      },
+      {
+        "timestamp": "01:50:10",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "01:50:12",
+        "action": "Scrolled 50% down the page"
+      },
+      {
+        "timestamp": "01:50:16",
+        "action": "Deep reading - Scrolled 75% down"
+      },
+      {
+        "timestamp": "01:50:18",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "01:50:18",
+        "action": "Scrolled 50% down the page"
+      },
+      {
+        "timestamp": "01:50:18",
+        "action": "Clicked: \"Verify FB Preview ↗\""
+      },
+      {
+        "timestamp": "01:50:26",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "01:50:26",
+        "action": "Clicked: \"Verify FB Preview ↗\""
+      },
+      {
+        "timestamp": "01:50:31",
+        "action": "Deep reading - Scrolled 75% down"
+      },
+      {
+        "timestamp": "01:50:34",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "01:50:35",
+        "action": "Scrolled to bottom footer section"
+      },
+      {
+        "timestamp": "01:50:37",
+        "action": "Scrolled 25% down the page"
+      },
+      {
+        "timestamp": "01:50:42",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "01:50:49",
+        "action": "Deep reading - Scrolled 75% down"
+      },
+      {
+        "timestamp": "01:50:50",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "01:50:51",
+        "action": "Scrolled 25% down the page"
+      },
+      {
+        "timestamp": "01:50:58",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "01:51:02",
+        "action": "Scrolled 50% down the page"
+      },
+      {
+        "timestamp": "01:51:06",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "01:51:23",
+        "action": "Scrolled to bottom footer section"
+      },
+      {
+        "timestamp": "01:51:30",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "01:51:39",
+        "action": "Scrolled 25% down the page"
+      },
+      {
+        "timestamp": "01:51:43",
+        "action": "Deep reading - Scrolled 75% down"
+      },
+      {
+        "timestamp": "01:51:46",
+        "action": "Still active - exploring page"
+      },
+      {
+        "timestamp": "01:52:01",
+        "action": "Scrolled 25% down the page"
       }
     ],
-    "scrollPercent": 0,
+    "scrollPercent": 33,
     "geo": {
       "ip": "102.90.125.175",
       "country": "Nigeria",

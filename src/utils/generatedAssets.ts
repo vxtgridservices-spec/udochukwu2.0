@@ -6,12 +6,14 @@ import productAudioHeadsetImg from '../assets/images/product_audio_headset_17952
 import productUsbcDockImg from '../assets/images/product_usbc_dock_1795217193217.jpg';
 import solarInverterImg from '../assets/images/marketplace_solar_inverter_1795212814359.jpg';
 import itelEnuguFlyerImg from '../assets/images/itel_enugu_flyer_1795221858026.jpg';
+import itelFbAdFlyerImg from '../assets/images/itel_fb_ad_flyer_1795225805588.jpg';
 import itelPowerTankHeroImg from '../assets/images/itel_powertank_hero_1795222439754.jpg';
 import itelPowerTankDetailImg from '../assets/images/itel_powertank_detail_1795222439120.jpg';
 import itelSolarKitImg from '../assets/images/itel_solar_kit_1795222438510.jpg';
 
 export const GENERATED_ASSETS = {
   itelEnuguFlyer: itelEnuguFlyerImg,
+  itelFbAdFlyer: itelFbAdFlyerImg,
   itelPowerTankSetup: itelPowerTankHeroImg,
   itelPowerTankDetail: itelPowerTankDetailImg,
   itelSolarPanelKit: itelSolarKitImg,

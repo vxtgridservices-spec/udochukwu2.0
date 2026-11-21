@@ -247,7 +247,7 @@ export default function Buyfromudochukwu() {
   const [isImageZoomOpen, setIsImageZoomOpen] = useState(false);
   const [previewQty, setPreviewQty] = useState(1);
   const [showRatingForm, setShowRatingForm] = useState(false);
-  const [shareCopiedState, setShareCopiedState] = useState<'idle' | 'link' | 'post'>('idle');
+  const [shareCopiedState, setShareCopiedState] = useState<string>('idle');
 
   // Admin Inline Edit State
   const [isEditingItem, setIsEditingItem] = useState(false);
@@ -396,7 +396,24 @@ export default function Buyfromudochukwu() {
         freeDeliveryEnugu: selectedProduct.freeDeliveryEnugu,
         paymentOnDeliveryEnugu: selectedProduct.paymentOnDeliveryEnugu,
       });
-      setActiveImageIdx(0);
+      const variantParam = new URLSearchParams(window.location.search)
+        .get('variant')
+        ?.toLowerCase();
+      const variantIdxMap: Record<string, number> = {
+        setup: 0,
+        detail: 1,
+        solar: 2,
+        flyer: 3,
+        lifestyle: 4,
+      };
+      const resolvedIdx =
+        selectedProduct.id === 'prod-itel-powertank-full' &&
+        variantParam &&
+        variantIdxMap[variantParam] !== undefined &&
+        variantIdxMap[variantParam] < selectedProduct.images.length
+          ? variantIdxMap[variantParam]
+          : 0;
+      setActiveImageIdx(resolvedIdx);
       setPreviewQty(1);
       setShowRatingForm(false);
       setIsEditingItem(false);
@@ -1756,17 +1773,51 @@ export default function Buyfromudochukwu() {
                       ? `🔥 21% OFF itel Sponsored Flash Sale — Now ₦${selectedProduct.price.toLocaleString()} (Was ₦696,000, Save ₦146,000)\n\n✅ itel Power Tank 500W Hybrid Inverter + 1,000Wh LiFePO4 Battery\n✅ 300W Monocrystalline Solar Panel + 20m Cable Included\n✅ Free Doorstep Delivery & Pay on Delivery after live testing in Enugu\n\nOrder directly here 👇\n${shareUrl}`
                       : `${selectedProduct.title} — ₦${selectedProduct.price.toLocaleString()} on Buyfromudochukwu.\n${selectedProduct.subtitle}\n\nInspect full specs & order here 👇\n${shareUrl}`;
 
-                  const handleCopyShare = (mode: 'link' | 'post') => {
-                    navigator.clipboard?.writeText(mode === 'link' ? shareUrl : fbCaption);
+                  const handleCopyShare = (mode: string, textValue: string) => {
+                    navigator.clipboard?.writeText(textValue);
                     setShareCopiedState(mode);
                     setTimeout(() => setShareCopiedState('idle'), 2600);
                   };
 
+                  const variantSlides =
+                    selectedProduct.id === 'prod-itel-powertank-full'
+                      ? [
+                          {
+                            id: 'flyer',
+                            label: 'Card 1: Graphic Ad Poster (21% OFF)',
+                            url: `${window.location.origin}/ad/itel-enugu`,
+                            download: '/share/itel-fb-ad-flyer.jpg',
+                            filename: 'itel-enugu-21off-ad-flyer.jpg',
+                          },
+                          {
+                            id: 'setup',
+                            label: 'Card 2: 3-Piece Solar Bundle',
+                            url: `${window.location.origin}/ad/itel-enugu?variant=setup`,
+                            download: '/share/itel-powertank-setup.jpg',
+                            filename: 'itel-powertank-bundle.jpg',
+                          },
+                          {
+                            id: 'detail',
+                            label: 'Card 3: Ports & Hardware Close-Up',
+                            url: `${window.location.origin}/ad/itel-enugu?variant=detail`,
+                            download: '/share/itel-powertank-detail.jpg',
+                            filename: 'itel-powertank-ports.jpg',
+                          },
+                          {
+                            id: 'solar',
+                            label: 'Card 4: 300W Panel + 20m Cable',
+                            url: `${window.location.origin}/ad/itel-enugu?variant=solar`,
+                            download: '/share/itel-solar-kit.jpg',
+                            filename: 'itel-300w-solar-20m-cable.jpg',
+                          },
+                        ]
+                      : [];
+
                   return (
-                    <div className="border-t border-white/10 pt-4 space-y-2.5">
+                    <div className="border-t border-white/10 pt-4 space-y-3">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <h2 className="text-xs font-mono text-slate-400 uppercase tracking-wider">
-                          Share on Facebook (Auto Ad &amp; Photo Card)
+                          Share on Facebook (Ad Poster &amp; Variant Cards)
                         </h2>
                         <a
                           href={`https://developers.facebook.com/tools/debug/?q=${encodeURIComponent(shareUrl)}`}
@@ -1774,7 +1825,7 @@ export default function Buyfromudochukwu() {
                           rel="noopener noreferrer"
                           className="text-[11px] font-mono text-sky-400 hover:text-sky-300 underline underline-offset-4"
                         >
-                          Verify FB Preview ↗
+                          Verify / Refresh FB Cache ↗
                         </a>
                       </div>
                       <div className="bg-[#191f30] border border-white/10 p-3 space-y-2.5">
@@ -1784,7 +1835,7 @@ export default function Buyfromudochukwu() {
                         <div className="flex flex-wrap gap-2">
                           <button
                             type="button"
-                            onClick={() => handleCopyShare('link')}
+                            onClick={() => handleCopyShare('link', shareUrl)}
                             className="bg-white text-slate-950 hover:bg-slate-200 px-3 py-1.5 text-[11px] font-mono font-semibold uppercase tracking-wider inline-flex items-center gap-1.5 cursor-pointer"
                           >
                             {shareCopiedState === 'link' ? (
@@ -1798,7 +1849,7 @@ export default function Buyfromudochukwu() {
                           </button>
                           <button
                             type="button"
-                            onClick={() => handleCopyShare('post')}
+                            onClick={() => handleCopyShare('post', fbCaption)}
                             className="border border-white/20 text-white hover:bg-white/5 px-3 py-1.5 text-[11px] font-mono font-semibold uppercase tracking-wider inline-flex items-center gap-1.5 cursor-pointer"
                           >
                             {shareCopiedState === 'post' ? (
@@ -1819,6 +1870,40 @@ export default function Buyfromudochukwu() {
                             Post to Facebook ↗
                           </a>
                         </div>
+
+                        {variantSlides.length > 0 && (
+                          <div className="border-t border-white/10 pt-3 space-y-2">
+                            <p className="text-[11px] font-sans text-slate-300 leading-relaxed">
+                              For <strong className="text-white">swappable Carousel slides</strong> on a Facebook Page or Meta Ad, add each card URL below (or download the 4 images directly):
+                            </p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                              {variantSlides.map((slide) => (
+                                <div
+                                  key={slide.id}
+                                  className="flex items-center justify-between gap-2 bg-[#141824] border border-white/10 px-2.5 py-1.5 text-[10px] font-mono"
+                                >
+                                  <span className="text-slate-200 truncate">{slide.label}</span>
+                                  <div className="flex items-center gap-2 shrink-0">
+                                    <button
+                                      type="button"
+                                      onClick={() => handleCopyShare(`var-${slide.id}`, slide.url)}
+                                      className="text-amber-300 hover:text-amber-200 underline underline-offset-2 cursor-pointer"
+                                    >
+                                      {shareCopiedState === `var-${slide.id}` ? 'Copied' : 'Copy URL'}
+                                    </button>
+                                    <a
+                                      href={slide.download}
+                                      download={slide.filename}
+                                      className="text-slate-400 hover:text-white underline underline-offset-2"
+                                    >
+                                      Save JPG
+                                    </a>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   );

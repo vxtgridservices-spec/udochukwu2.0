@@ -185,7 +185,7 @@ async function startServer() {
       compareAtPrice: 696000,
       inStock: true,
       images: [
-        "/share/itel-enugu-flyer.jpg",
+        "/share/itel-fb-ad-flyer.jpg",
         "/share/itel-powertank-setup.jpg",
         "/share/itel-powertank-detail.jpg",
         "/share/itel-solar-kit.jpg",
@@ -230,6 +230,7 @@ async function startServer() {
     if (!rawImg) return `${origin}/share/marketplace-collection.jpg`;
     if (rawImg.startsWith("http://") || rawImg.startsWith("https://")) return rawImg;
     if (rawImg.startsWith("/share/")) return `${origin}${rawImg}`;
+    if (rawImg.includes("itel_fb_ad_flyer")) return `${origin}/share/itel-fb-ad-flyer.jpg`;
     if (rawImg.includes("itel_enugu_flyer")) return `${origin}/share/itel-enugu-flyer.jpg`;
     if (rawImg.includes("itel_powertank_hero")) return `${origin}/share/itel-powertank-setup.jpg`;
     if (rawImg.includes("itel_powertank_detail")) return `${origin}/share/itel-powertank-detail.jpg`;
@@ -266,6 +267,7 @@ async function startServer() {
     const origin = getRequestOrigin(req);
     const cleanPath = req.path.replace(/\/+$/, "").toLowerCase() || "/";
     const itemQuery = typeof req.query.item === "string" ? req.query.item.trim() : "";
+    const variantQuery = typeof req.query.variant === "string" ? req.query.variant.trim().toLowerCase() : "";
 
     let requestedItemId = itemQuery;
     if (!requestedItemId && cleanPath === "/ad/itel-enugu") {
@@ -285,6 +287,8 @@ async function startServer() {
       "Official platform of Udochukwu (VXTGrid Services) — custom web engineering, strategy, and the Buyfromudochukwu curated marketplace.";
     let ogType = "website";
     let ogImages: string[] = [`${origin}/share/marketplace-collection.jpg`];
+    let imgWidth = "1200";
+    let imgHeight = "900";
     let matchedProduct: ShareProductFallback | undefined;
 
     if (requestedItemId) {
@@ -296,17 +300,59 @@ async function startServer() {
             : 0;
         const formattedPrice = `₦${Number(matchedProduct.price).toLocaleString()}`;
         if (matchedProduct.id === "prod-itel-powertank-full") {
-          title = `${discountPct > 0 ? `${discountPct}% OFF Flash Sale: ` : ""}${matchedProduct.title} — ${formattedPrice}`;
-          description =
-            matchedProduct.compareAtPrice && matchedProduct.compareAtPrice > matchedProduct.price
-              ? `Save ₦${(matchedProduct.compareAtPrice - matchedProduct.price).toLocaleString()} (${discountPct}% OFF). Includes 500W/1000Wh itel Power Tank + 300W Solar Panel + 20m Cable. Free Enugu delivery & Pay on Delivery after testing!`
-              : matchedProduct.description;
-          ogImages = [
-            `${origin}/share/itel-enugu-flyer.jpg`,
-            `${origin}/share/itel-powertank-setup.jpg`,
-            `${origin}/share/itel-powertank-detail.jpg`,
-            `${origin}/share/itel-solar-kit.jpg`,
-          ];
+          const variantCards: Record<string, { title: string; desc: string; img: string; w: string; h: string }> = {
+            setup: {
+              title: `3-Piece Full Bundle: itel Power Tank + 300W Panel + 20m Cable — ${formattedPrice}`,
+              desc: "Includes 500W/1000Wh LiFePO4 Power Tank, 300W Monocrystalline Solar Panel & 20m Heavy-Duty MC4 Cable. Free Enugu Delivery & Pay on Delivery.",
+              img: `${origin}/share/itel-powertank-setup.jpg`,
+              w: "1200",
+              h: "900",
+            },
+            detail: {
+              title: `Ports & Hardware Close-Up: itel IESS-05K10N 500W/1000Wh — ${formattedPrice}`,
+              desc: "Dual universal AC sockets, <20ms UPS switchover, 400W MPPT solar controller & 6,000+ LiFePO4 cycles. Test live before paying in Enugu.",
+              img: `${origin}/share/itel-powertank-detail.jpg`,
+              w: "1200",
+              h: "900",
+            },
+            solar: {
+              title: `Included 300W Monocrystalline Solar Panel + 20m Cable Kit — itel Bundle`,
+              desc: "High-efficiency 300W solar panel, 20m MC4 solar cable, mounting brackets & fuses included free in the ₦550,000 Flash Sale bundle.",
+              img: `${origin}/share/itel-solar-kit.jpg`,
+              w: "1200",
+              h: "900",
+            },
+            lifestyle: {
+              title: `21% OFF Enugu Flash Sale: itel Power Tank Solar Setup — ${formattedPrice}`,
+              desc: "Power TV, fans, laptops & inverter freezer silently without fuel queues. Free Enugu doorstep testing & Pay on Delivery.",
+              img: `${origin}/share/itel-enugu-flyer.jpg`,
+              w: "1200",
+              h: "900",
+            },
+          };
+
+          const variantMatch = variantCards[variantQuery];
+          if (variantMatch) {
+            title = variantMatch.title;
+            description = variantMatch.desc;
+            ogImages = [variantMatch.img];
+            imgWidth = variantMatch.w;
+            imgHeight = variantMatch.h;
+          } else {
+            title = `${discountPct > 0 ? `${discountPct}% OFF Flash Sale: ` : ""}${matchedProduct.title} — ${formattedPrice}`;
+            description =
+              matchedProduct.compareAtPrice && matchedProduct.compareAtPrice > matchedProduct.price
+                ? `Save ₦${(matchedProduct.compareAtPrice - matchedProduct.price).toLocaleString()} (${discountPct}% OFF). Includes 500W/1000Wh itel Power Tank + 300W Solar Panel + 20m Cable. Free Enugu delivery & Pay on Delivery after testing!`
+                : matchedProduct.description;
+            ogImages = [
+              `${origin}/share/itel-fb-ad-flyer.jpg`,
+              `${origin}/share/itel-powertank-setup.jpg`,
+              `${origin}/share/itel-powertank-detail.jpg`,
+              `${origin}/share/itel-solar-kit.jpg`,
+            ];
+            imgWidth = "1280";
+            imgHeight = "720";
+          }
         } else {
           title = `${matchedProduct.title} — ${formattedPrice} | Buyfromudochukwu`;
           description = matchedProduct.description || matchedProduct.subtitle;
@@ -322,10 +368,12 @@ async function startServer() {
       description =
         "Curated tech, workstations, audio, and the itel Power Tank 500W + 300W Solar + 20m Cable Flash Sale (₦550,000, Free Enugu Delivery & Payment on Delivery).";
       ogImages = [
-        `${origin}/share/itel-enugu-flyer.jpg`,
+        `${origin}/share/itel-fb-ad-flyer.jpg`,
         `${origin}/share/itel-powertank-setup.jpg`,
         `${origin}/share/marketplace-collection.jpg`,
       ];
+      imgWidth = "1280";
+      imgHeight = "720";
     }
 
     const canonicalUrl = `${origin}${req.originalUrl}`;
@@ -334,12 +382,12 @@ async function startServer() {
     const imageMetaTags = ogImages
       .slice(0, 4)
       .map(
-        (imgUrl) => `
+        (imgUrl, idx) => `
     <meta property="og:image" content="${escapeHtmlAttr(imgUrl)}" />
     <meta property="og:image:secure_url" content="${escapeHtmlAttr(imgUrl)}" />
     <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="900" />`
+    <meta property="og:image:width" content="${idx === 0 ? imgWidth : "1200"}" />
+    <meta property="og:image:height" content="${idx === 0 ? imgHeight : "900"}" />`
       )
       .join("");
 
