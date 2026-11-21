@@ -1,27 +1,20 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { PRELOADED_SERVICES } from '../utils/storage';
 import { useCurrency } from '../context/CurrencyContext';
-import { 
-  Check, 
-  HelpCircle, 
-  ShieldCheck, 
-  Building2, 
-  UtensilsCrossed, 
-  Hotel, 
-  Sparkles, 
-  BookOpen, 
-  HeartPulse, 
-  Briefcase, 
-  Hammer, 
-  Tag, 
-  Store, 
-  Cpu, 
-  Scale, 
-  Calendar, 
-  DollarSign, 
-  Hourglass,
-  ArrowRight
+import { GENERATED_ASSETS } from '../utils/generatedAssets';
+import {
+  Building2,
+  UtensilsCrossed,
+  Hotel,
+  Landmark,
+  BookOpen,
+  HeartPulse,
+  Hammer,
+  Tag,
+  Store,
+  Cpu,
+  Scale,
+  MoveRight,
 } from 'lucide-react';
 
 interface ServicesProps {
@@ -30,169 +23,211 @@ interface ServicesProps {
 
 export default function Services({ onNavigate }: ServicesProps) {
   const { convertNairaString } = useCurrency();
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [selectedIndustry, setSelectedIndustry] = useState<string>('Hotels');
 
   const extraServices = [
-    { title: 'Website Speed Tuning', desc: 'Squeeze bloated server response overhead. Compress images and setup edge CDNs to raise Google Core Web Vitals to 98%.' },
-    { title: 'SEO Optimization', desc: 'Schema markup mappings, Google Search console indexings, and contextual keywords mapping to secure ranking on intent queries.' },
-    { title: 'Brand Identity Strategy', desc: 'Elite corporate logo creation, high-end visual stylesheets, font pairings, and unified brand manuals.' },
-    { title: 'Website Maintenance & Security SLA', desc: 'Weekly backups, immediate core updates, malware scans, DDoS protection, and continuous SLA support hours.' },
-    { title: 'Premium Business Consultation', desc: 'One-on-one direct audits of existing pipelines, traffic analytics breakdown, and customized CTA re-trigger strategy maps.' }
+    {
+      title: 'Website Speed Tuning',
+      desc: 'Remove bloated plugin overhead, compress media assets, and configure clean static bundling for crisp mobile loading.',
+    },
+    {
+      title: 'SEO Optimization',
+      desc: 'Structured Schema markup, clean semantic headings, Search Console readiness, and regional keyword architecture.',
+    },
+    {
+      title: 'Brand Identity Strategy',
+      desc: 'Cohesive visual systems, clear typography pairings, and consistent digital presentation guidelines.',
+    },
+    {
+      title: 'Website Maintenance & Security SLA',
+      desc: 'Scheduled backups, dependency updates, uptime checks, and ongoing technical support.',
+    },
+    {
+      title: 'Technical Product Consultation',
+      desc: 'One-on-one architecture reviews of existing web funnels, checkout UX, and lead capture workflows.',
+    },
   ];
 
   const industries = [
     {
       name: 'Hotels',
       icon: Hotel,
-      tagline: 'Direct Bedside Reservations',
-      challenge: 'Losing 18%+ bookings gross profit margins to heavy OTA aggregators (Booking.com/Expedia) and slow loading galleries.',
-      strategy: 'Deploy ultra-light booking funnels synced to local bank wire/card gateways and automatic checkout confirmation flows.'
+      tagline: 'Direct Guest Reservations',
+      challenge:
+        'Relying solely on third-party booking aggregators cuts into room margins while slow mobile galleries frustrate direct visitors.',
+      strategy:
+        'Clean direct booking workflows synced with instant confirmation messages and lightweight room photo galleries.',
     },
     {
       name: 'Real Estate',
       icon: Building2,
-      tagline: 'High-Net-Worth Lead Pipelines',
-      challenge: 'Relying strictly on messy Instagram messages and bulky PDFs that diaspora buyers find untrustworthy.',
-      strategy: 'Prestige catalog grids with virtual cinematic walkthrough embeds, lifestyle maps, and secure Diaspora Lead Capture Kits.'
+      tagline: 'Credible Property Portfolios',
+      challenge:
+        'Sending messy chat links and heavy unformatted brochures weakens trust with serious local and diaspora buyers.',
+      strategy:
+        'Structured property catalog pages with neighborhood filters, clear payment breakdowns, and direct inspection forms.',
     },
     {
       name: 'Restaurants',
       icon: UtensilsCrossed,
-      tagline: 'Mobile Ordering & Table Bookings',
-      challenge: 'Slow, unreadable mobile menus causing massive lunch or evening booking bounces.',
-      strategy: 'Light mobile menus that load in 0.5 seconds, interactive calendar reservation forms, and direct WhatsApp reservation alerts.'
+      tagline: 'Fast Mobile Menus & Table Requests',
+      challenge:
+        'Heavy PDF menus are hard to read on phones and delay customer ordering decisions.',
+      strategy:
+        'Lightweight, readable web menus, quick table reservation forms, and direct WhatsApp ordering integration.',
     },
     {
       name: 'Schools',
       icon: BookOpen,
-      tagline: 'Nursery & Secondary Admissions',
-      challenge: 'Confused parents leaving because enrollment details and fee download links are broken or slow.',
-      strategy: 'Elegant "Admissions Hub" pages containing streamlined forms, interactive prospectus viewports, and school values timelines.'
+      tagline: 'Clear Admissions Hubs',
+      challenge:
+        'Parents struggle to locate fee guidelines, academic calendars, and broken enrollment forms.',
+      strategy:
+        'Organized admissions portals featuring clear program tracks, downloadable guides, and working inquiry forms.',
     },
     {
       name: 'Churches',
-      icon: Sparkles,
-      tagline: 'Digital Ministry and Media Archives',
-      challenge: 'Scattered sermon records, laggy video embeds, and confusing options to donate locally or from abroad.',
-      strategy: 'Optimized video sermon streams, seamless secure online offering hubs, and simplified digital weekly bulletin downloads.'
+      icon: Landmark,
+      tagline: 'Media Archives & Giving Portals',
+      challenge:
+        'Scattered sermon links and confusing online giving flows make it difficult for members to stay connected.',
+      strategy:
+        'Clean media libraries, service schedules, and straightforward local and international support channels.',
     },
     {
       name: 'Healthcare',
       icon: HeartPulse,
-      tagline: 'Patient Enrollment & Doctor Schedules',
-      challenge: 'Manual phone scheduling draining front-desk energy, forcing patients to wait for appointments.',
-      strategy: 'Hacker-proof appointment engines with real-time slot selection, SMS alerts, and professional department directories.'
+      tagline: 'Patient Scheduling & Department Guides',
+      challenge:
+        'Manual phone coordination creates reception bottlenecks and missed patient follow-ups.',
+      strategy:
+        'Structured appointment intake forms, clear specialist directories, and mobile-friendly clinic directions.',
     },
     {
       name: 'Law Firms',
       icon: Scale,
-      tagline: 'Elite Consultation Closers',
-      challenge: 'Brochure sites that fail to represent trial pedigree, making elite corporations negotiate lower rates.',
-      strategy: 'Sleek, heavy white-and-gold editorial pages detailing key partner accolades, high-profile victory reports, and calendar forms.'
+      tagline: 'Authoritative Practice Portals',
+      challenge:
+        'Dated template websites fail to reflect partner pedigree and practice area specialization.',
+      strategy:
+        'Disciplined editorial layouts highlighting practice areas, partner profiles, and confidential consultation intake.',
     },
     {
       name: 'Construction',
       icon: Hammer,
-      tagline: 'Bid-Winning Portal Layouts',
-      challenge: 'Losing massive government or private tenders because portfolios look unpolished or outdated.',
-      strategy: 'Case-study layouts of past architectural contracts, site telemetry stats, and high-fidelity project gallery carousels.'
+      tagline: 'Project Documentation & Tender Readiness',
+      challenge:
+        'Missing project documentation makes corporate and public procurement reviews harder to win.',
+      strategy:
+        'Structured project case logs, technical capability briefs, and clean corporate contact specifications.',
     },
     {
       name: 'Fashion Brands',
       icon: Tag,
-      tagline: 'Prestige Identity & E-commerce',
-      challenge: 'Standard Shopify setups that strip your clothes of luxury feeling, resulting in low average orders.',
-      strategy: 'High-contrast magazine layouts, integrated rich shopping experiences, and premium local payout automations.'
+      tagline: 'Editorial Lookbooks & E-Commerce',
+      challenge:
+        'Generic store themes flatten brand positioning and slow down product browsing on mobile.',
+      strategy:
+        'High-contrast product presentation, organized sizing/variant selection, and streamlined order checkout.',
     },
     {
       name: 'Small Businesses',
       icon: Store,
-      tagline: 'Immediate Automated Inbounds',
-      challenge: 'Zero local visibility, failing to convince prospects coming from local search terms.',
-      strategy: 'Highly localized SEO blueprints, prominent trust indicators, and frictionless direct Call/WhatsApp trigger modules.'
+      tagline: 'Dependable Local Discovery',
+      challenge:
+        'Customers searching locally cannot verify offerings, pricing, or active contact channels quickly.',
+      strategy:
+        'Focused local landing pages, verified contact details, and instant WhatsApp inquiry buttons.',
     },
     {
       name: 'Tech Startups',
       icon: Cpu,
-      tagline: 'SaaS Traction & Lead Funnels',
-      challenge: 'Heavy layouts with confusing text, leading to poor visitor conversions and expensive ad budgets.',
-      strategy: 'Modern single-page react funnels, dynamic service visualizers, and structured interactive pricing tables.'
-    }
+      tagline: 'Product Clarity & Waitlist Flows',
+      challenge:
+        'Overcomplicated landing copy confuses visitors instead of clearly explaining what the product does.',
+      strategy:
+        'Sharp React product pages, clear feature breakdowns, and responsive onboarding waitlists.',
+    },
   ];
 
+  const activeIndustryObj =
+    industries.find((ind) => ind.name === selectedIndustry) || industries[0];
+  const ActiveIndIcon = activeIndustryObj.icon;
+
+  const packageTints = ['bg-[#1b243b]', 'bg-[#3c7b8c]', 'bg-[#4a628d]', 'bg-[#3b6e82]'];
+
   return (
-    <div className="w-full bg-slate-950 transition-colors duration-300 overflow-hidden">
-      
-      {/* Intro - Full Bleed */}
-      <section className="relative min-h-[50vh] flex flex-col justify-center items-center text-center px-6 border-b border-white/20">
-        <div className="absolute inset-0 z-0 bg-slate-900"></div>
-        <div className="relative z-10 max-w-4xl mx-auto">
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-sans font-bold text-white tracking-tight uppercase">
-            Services & Packages
+    <div className="bg-[#181d2c] text-white">
+      {/* 1. HERO BAND (Warm Sand-Amber Wash — Matches Home Services Section) */}
+      <section className="relative min-h-[50vh] flex flex-col justify-center items-start bg-[#8f6f47] overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img
+            src={GENERATED_ASSETS.portfolioFintech}
+            alt="Web Engineering Architecture"
+            className="w-full h-full object-cover object-center opacity-20 mix-blend-luminosity"
+          />
+          <div className="absolute inset-0 bg-[#7f6039]/55" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#5e4628]/85 via-[#7f6039]/45 to-transparent" />
+        </div>
+
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14 py-20 text-left">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-sans font-semibold text-white tracking-tight">
+            VXTGrid Services
           </h1>
-          <div className="w-24 h-1 bg-white my-8 mx-auto"></div>
-          <p className="text-white text-xs sm:text-sm tracking-[0.2em] font-mono leading-relaxed max-w-2xl mx-auto font-bold uppercase">
-            WE DON’T CHARGE HOURLY RATES OR SELL EMPTY BLOCKS OF WEB LAYOUTS. WE OFFER COMPREHENSIVE CUSTOMER ACQUISITION FUNNELS MAPPED TO DIRECT BUSINESS BENEFITS.
+          <div className="w-full max-w-2xl h-[1px] bg-white/80 my-6" />
+          <p className="text-white/95 text-xs sm:text-sm tracking-[0.16em] font-mono leading-relaxed max-w-2xl uppercase">
+            CUSTOM REACT WEBSITES, MOBILE SPEED OPTIMIZATION, SEO FOUNDATIONS, AND CLEAN E-COMMERCE ARCHITECTURE.
           </p>
         </div>
       </section>
 
-      {/* Mega Packages Block */}
+      {/* 2. SERVICE PACKAGES BANDS */}
       <div className="w-full flex flex-col">
         {PRELOADED_SERVICES.map((p, idx) => (
           <section
             key={p.id}
             id={`service-pkg-row-${idx}`}
-            className="relative min-h-[80vh] flex flex-col justify-center items-start border-b border-white/20 py-24"
+            className={`relative py-16 sm:py-24 overflow-hidden ${packageTints[idx % packageTints.length]}`}
           >
-            <div className="absolute inset-0 z-0">
-              <img 
-                src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1920&q=80" 
-                alt="Service background" 
-                className="w-full h-full object-cover object-center filter opacity-30 mix-blend-luminosity grayscale"
-                referrerPolicy="no-referrer"
-              />
-              <div className={`absolute inset-0 ${idx % 2 === 0 ? 'bg-slate-900/90' : 'bg-blue-950/90'} mix-blend-multiply`} />
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-transparent to-transparent" />
-            </div>
-
-            <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-left">
+            <div className="w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14 text-left">
               {idx === 0 && (
-                <span className="inline-block text-emerald-400 text-sm font-mono tracking-widest uppercase font-bold mb-4 border border-emerald-400/30 px-3 py-1">
-                  ★ MOST POPULAR
+                <span className="inline-block text-white/90 text-xs font-mono tracking-[0.18em] uppercase mb-3">
+                  Core Engineering Track
                 </span>
               )}
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-sans font-bold text-white tracking-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-sans font-semibold text-white tracking-tight">
                 {p.name}
               </h2>
-              <div className="w-full max-w-2xl h-0.5 bg-white/40 my-6"></div>
-              <p className="text-slate-300 text-sm sm:text-base tracking-[0.1em] font-mono leading-relaxed max-w-3xl font-bold uppercase mb-8">
+              <div className="w-full max-w-2xl h-[1px] bg-white/80 my-5" />
+              <p className="text-white/90 text-xs sm:text-sm tracking-[0.14em] font-mono leading-relaxed max-w-3xl uppercase mb-10">
                 {p.tagline}
               </p>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl">
-                <div>
-                  <h4 className="text-xs font-mono font-black text-white uppercase tracking-widest mb-4 border-b border-white/20 pb-2">
-                    BUSINESS ADVANTAGES
-                  </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-4xl">
+                <div className="bg-[#141a2b]/50 border border-white/20 p-6 space-y-4">
+                  <h3 className="text-xs font-mono font-semibold text-white uppercase tracking-[0.18em] border-b border-white/20 pb-2">
+                    Core Outcomes
+                  </h3>
                   <ul className="space-y-3">
                     {p.benefits.map((b, bIdx) => (
-                      <li key={bIdx} className="flex items-start gap-3 text-sm text-slate-300 font-mono">
-                        <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                      <li key={bIdx} className="flex items-start gap-3 text-xs sm:text-sm text-white/85 font-sans">
+                        <span className="font-mono font-bold text-white shrink-0 tabular-nums">
+                          {(bIdx + 1).toString().padStart(2, '0')}.
+                        </span>
                         <span>{b}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
-                <div>
-                  <h4 className="text-xs font-mono font-black text-white uppercase tracking-widest mb-4 border-b border-white/20 pb-2">
-                    WHAT IS INCLUDED
-                  </h4>
+
+                <div className="bg-[#141a2b]/50 border border-white/20 p-6 space-y-4">
+                  <h3 className="text-xs font-mono font-semibold text-white uppercase tracking-[0.18em] border-b border-white/20 pb-2">
+                    Included Deliverables
+                  </h3>
                   <ul className="space-y-3">
                     {p.features.map((f, fIdx) => (
-                      <li key={fIdx} className="flex gap-3 items-center text-sm text-slate-300 font-mono">
-                        <span className="w-1.5 h-1.5 bg-white rounded-full shrink-0"></span>
+                      <li key={fIdx} className="flex gap-3 items-start text-xs sm:text-sm text-white/85 font-sans">
+                        <span className="font-mono font-bold text-white/75 shrink-0">—</span>
                         <span>{f}</span>
                       </li>
                     ))}
@@ -200,17 +235,26 @@ export default function Services({ onNavigate }: ServicesProps) {
                 </div>
               </div>
 
-              <div className="mt-12 flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+              <div className="mt-10 flex flex-col sm:flex-row gap-6 items-start sm:items-center">
                 <button
+                  type="button"
                   onClick={() => onNavigate('contact')}
-                  className="border-2 border-white text-white font-mono uppercase tracking-[0.2em] px-8 py-4 hover:bg-white hover:text-slate-950 transition-colors flex items-center justify-center gap-4 cursor-pointer font-bold text-sm"
+                  className="border border-white text-white font-mono uppercase tracking-[0.18em] px-6 py-3.5 hover:bg-white hover:text-slate-950 transition-colors inline-flex items-center gap-3 cursor-pointer font-semibold text-xs"
                 >
-                  ACQUIRE SYSTEM <ArrowRight className="w-5 h-5 ml-2" />
+                  <span>Start This Package</span>
+                  <MoveRight className="w-4 h-4" />
                 </button>
-                <div className="flex flex-col gap-1 text-xs font-mono text-slate-400">
-                  <span>TIMELINE: <strong className="text-white">{p.timeline}</strong></span>
+                <div className="flex flex-wrap gap-6 text-xs font-mono text-white/85 uppercase tracking-wider">
+                  <span>
+                    Timeline: <strong className="text-white">{p.timeline}</strong>
+                  </span>
                   {p.priceRange && (
-                    <span>STARTING AT: <strong className="text-white">{convertNairaString(p.priceRange)}</strong></span>
+                    <span>
+                      Starting At:{' '}
+                      <strong className="text-white tabular-nums">
+                        {convertNairaString(p.priceRange)}
+                      </strong>
+                    </span>
                   )}
                 </div>
               </div>
@@ -219,76 +263,84 @@ export default function Services({ onNavigate }: ServicesProps) {
         ))}
       </div>
 
-        {/* INDUSTRIES SHOWCASE PAGE */}
-        <section className="relative min-h-[50vh] flex flex-col justify-center items-start border-b border-white/20 py-24 bg-slate-900">
-          <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-left">
-            <h2 className="text-4xl sm:text-5xl lg:text-5xl font-sans font-bold text-white tracking-tight uppercase">
-              Bespoke Vertical Solutions
-            </h2>
-            <div className="w-full max-w-2xl h-0.5 bg-white/40 my-6"></div>
-            
-            <div className="flex flex-wrap gap-2 mb-12 max-w-4xl">
-              {industries.map(ind => (
-                <button
-                  key={ind.name}
-                  onClick={() => setSelectedIndustry(ind.name)}
-                  className={`py-3 px-4 text-xs font-mono font-bold uppercase transition-all tracking-widest border border-white/10 ${
-                    selectedIndustry === ind.name 
-                      ? 'bg-white text-slate-900 border-white' 
-                      : 'text-slate-400 hover:bg-white/5 hover:text-white'
-                  }`}
-                >
-                  {ind.name}
-                </button>
-              ))}
-            </div>
+      {/* 3. SECTOR BLUEPRINTS (Muted Violet Wash) */}
+      <section className="bg-[#52497a] py-16 sm:py-24">
+        <div className="w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14 text-left">
+          <h2 className="text-3xl sm:text-4xl font-sans font-semibold text-white tracking-tight">
+            Sector Blueprints
+          </h2>
+          <div className="w-full max-w-2xl h-[1px] bg-white/80 my-5" />
 
-            <div className="bg-slate-950 p-8 md:p-12 border border-white/10 text-white max-w-4xl">
-              {industries.filter(ind => ind.name === selectedIndustry).map(ind => (
-                <div key={ind.name}>
-                  <h3 className="text-2xl font-bold font-sans uppercase tracking-tight mb-2">{ind.name}: {ind.tagline}</h3>
-                  <p className="text-emerald-400 text-sm font-mono tracking-widest uppercase mb-8">THE STRATEGY</p>
-                  
-                  <div className="space-y-8 text-sm font-mono leading-relaxed text-slate-300">
-                    <div>
-                      <strong className="text-white block mb-2 tracking-widest">THE LEAK:</strong>
-                      {ind.challenge}
-                    </div>
-                    <div>
-                      <strong className="text-white block mb-2 tracking-widest">THE FIX:</strong>
-                      {ind.strategy}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            
+          <div className="flex flex-wrap gap-2 mb-8">
+            {industries.map((ind) => (
+              <button
+                key={ind.name}
+                type="button"
+                onClick={() => setSelectedIndustry(ind.name)}
+                className={`py-2.5 px-4 text-xs font-mono font-semibold uppercase transition-colors tracking-[0.14em] border cursor-pointer whitespace-nowrap ${
+                  selectedIndustry === ind.name
+                    ? 'bg-white text-slate-950 border-white'
+                    : 'border-white/25 bg-[#141a2b]/45 text-white/85 hover:border-white hover:text-white'
+                }`}
+              >
+                {ind.name}
+              </button>
+            ))}
           </div>
-        </section>
 
-        {/* EXTRA SMALLER SECTOR CHEATS & PLUGINS */}
-        <section className="relative min-h-[50vh] flex flex-col justify-center items-start border-b border-white/20 py-24 bg-slate-950">
-          <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-left">
-            <h2 className="text-3xl sm:text-4xl font-sans font-bold text-white tracking-tight uppercase">
-              Add-On Services
-            </h2>
-            <div className="w-full max-w-2xl h-0.5 bg-white/40 my-6"></div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12 mt-12 max-w-5xl">
-              {extraServices.map((x, idx) => (
-                <div key={idx} className="border-l-2 border-white/20 pl-6 py-2">
-                  <h4 className="text-white font-mono font-bold uppercase tracking-widest mb-3">
-                    {x.title}
-                  </h4>
-                  <p className="text-slate-400 text-sm font-mono leading-relaxed">
-                    {x.desc}
-                  </p>
-                </div>
-              ))}
+          <div className="bg-[#141a2b]/75 p-6 sm:p-10 border border-white/25 text-white max-w-4xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2.5 bg-white/10 border border-white/25 text-white">
+                <ActiveIndIcon className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-xl sm:text-2xl font-sans font-semibold tracking-tight">
+                  {activeIndustryObj.name}: {activeIndustryObj.tagline}
+                </h3>
+                <p className="text-white/75 text-xs font-mono tracking-[0.16em] uppercase mt-0.5">
+                  Engineering Approach
+                </p>
+              </div>
+            </div>
+
+            <div className="w-full h-[1px] bg-white/25 my-5" />
+
+            <div className="space-y-5 text-sm leading-relaxed text-white/85 font-sans">
+              <div>
+                <strong className="text-white font-mono text-xs uppercase block mb-1.5 tracking-[0.16em]">
+                  Common Bottleneck
+                </strong>
+                {activeIndustryObj.challenge}
+              </div>
+              <div>
+                <strong className="text-white font-mono text-xs uppercase block mb-1.5 tracking-[0.16em]">
+                  Recommended System
+                </strong>
+                {activeIndustryObj.strategy}
+              </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-      </div>
+      {/* 4. ADDITIONAL SERVICES (Periwinkle Indigo Wash) */}
+      <section className="bg-[#485180] py-16 sm:py-24">
+        <div className="w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14 text-left">
+          <h2 className="text-3xl sm:text-4xl font-sans font-semibold text-white tracking-tight">
+            Additional Services
+          </h2>
+          <div className="w-full max-w-2xl h-[1px] bg-white/80 my-5" />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+            {extraServices.map((x, idx) => (
+              <div key={idx} className="border border-white/25 bg-[#141a2b]/50 p-6 space-y-2">
+                <h3 className="text-white font-sans font-semibold text-lg">{x.title}</h3>
+                <p className="text-white/85 text-sm font-sans leading-relaxed">{x.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }

@@ -1,23 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PageView } from '../types';
-import { getBlogs, PRELOADED_SERVICES } from '../utils/storage';
+import { getBlogs, PRELOADED_SERVICES, getMarketplaceProducts } from '../utils/storage';
 import { useSettings } from '../context/ThemeContext';
-import { 
-  Sun, 
-  Moon, 
-  Search, 
-  MessageSquare, 
-  ArrowUp, 
-  X, 
-  ChevronRight, 
-  Cookie, 
-  Sparkles, 
-  Menu, 
-  FileText,
-  Globe
-} from 'lucide-react';
-
+import { Search, MessageSquare, ArrowUp, X, Menu } from 'lucide-react';
+import ItelFlashSaleBannerAd from './ItelFlashSaleBannerAd';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -25,86 +12,73 @@ interface LayoutProps {
   onNavigate: (page: PageView) => void;
 }
 
-export default function Layout({ 
-  children, 
-  activePage, 
-  onNavigate 
-}: LayoutProps) {
-  const { theme, toggleTheme, isWhatsAppEnabled } = useSettings();
+export default function Layout({ children, activePage, onNavigate }: LayoutProps) {
+  const { isWhatsAppEnabled } = useSettings();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  
-  // Custom scroll states
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
-  
-  // Cookie Consent state
-  const [showCookieAlert, setShowCookieAlert] = useState(() => {
-    return localStorage.getItem('vxt_cookie_agree') !== 'true';
-  });
 
-  // Global search overlays state
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const blogsList = getBlogs();
+  const productsList = getMarketplaceProducts();
 
-  // Track page scrolling
   useEffect(() => {
     const handlePageScrolling = () => {
       const scrolled = window.scrollY;
       const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
       const progress = totalHeight > 0 ? (scrolled / totalHeight) * 100 : 0;
       setScrollProgress(progress);
-      setShowScrollTop(scrolled > 300);
-      setHasScrolled(scrolled > 20);
+      setShowScrollTop(scrolled > 350);
+      setHasScrolled(scrolled > 24);
     };
 
-    window.addEventListener('scroll', handlePageScrolling);
+    window.addEventListener('scroll', handlePageScrolling, { passive: true });
     return () => window.removeEventListener('scroll', handlePageScrolling);
   }, []);
 
-  // Sync SEO Strategy & Document metadata on active View change
   useEffect(() => {
     const metaTitles: Record<PageView, string> = {
-      home: 'Websites That Help Businesses Win More Customers | Udochukwu',
-      about: 'My Story, Strategy & Personal Philosophy | Udochukwu',
-      portfolio: 'High ROI Web Engineering Case Studies | Udochukwu',
-      services: 'Premium Packages & Strategic Solutions | Udochukwu',
-      industries: 'Bespoke Sectors blueprints catalog | Udochukwu',
-      testimonials: 'Verified Client Results & Google Reviews | Udochukwu',
-      audit: 'Free Local Website Audit & Speed Checkup | Udochukwu',
-      blog: 'High-Traction Web Design & Business Strategy Blog | Udochukwu',
-      resources: 'Free Planners, Launch Checklists & Guides | Udochukwu',
-      faq: 'Resolving Objections & SLA Support Pricing | Udochukwu',
-      contact: 'Book a Consultation / Drop a Line | Udochukwu',
-      dashboard: 'Interactive Client Transparencies Milestones Portal | Udochukwu',
-      learn: 'Masterclass Hub: Learn Web Engineering & Strategy | Udochukwu',
-      calculator: 'Advanced Revenue Projection Engine & Estimator | Udochukwu'
+      home: 'Udochukwu — Official Website & Buyfromudochukwu',
+      about: 'Who is Udochukwu | Biography & Background',
+      portfolio: 'Portfolio & Live Systems | Udochukwu',
+      services: 'VXTGrid Services & Solutions | Udochukwu',
+      industries: 'Sector Blueprints | Udochukwu',
+      testimonials: 'Client Reviews | Udochukwu',
+      audit: 'Free Technical Website Audit | Udochukwu',
+      blog: 'Latest Articles & Field Notes | Udochukwu',
+      resources: 'Free Checklists & Guides | Udochukwu',
+      faq: 'Frequently Asked Questions | Udochukwu',
+      contact: 'Contact & Inquiries | Udochukwu',
+      dashboard: 'Admin Dashboard | Udochukwu',
+      learn: 'Learn With Udochukwu',
+      calculator: 'Revenue Scenario Estimator | Udochukwu',
+      buyfromudochukwu: 'Buyfromudochukwu — Curated Multi-Category Marketplace',
     };
 
     const metaDescriptions: Record<PageView, string> = {
-      home: 'Udochukwu helps African hospitality, real-estate developers, private clinics & legal firms command high trust & acquire clients using React layouts and localized SEO.',
-      about: 'A veteran digital strategist in Lagos. Read why I skip slow pre-made WordPress templates to hand-code ultra-fast customer acquisitions portals.',
-      portfolio: 'See the numbers: slashed Booking.com commission rates, increased inbound lead captures, and high-converting real estate catalogs.',
-      services: 'Premium digital systems starting at ₦850k. Explore fully custom architectures, speed tuning SLAs, and logo stylesheets guidelines.',
-      industries: 'Bespoke web layouts and strategy parameters for Hotels, Restaurants, Schools, law firms, and tech SaaS firms in West Africa.',
-      testimonials: 'Sincere corporate feedback from Managing Directors, clinic administrators, and diaspora investors praising our lightweight systems.',
-      audit: 'Let’s perform local performance crawls. Check DNS latency over Airtel/MTN nodes and claim a detailed optimization diagnostic checklist.',
-      blog: 'Actionable blueprints covering speed performance rules, local schema structures, pricing mastery, and SEO optimization targets.',
-      resources: 'Download editable planning spreadsheets, sitemaps diagrams, and technical checklist logs designed personally by Udochukwu.',
-      faq: 'Pricing benchmarks, timelines, CMS autonomies, and safety protocol updates. Find clear transparent answers to major objections.',
-      contact: 'Reserve a brief exploratory Zoom slot or message Udochukwu directly. Get immediate feedback on web planning pipelines.',
-      dashboard: 'VIP login access to upload resources files, print formal invoicing receipts, and audit live timeline developments.',
-      learn: 'Free masterclass content on React layout components, high-speed CSS strategies, and client-acquisition conversion-trigger blueprints.',
-      calculator: 'Calculate and model VXT production system ROI pipeline enhancements based on customizable organic visitors traffic and category values.'
+      home: 'Official platform of Udochukwu — custom web engineering, VXTGrid Services, and the Buyfromudochukwu curated marketplace.',
+      about: 'Biography and background of Udochukwu, web designer and digital strategist.',
+      portfolio: 'Live web platforms built by Udochukwu including Truispay, OmnixMarket, and Global Sentinel Group.',
+      services: 'Custom React engineering, speed tuning, and SEO services.',
+      industries: 'Sector blueprints for hospitality, real estate, clinics, schools, and local commerce.',
+      testimonials: 'Client reviews submitted directly by customers and business partners.',
+      audit: 'Request a hands-on website speed and technical SEO review.',
+      blog: 'Practical articles on website performance, local search, and clear design.',
+      resources: 'Download planning templates and launch checklists.',
+      faq: 'Clear answers about web engineering and Buyfromudochukwu marketplace policies.',
+      contact: 'Contact Udochukwu directly or schedule a strategy session.',
+      dashboard: 'Admin operations portal for Buyfromudochukwu inventory, orders, leads, and content.',
+      learn: 'Structured frontend engineering curriculum and modules.',
+      calculator: 'Interactive scenario estimator based on traffic and conversion inputs.',
+      buyfromudochukwu: 'Buyfromudochukwu — a multi-category marketplace for tech gear, workstations, power hardware, seasonal discount deals, and transparent buyer policies.',
     };
 
-    // Update document head details
-    document.title = metaTitles[activePage] || 'Udochukwu - Premium Personal Brand';
-    
-    // Attempt updating meta description element
-    let metaDescriptionEl = document.querySelector('meta[name="description"]');
+    document.title = metaTitles[activePage] || 'Udochukwu';
+
+    const metaDescriptionEl = document.querySelector('meta[name="description"]');
     if (metaDescriptionEl) {
       metaDescriptionEl.setAttribute('content', metaDescriptions[activePage]);
     } else {
@@ -114,25 +88,18 @@ export default function Layout({
       document.head.appendChild(meta);
     }
 
-    // Embed simulated Schema Markup parameters
     const schemaJSON = {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Udochukwu",
-      "jobTitle": "Lead Digital Strategist & Founder",
-      "worksFor": {
-        "@type": "Organization",
-        "name": "VXTGrid Services"
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      name: 'Udochukwu',
+      jobTitle: 'Web Designer & Digital Strategist',
+      worksFor: {
+        '@type': 'Organization',
+        name: 'VXTGrid Services',
       },
-      "url": window.location.href,
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Lekki Phase 1",
-        "addressRegion": "Lagos",
-        "addressCountry": "NG"
-      }
+      url: window.location.href,
     };
-    
+
     let schemaScript = document.getElementById('vxt-schema-json');
     if (schemaScript) {
       schemaScript.innerHTML = JSON.stringify(schemaJSON);
@@ -145,267 +112,238 @@ export default function Layout({
     }
   }, [activePage]);
 
-  // Handle Cookie Agree Close
-  const handleAgreeCookie = () => {
-    localStorage.setItem('vxt_cookie_agree', 'true');
-    setShowCookieAlert(false);
-  };
-
-  // Live filter Search query
-  const filteredSearchItems = searchQuery.trim() === '' ? [] : [
-    ...blogsList.filter(b => b.title.toLowerCase().includes(searchQuery.toLowerCase())).map(b => ({ type: 'Article', title: b.title, page: 'blog' as const, details: b.excerpt })),
-    ...PRELOADED_SERVICES.filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase())).map(s => ({ type: 'Service Package', title: s.name, page: 'services' as const, details: s.tagline })),
-    { type: 'Tool', title: 'Free Website Performance Audit', page: 'audit' as const, details: 'Analyze your active domain speed leaks' }
-  ];
+  const filteredSearchItems =
+    searchQuery.trim() === ''
+      ? []
+      : [
+          ...productsList
+            .filter(
+              (p) =>
+                p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                p.category.toLowerCase().includes(searchQuery.toLowerCase())
+            )
+            .map((p) => ({
+              type: 'Buyfromudochukwu',
+              title: p.title,
+              page: 'buyfromudochukwu' as const,
+              details: `₦${p.price.toLocaleString()} — ${p.subtitle}`,
+            })),
+          ...blogsList
+            .filter((b) => b.title.toLowerCase().includes(searchQuery.toLowerCase()))
+            .map((b) => ({
+              type: 'Article',
+              title: b.title,
+              page: 'blog' as const,
+              details: b.excerpt,
+            })),
+          ...PRELOADED_SERVICES.filter((s) =>
+            s.name.toLowerCase().includes(searchQuery.toLowerCase())
+          ).map((s) => ({
+            type: 'Service',
+            title: s.name,
+            page: 'services' as const,
+            details: s.tagline,
+          })),
+        ];
 
   const isHome = activePage === 'home';
 
-  return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans flex flex-col justify-between transition-colors duration-300">
-      
-      {/* 1. SCROLLING PROGRESS SLIDER */}
-      <div 
-        className="fixed top-0 left-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 z-50 transition-all duration-100"
-        style={{ width: `${scrollProgress}%` }}
-      ></div>
+  const desktopNavLinks: { label: string; view: PageView }[] = [
+    { label: 'Buyfromudochukwu', view: 'buyfromudochukwu' },
+    { label: 'About', view: 'about' },
+    { label: 'Portfolio', view: 'portfolio' },
+    { label: 'Services', view: 'services' },
+    { label: 'Blog', view: 'blog' },
+    { label: 'Contact', view: 'contact' },
+  ];
 
-      {/* 2. STICKY GLASSMORPHIC HEADER */}
-      <header className={`z-40 transition-all duration-300 ${
-        isHome 
-          ? (hasScrolled 
-              ? 'fixed top-0 left-0 w-full bg-[#141722]/90 backdrop-blur-md border-b border-white/10 shadow-md' 
-              : 'absolute top-0 left-0 w-full bg-transparent border-b-0 shadow-none'
-            ) 
-          : 'sticky top-0 bg-[#141722]/75 backdrop-blur-md border-b border-white/10 shadow-sm'
-      }`}>
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-          <div className="flex items-center justify-between h-14 md:h-16">
-            
-            {/* BRAND LOGO DESIGN (Minimal Badge in Elon Style) */}
-            <div 
-              onClick={() => { onNavigate('home'); }} 
-              className="cursor-pointer group select-none"
+  const directoryLinks: { label: string; view: PageView }[] = [
+    { label: 'Home', view: 'home' },
+    { label: 'Buyfromudochukwu', view: 'buyfromudochukwu' },
+    { label: 'Who is Udochukwu', view: 'about' },
+    { label: 'Portfolio & Systems', view: 'portfolio' },
+    { label: 'Services', view: 'services' },
+    { label: 'Latest Articles', view: 'blog' },
+    { label: 'Client Reviews', view: 'testimonials' },
+    { label: 'Technical Audit', view: 'audit' },
+    { label: 'Learn', view: 'learn' },
+    { label: 'Resources', view: 'resources' },
+    { label: 'FAQs', view: 'faq' },
+    { label: 'Contact', view: 'contact' },
+    { label: 'Admin Dashboard', view: 'dashboard' },
+  ];
+
+  return (
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#181d2c] text-slate-100 font-sans flex flex-col justify-between transition-colors duration-300">
+      {/* Subtle Top Scroll Bar */}
+      <div
+        className="fixed top-0 left-0 h-[2px] bg-white/80 z-50 transition-all duration-100"
+        style={{ width: `${scrollProgress}%` }}
+      />
+
+      {/* CLEAN PLAIN HEADER (InvestInMusk Style) */}
+      <header
+        className={`z-40 transition-all duration-300 ${
+          isHome
+            ? hasScrolled
+              ? 'fixed top-0 left-0 w-full bg-[#181d2c]/90 backdrop-blur-md border-b border-white/10'
+              : 'absolute top-0 left-0 w-full bg-transparent'
+            : 'sticky top-0 bg-[#181d2c]/95 backdrop-blur-md border-b border-white/10'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
+          <div className="flex items-center justify-between h-16 gap-8">
+            {/* Boxed Wordmark Badge */}
+            <button
+              type="button"
+              onClick={() => onNavigate('home')}
+              className="cursor-pointer select-none shrink-0 text-left"
               id="header-logo-brand"
             >
-              <div className={`px-3 py-1 text-[10px] sm:text-xs font-mono font-bold tracking-[0.25em] uppercase transition-colors whitespace-nowrap ${
-                isHome 
-                  ? 'bg-white text-slate-950 border border-white' 
-                  : 'bg-white text-slate-950 border border-white'
-              }`}>
+              <span className="inline-block px-3 py-1 text-[11px] font-mono font-bold tracking-[0.22em] uppercase bg-white text-slate-950 whitespace-nowrap">
                 UDOCHUKWU
-              </div>
-            </div>
+              </span>
+            </button>
 
-            {/* DESKTOP NAVIGATION ROW */}
-            <nav className="hidden md:flex items-center gap-6 text-[10px] sm:text-xs">
-              {[
-                { label: 'Case Studies', view: 'portfolio' },
-                { label: 'Services', view: 'services' },
-                { label: 'Diagnostic Audit', view: 'audit' },
-                { label: 'Masterclass Blog', view: 'blog' },
-                { label: 'Resources', view: 'resources' },
-                { label: 'Learn Hub', view: 'learn' }
-              ].map((link) => (
+            {/* Clean Text Navigation */}
+            <nav className="hidden lg:flex items-center gap-7 text-[11px]">
+              {desktopNavLinks.map((link) => (
                 <button
                   key={link.view}
-                  onClick={() => onNavigate(link.view as PageView)}
+                  type="button"
+                  onClick={() => onNavigate(link.view)}
                   id={`nav-link-${link.view}`}
-                  className={`py-1 cursor-pointer transition-colors relative font-mono font-bold uppercase tracking-widest text-slate-400 hover:text-white ${
-                    activePage === link.view ? 'text-white font-extrabold' : ''
+                  className={`py-1 cursor-pointer transition-colors relative font-mono font-medium uppercase tracking-[0.16em] whitespace-nowrap shrink-0 ${
+                    activePage === link.view
+                      ? 'text-white'
+                      : 'text-white/75 hover:text-white'
                   }`}
                 >
                   <span>{link.label}</span>
                   {activePage === link.view && (
-                    <span className="absolute bottom-0 left-0 w-full h-[1.5px] rounded-none bg-white"></span>
+                    <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white" />
                   )}
                 </button>
               ))}
             </nav>
 
-            {/* ACTION DOCK */}
-            <div className="flex items-center gap-3 md:gap-4">
-              
-              {/* Day/Night Toggler */}
+            {/* Quiet Action Controls + Menu Drawer Trigger */}
+            <div className="flex items-center gap-2 shrink-0">
               <button
-                onClick={toggleTheme}
-                title={theme === 'dark' ? "Switch to High-Contrast Light Mode" : "Switch to Immersive Night Mode"}
-                id="darkmode-header-toggle"
-                className="p-2 rounded-none transition-all cursor-pointer text-slate-400 hover:text-white hover:bg-white/5"
+                type="button"
+                onClick={() => setSearchOpen(true)}
+                title="Search platform"
+                className="p-2 transition-colors cursor-pointer text-white/75 hover:text-white"
               >
-                {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-white" />}
+                <Search className="w-4 h-4" />
               </button>
 
-              {/* Free Consult Call to action (High Converting CTA) */}
               <button
-                onClick={() => onNavigate('contact')}
-                id="header-consultation-register"
-                className="hidden sm:inline-flex text-[10px] tracking-[0.2em] font-mono font-bold uppercase cursor-pointer transition-all border border-white text-white px-5 py-2.5 hover:bg-white hover:text-slate-950 rounded-none bg-transparent"
-              >
-                Consultation
-              </button>
-
-              {/* Mobile side-bar Menu trigger */}
-              <button
+                type="button"
                 onClick={() => setMobileMenuOpen(true)}
-                title="Expand side menu..."
+                title="Open navigation menu"
                 id="mobile-drawer-trigger-btn"
-                className="inline-flex lg:hidden p-2 rounded-none cursor-pointer transition-colors text-slate-300 hover:text-white hover:bg-white/5"
+                className="p-2 cursor-pointer transition-colors text-white hover:bg-white/10"
               >
-                <Menu className="w-4 h-4" />
+                <Menu className="w-5 h-5" />
               </button>
-
             </div>
-
           </div>
         </div>
       </header>
 
-      {/* 3. MOBILE SYSTEM OVERLAY MENU / DRAWER */}
+      {/* SLIDE-OVER NAVIGATION DRAWER */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 flex justify-end lg:hidden"
+            className="fixed inset-0 bg-slate-950/75 backdrop-blur-xs z-50 flex justify-end"
           >
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'tween', duration: 0.25 }}
-              className="bg-[#131620] text-slate-100 w-full max-w-sm h-full p-8 flex flex-col justify-between shadow-2xl relative border-l border-white/10 rounded-none"
+              transition={{ type: 'tween', duration: 0.22 }}
+              className="bg-[#181d2c] text-slate-100 w-full max-w-sm h-full p-8 flex flex-col justify-between shadow-2xl relative border-l border-white/10"
             >
-              
-              {/* Close button */}
               <button
+                type="button"
                 onClick={() => setMobileMenuOpen(false)}
                 id="mobile-drawer-close"
-                className="absolute top-6 right-6 p-2 rounded-none border border-white/10 text-slate-400 hover:text-white hover:bg-white/5 cursor-pointer"
+                className="absolute top-6 right-6 p-2 border border-white/15 text-slate-300 hover:text-white cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
 
-              {/* Links List */}
-              <div className="space-y-8 mt-12 overflow-y-auto pr-2">
-                <div className="space-y-1">
-                  <span className="text-[9px] font-mono text-blue-400 font-extrabold uppercase tracking-[0.25em] block">NAVIGATIONAL DIRECTORY</span>
-                  <p className="text-xl font-serif text-white leading-none font-black uppercase tracking-wider">Portal Directory</p>
-                </div>
+              <div className="space-y-6 mt-10 overflow-y-auto pr-2">
+                <span className="inline-block px-3 py-1 text-[10px] font-mono font-bold tracking-[0.22em] uppercase bg-white text-slate-950">
+                  UDOCHUKWU
+                </span>
 
-                <nav className="flex flex-col gap-1 text-xs">
-                  {[
-                    { label: 'Home Page', view: 'home' },
-                    { label: 'Case Studies', view: 'portfolio' },
-                    { label: 'About & Story', view: 'about' },
-                    { label: 'Services Packages', view: 'services' },
-                    { label: 'Performance Audit', view: 'audit' },
-                    { label: 'Masterclass Blog', view: 'blog' },
-                    { label: 'Planning Vault', view: 'resources' },
-                    { label: 'Learn Hub', view: 'learn' },
-                    { label: 'Frequently Asked FAQs', view: 'faq' },
-                    { label: 'Book Consultation', view: 'contact' }
-                  ].map((x) => (
+                <nav className="flex flex-col">
+                  {directoryLinks.map((x) => (
                     <button
                       key={x.view}
+                      type="button"
                       onClick={() => {
-                        onNavigate(x.view as PageView);
+                        onNavigate(x.view);
                         setMobileMenuOpen(false);
                       }}
-                      className={`text-left hover:text-white transition-all flex items-center justify-between cursor-pointer py-4 border-b border-white/5 font-mono text-[11px] uppercase tracking-[0.15em] font-extrabold ${
-                        activePage === x.view ? 'text-white font-black' : 'text-slate-400'
+                      className={`text-left hover:text-white transition-colors cursor-pointer py-3 border-b border-white/10 font-mono text-xs uppercase tracking-[0.16em] ${
+                        activePage === x.view ? 'text-white font-bold' : 'text-slate-300'
                       }`}
                     >
-                      <span className="relative">
-                        {x.label}
-                        {activePage === x.view && (
-                          <span className="absolute -bottom-1 left-0 w-full h-[1px] bg-white"></span>
-                        )}
-                      </span>
-                      <ChevronRight className="w-3.5 h-3.5 opacity-40 shrink-0" />
+                      {x.label}
                     </button>
                   ))}
                 </nav>
               </div>
 
-              {/* Drawer Footer info */}
-              <div className="pt-6 border-t border-white/10 font-mono text-[9px] text-slate-500 uppercase tracking-widest leading-relaxed">
-                VXTGrid Services • Registered under RC-1925048 • Africa
+              <div className="pt-6 border-t border-white/10 font-mono text-[10px] text-slate-400 uppercase tracking-widest">
+                © Udochukwu.com.ng
               </div>
-
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* 4. MAIN PAGE CONTAINER WORKSTATION */}
-      <main className="grow">
-        {children}
-      </main>
+      {/* MAIN CONTENT */}
+      <main className="grow">{children}</main>
 
-      {/* 5. HIGH STATUS COOKIE CONSENT ALERT */}
-      <AnimatePresence>
-        {showCookieAlert && (
-          <motion.div
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 50, opacity: 0 }}
-            className="fixed bottom-6 left-6 right-6 md:left-auto md:max-w-md z-45 bg-slate-950 text-white rounded-2xl p-5 shadow-2xl border border-slate-800 flex flex-col gap-4"
-          >
-            <div className="flex gap-3 items-start">
-              <div className="p-2 bg-slate-900 rounded-lg text-amber-400 mt-0.5 shrink-0 border border-slate-800">
-                <Cookie className="w-4 h-4" />
-              </div>
-              <div className="space-y-1 text-xs">
-                <strong className="block text-white font-medium">Lekki Local Speed Consent</strong>
-                <p className="text-slate-400 leading-relaxed font-light">
-                  This platform sets active performance parameters in localStorage database files to secure lightweight client dashboards. No unapproved tracking scripts are loaded.
-                </p>
-              </div>
-            </div>
+      {/* SITEWIDE NON-BLOCKING ITEL FLASH SALE AD FLYER */}
+      <ItelFlashSaleBannerAd activePage={activePage} onNavigate={onNavigate} />
 
-            <div className="flex justify-end gap-2 text-xs">
-              <button
-                onClick={handleAgreeCookie}
-                id="cookie-alert-onboard-agree"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold transition-all cursor-pointer"
-              >
-                Accept parameters
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* 6. PERSISTENT FLOATING WHATSAPP HUB & BACK-TO-TOP */}
+      {/* FLOATING WHATSAPP & BACK TO TOP */}
       <div className="fixed bottom-6 right-6 z-40 flex flex-col gap-3">
         {showScrollTop && (
           <button
+            type="button"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            title="Sitemap Top"
+            title="Back to top"
             id="backt-to-top-arrow-btn"
-            className="bg-slate-900 hover:bg-slate-950 dark:bg-white text-white dark:text-slate-950 p-2.5 rounded-full shadow-lg transition-transform hover:-translate-y-1 flex items-center justify-center cursor-pointer"
+            className="bg-slate-900 hover:bg-slate-800 text-white p-2.5 rounded-full shadow-lg transition-transform hover:-translate-y-0.5 flex items-center justify-center cursor-pointer border border-white/20"
           >
-            <ArrowUp className="w-4.5 h-4.5" />
+            <ArrowUp className="w-4 h-4" />
           </button>
         )}
-        
-        {/* Persistent bubble pointing to Whatsapp */}
+
         {isWhatsAppEnabled && (
           <a
-            href="https://wa.me/2347052199651?text=Hello%20VXTGrid%20Services,%20I%20am%20visiting%20from%20your%20premium%20brand%20website%20and%20want%2520to%20discuss%20a%20new%20web%20system."
+            href="https://wa.me/2347052199651?text=Hello%20Udochukwu%2C%20I%20am%20visiting%20your%20website%20and%20would%20like%20to%20inquire."
             target="_blank"
             rel="noreferrer"
-            title="Direct WhatsApp chat..."
+            title="Message on WhatsApp"
             id="whatsapp-sticky-icon-button"
-            className="bg-emerald-600 hover:bg-emerald-700 text-white p-3.5 rounded-full shadow-2xl transition-transform hover:scale-105 flex items-center justify-center cursor-pointer animate-pulse-slow"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white p-3.5 rounded-full shadow-xl transition-transform hover:scale-105 flex items-center justify-center cursor-pointer"
           >
             <MessageSquare className="w-5 h-5 text-white" />
           </a>
         )}
       </div>
 
-      {/* 7. GLOBAL EXPLORATORY SEARCH CONSOLE OVERLAY */}
+      {/* SEARCH OVERLAY */}
       <AnimatePresence>
         {searchOpen && (
           <motion.div
@@ -414,40 +352,37 @@ export default function Layout({
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-6"
           >
-            {/* Close */}
             <button
-              onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
+              type="button"
+              onClick={() => {
+                setSearchOpen(false);
+                setSearchQuery('');
+              }}
               id="search-overlay-exit"
-              className="absolute top-6 right-6 text-slate-400 hover:text-white p-2 border border-slate-800 rounded-lg cursor-pointer"
+              className="absolute top-6 right-6 text-slate-400 hover:text-white p-2 border border-slate-800 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div className="w-full max-w-2xl space-y-8">
-              
+            <div className="w-full max-w-2xl space-y-6">
               <div className="text-center space-y-2">
-                <span className="text-[10px] font-mono text-blue-400 uppercase tracking-widest font-extrabold block">VXT-FAST SEARCH SYSTEM</span>
-                <p className="text-2xl font-serif text-white">Find Masterclasses or Packages</p>
+                <p className="text-2xl font-sans font-semibold text-white">Quick Search</p>
               </div>
 
-              {/* Large Input */}
-              <div className="relative">
-                <input
-                  type="text"
-                  autoFocus
-                  required
-                  placeholder="Type anything (e.g., speed, SEO, boutique hotel)..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-slate-900 border-2 border-slate-800 p-4 pl-12 text-white rounded-2xl h-14 sm:h-16 text-sm sm:text-base focus:border-blue-500 focus:outline-hidden"
-                />
-                <Search className="absolute left-4 top-5 w-6 h-6 text-slate-500" />
-              </div>
+              <input
+                type="text"
+                autoFocus
+                placeholder="Search Buyfromudochukwu, services, or articles..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-slate-900 border border-slate-700 px-5 py-4 text-white text-sm sm:text-base focus:border-white focus:outline-hidden"
+              />
 
-              {/* Results */}
-              <div className="max-h-72 overflow-y-auto space-y-3">
+              <div className="max-h-72 overflow-y-auto space-y-2">
                 {searchQuery.trim() !== '' && filteredSearchItems.length === 0 && (
-                  <p className="text-slate-500 text-xs text-center font-mono italic">No matches on search indexes. Try keywords like "speed", "SEO" or "boutique".</p>
+                  <p className="text-slate-400 text-xs text-center font-mono py-4">
+                    No matching items found.
+                  </p>
                 )}
                 {filteredSearchItems.map((item, idx) => (
                   <div
@@ -458,68 +393,42 @@ export default function Layout({
                       setSearchQuery('');
                       window.scrollTo({ top: 0, behavior: 'instant' });
                     }}
-                    className="bg-slate-900 p-4 rounded-xl border border-slate-800 hover:border-blue-500 cursor-pointer transition-colors"
+                    className="bg-slate-900 p-4 border border-slate-800 hover:border-white cursor-pointer transition-colors"
                   >
-                    <div className="flex justify-between items-center">
-                      <span className="text-[10px] font-mono font-bold bg-blue-950 text-blue-400 border border-blue-900/50 px-2 py-0.5 rounded-md uppercase shrink-0">
-                        {item.type}
-                      </span>
-                      <span className="text-[10px] font-mono text-slate-500">Redirects to {item.page}</span>
+                    <div className="flex justify-between items-center text-[10px] font-mono text-slate-400 uppercase">
+                      <span>{item.type}</span>
+                      <span>/{item.page}</span>
                     </div>
-                    <h4 className="text-slate-200 text-sm font-semibold mt-2">{item.title}</h4>
-                    <p className="text-slate-500 text-xs mt-1 font-light truncate">{item.details}</p>
+                    <h4 className="text-white text-sm font-medium mt-1">{item.title}</h4>
+                    <p className="text-slate-400 text-xs mt-1 truncate">{item.details}</p>
                   </div>
                 ))}
               </div>
-
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* 8. GENERAL SITEMAP FOOTER */}
-      <footer className="bg-slate-950 text-slate-400 border-t border-slate-900 py-12 md:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="max-w-3xl space-y-4 mb-12">
-            
-            {/* Branding Column */}
-            <div className="space-y-4">
-              <div className="flex items-center">
-                <div className="bg-white text-slate-950 px-3.5 py-1 text-xs font-mono font-bold tracking-[0.25em] uppercase border border-white whitespace-nowrap">
-                  UDOCHUKWU
-                </div>
-              </div>
-              <p className="text-xs text-slate-500 leading-relaxed font-light">
-                Founder, Digital strategist & Principal of VXTGrid Services. We don't build generic brochure templates. We hand-code robust React systems that acquire clients.
-              </p>
-              <p className="text-[10px] text-slate-600 font-mono">RC-1925048 | Lekki 1, Lagos, NG</p>
-            </div>
-
-          </div>
-
-          {/* Legal Bar */}
-          <div className="pt-8 border-t border-slate-900 flex flex-col sm:flex-row justify-between text-[11px] text-slate-600 font-mono">
-            <span>© 2026 Udochukwu - VXTGRID SERVICES. RCS RC-1925048. All rights reserved.</span>
-            <span className="flex gap-4 mt-4 sm:mt-0 items-center">
-              <a href="#privacy" className="hover:text-white">Privacy policy</a>
-              <a href="#terms" className="hover:text-white">Terms of compliance</a>
-              <button 
-                onClick={() => {
-                  onNavigate('dashboard');
-                  window.scrollTo({ top: 0, behavior: 'instant' });
-                }} 
-                className="hover:text-white text-slate-700 dark:text-slate-800 text-[10px] font-mono hover:underline cursor-pointer transition-colors"
-                title="Secure Workspace Access"
-              >
-                [VXT-Console]
-              </button>
-            </span>
-          </div>
-
+      {/* ELONMUSK-STYLE MINIMAL FOOTER */}
+      <footer className="bg-[#23283d] text-slate-300 py-8 border-t border-white/10">
+        <div className="max-w-5xl mx-auto px-6 flex items-center justify-center gap-4 text-xs font-sans tracking-wide">
+          <span>© Udochukwu.com.ng</span>
+          <span className="text-white/25" aria-hidden="true">
+            ·
+          </span>
+          <button
+            type="button"
+            onClick={() => {
+              onNavigate('dashboard');
+              window.scrollTo({ top: 0, behavior: 'instant' });
+            }}
+            className="text-slate-400 hover:text-white transition-colors cursor-pointer"
+            title="Open Admin Dashboard"
+          >
+            Admin
+          </button>
         </div>
       </footer>
-
     </div>
   );
 }

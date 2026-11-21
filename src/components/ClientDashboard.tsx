@@ -1,120 +1,162 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSettings } from '../context/ThemeContext';
-import { motion, AnimatePresence } from 'motion/react';
-import { 
+import {
   getBookings,
   getContacts,
   getAudits,
   getNewsletterSubscribers,
+  getBlogs,
   saveBlog,
+  deleteBlog,
   getSiteSettings,
-  saveSiteSettings
+  saveSiteSettings,
+  getMarketplaceProducts,
+  addMarketplaceProduct,
+  deleteMarketplaceProduct,
+  updateMarketplaceProduct,
+  getMarketplaceOrders,
+  updateMarketplaceOrderStatus,
+  deleteMarketplaceOrder,
+  syncMarketplaceFromServer,
+  getCaseStudies,
+  saveCaseStudy,
+  deleteCaseStudy,
+  getClientReviews,
+  deleteClientReview,
 } from '../utils/storage';
-import { 
-  Lock, 
-  ShieldCheck, 
-  Activity, 
-  Calendar, 
-  Mail, 
-  FileText, 
-  Users, 
-  BookOpen, 
-  Sparkles, 
-  Sliders, 
-  Trash2, 
-  LogOut, 
-  Copy, 
-  Check, 
-  AlertCircle,
-  Eye,
-  Brain,
-  Send,
+import {
+  LayoutDashboard,
+  Package,
+  Inbox,
+  FileEdit,
+  LineChart,
+  Lock,
+  KeyRound,
+  LogOut,
+  Copy,
+  Trash2,
   Paperclip,
-  X
+  AlertTriangle,
 } from 'lucide-react';
 import VisitorTracker from './VisitorTracker';
 import AIConversionMonitor from './AIConversionMonitor';
+import { MarketplaceOrder, MarketplaceProduct, CaseStudy, ClientReview } from '../types';
+import { GENERATED_ASSETS } from '../utils/generatedAssets';
+
+type AdminPage = 'overview' | 'marketplace' | 'leads' | 'content' | 'analytics';
 
 export default function ClientDashboard() {
   const { isWhatsAppEnabled, toggleWhatsApp } = useSettings();
-  const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('vxt_admin_logged') === 'true');
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    () => localStorage.getItem('vxt_admin_logged') === 'true'
+  );
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [errorText, setErrorText] = useState('');
 
-  // Loaded administrative records
+  // Clean multi-page navigation state
+  const [activeSection, setActiveSection] = useState<AdminPage>('overview');
+  const [marketSubTab, setMarketSubTab] = useState<'orders' | 'products' | 'addProduct'>('orders');
+  const [leadsSubTab, setLeadsSubTab] = useState<'bookings' | 'contacts' | 'audits' | 'subscribers'>('bookings');
+  const [contentSubTab, setContentSubTab] = useState<'blog' | 'portfolio' | 'reviews' | 'assets'>('blog');
+  const [analyticsSubTab, setAnalyticsSubTab] = useState<'visitors' | 'funnel' | 'email' | 'webhooks'>('visitors');
+
+  // Inline notification banner
+  const [notice, setNotice] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const showNotice = (text: string, type: 'success' | 'error' = 'success') => {
+    setNotice({ text, type });
+    setTimeout(() => setNotice(null), 4000);
+  };
+
+  // Data States
   const [bookings, setBookings] = useState<any[]>(() => getBookings());
   const [contacts, setContacts] = useState<any[]>(() => getContacts());
   const [audits, setAudits] = useState<any[]>(() => getAudits());
   const [subscribers, setSubscribers] = useState<string[]>(() => getNewsletterSubscribers());
-  const [adminTab, setAdminTab] = useState<'overview' | 'visitorTracker' | 'aiMonitor' | 'bookings' | 'contacts' | 'audits' | 'subscribers' | 'settings' | 'blogPost' | 'siteAssets' | 'emailSender'>('overview');
-  const [copiedSubscribers, setCopiedSubscribers] = useState(false);
-  
-  // Blog form states
-  const [newBlog, setNewBlog] = useState({ 
-    title: '', 
-    slug: '', 
-    excerpt: '', 
-    content: '', 
-    category: 'Web Design' as any, 
-    readTime: '', 
-    image: '', 
-    tags: '' 
-  });
-  
-  // Settings configurations
-  const [siteSettings, setSiteSettings] = useState(() => getSiteSettings());
-  const [discordWebhookUrl, setDiscordWebhookUrl] = useState(() => localStorage.getItem('vxt_discord_webhook_url') || '');
-  const [discordEnabled, setDiscordEnabled] = useState(() => localStorage.getItem('vxt_discord_webhook_enabled') === 'true');
+  const [blogs, setBlogs] = useState(() => getBlogs());
+  const [portfolio, setPortfolio] = useState<CaseStudy[]>(() => getCaseStudies());
+  const [reviews, setReviews] = useState<ClientReview[]>(() => getClientReviews());
+  const [products, setProducts] = useState<MarketplaceProduct[]>(() => getMarketplaceProducts());
+  const [orders, setOrders] = useState<MarketplaceOrder[]>(() => getMarketplaceOrders());
 
-  // Email form states
+  // Blog Form
+  const [newBlog, setNewBlog] = useState({
+    title: '',
+    slug: '',
+    excerpt: '',
+    content: '',
+    category: 'Web Design' as any,
+    readTime: '',
+    image: '',
+    tags: '',
+  });
+
+  // Marketplace Add Product Form
+  const [newProd, setNewProd] = useState({
+    title: '',
+    subtitle: '',
+    category: 'Power & Solar' as MarketplaceProduct['category'],
+    price: '',
+    compareAtPrice: '',
+    description: '',
+    specs: '',
+    imageUrl: '',
+    promoVideoUrl: '',
+    warranty: 'Official Manufacturer Warranty',
+    freeDeliveryEnugu: false,
+    paymentOnDeliveryEnugu: false,
+  });
+
+  // Portfolio Add Project Form
+  const [newCase, setNewCase] = useState({
+    title: '',
+    client: '',
+    industry: '',
+    problem: '',
+    solution: '',
+    technology: '',
+    deliverables: '',
+    liveUrl: '',
+    summaryNote: '',
+  });
+
+  // Site Assets & Webhooks
+  const [siteSettings, setSiteSettings] = useState(() => getSiteSettings());
+  const [discordWebhookUrl, setDiscordWebhookUrl] = useState(
+    () => localStorage.getItem('vxt_discord_webhook_url') || ''
+  );
+  const [discordEnabled, setDiscordEnabled] = useState(
+    () => localStorage.getItem('vxt_discord_webhook_enabled') === 'true'
+  );
+
+  // Email Sender
   const [emailTo, setEmailTo] = useState('');
   const [emailSubject, setEmailSubject] = useState('');
   const [emailMessage, setEmailMessage] = useState('');
   const [emailAttachment, setEmailAttachment] = useState<File | null>(null);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
-  const [emailStatus, setEmailStatus] = useState<{type: 'success' | 'error', message: string} | null>(null);
 
-  const handleSendEmail = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!emailTo || !emailSubject || !emailMessage) {
-      setEmailStatus({ type: 'error', message: 'Please fill in all required fields.' });
-      return;
-    }
-
-    setIsSendingEmail(true);
-    setEmailStatus(null);
-
-    const formData = new FormData();
-    formData.append('to', emailTo);
-    formData.append('subject', emailSubject);
-    formData.append('message', emailMessage);
-    if (emailAttachment) {
-      formData.append('attachment', emailAttachment);
-    }
-
-    try {
-      const response = await fetch('/api/send-email', {
-        method: 'POST',
-        body: formData
-      });
-      const result = await response.json();
-      
-      if (response.ok && result.success) {
-        setEmailStatus({ type: 'success', message: 'Email dispatched securely via Resend.' });
-        setEmailTo('');
-        setEmailSubject('');
-        setEmailMessage('');
-        setEmailAttachment(null);
-      } else {
-        setEmailStatus({ type: 'error', message: result.error || 'Failed to send email.' });
-      }
-    } catch (err: any) {
-      setEmailStatus({ type: 'error', message: 'Network integration error.' });
-    } finally {
-      setIsSendingEmail(false);
-    }
+  const reloadAllData = () => {
+    setBookings(getBookings());
+    setContacts(getContacts());
+    setAudits(getAudits());
+    setSubscribers(getNewsletterSubscribers());
+    setBlogs(getBlogs());
+    setPortfolio(getCaseStudies());
+    setReviews(getClientReviews());
+    setProducts(getMarketplaceProducts());
+    setOrders(getMarketplaceOrders());
+    syncMarketplaceFromServer().then(({ products: p, orders: o }) => {
+      if (p) setProducts(p);
+      if (o) setOrders(o);
+    });
   };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      reloadAllData();
+    }
+  }, [isLoggedIn]);
 
   const handleAdminLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,15 +167,9 @@ export default function ClientDashboard() {
       localStorage.setItem('vxt_admin_logged', 'true');
       setIsLoggedIn(true);
       setErrorText('');
-      // Reload states
-      setBookings(getBookings());
-      setContacts(getContacts());
-      setAudits(getAudits());
-      setSubscribers(getNewsletterSubscribers());
-    } else if (email !== 'hello@udochukwu.com.ng') {
-      setErrorText('Access Denied: Unrecognized administrator email credentials.');
+      reloadAllData();
     } else {
-      setErrorText('Access Denied: Invalid Master Access Key.');
+      setErrorText('Invalid administrator email or security access key.');
     }
   };
 
@@ -144,68 +180,130 @@ export default function ClientDashboard() {
     setPasswordInput('');
   };
 
-  const handleSaveDiscordSettings = (e: React.FormEvent) => {
+  const handleProductImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        setNewProd((prev) => ({ ...prev, imageUrl: reader.result as string }));
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleCreateProduct = (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem('vxt_discord_webhook_url', discordWebhookUrl);
-    localStorage.setItem('vxt_discord_webhook_enabled', discordEnabled ? 'true' : 'false');
-    alert('Owner notification parameters saved! CRM system alert flows are online.');
+    const numericPrice = Number(newProd.price.replace(/[^0-9.]/g, ''));
+    if (!newProd.title.trim() || !numericPrice || !newProd.description.trim()) {
+      showNotice('Enter product title, valid price, and description.', 'error');
+      return;
+    }
+
+    const compareVal = newProd.compareAtPrice
+      ? Number(newProd.compareAtPrice.replace(/[^0-9.]/g, ''))
+      : undefined;
+
+    const specsArr = newProd.specs
+      .split(/\n|,/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    const updated = addMarketplaceProduct({
+      title: newProd.title.trim(),
+      subtitle: newProd.subtitle.trim() || 'Official Buyfromudochukwu Listing',
+      category: newProd.category,
+      price: numericPrice,
+      compareAtPrice: compareVal && compareVal > numericPrice ? compareVal : undefined,
+      description: newProd.description.trim(),
+      specs: specsArr.length > 0 ? specsArr : ['Verified Quality', 'Enugu Delivery Available'],
+      images: [newProd.imageUrl.trim() || GENERATED_ASSETS.itelPowerTankCloseup],
+      promoVideoUrl: newProd.promoVideoUrl.trim() || undefined,
+      promoType: newProd.promoVideoUrl.trim() ? 'custom-video' : 'showcase',
+      inStock: true,
+      isFeatured: false,
+      freeDeliveryEnugu: newProd.freeDeliveryEnugu,
+      paymentOnDeliveryEnugu: newProd.paymentOnDeliveryEnugu,
+      warranty: newProd.warranty.trim() || 'Official Warranty',
+    });
+
+    setProducts(updated);
+    setNewProd({
+      title: '',
+      subtitle: '',
+      category: 'Power & Solar',
+      price: '',
+      compareAtPrice: '',
+      description: '',
+      specs: '',
+      imageUrl: '',
+      promoVideoUrl: '',
+      warranty: 'Official Manufacturer Warranty',
+      freeDeliveryEnugu: false,
+      paymentOnDeliveryEnugu: false,
+    });
+    setMarketSubTab('products');
+    showNotice('Product published to Buyfromudochukwu marketplace.');
   };
 
-  const handleDeleteBooking = (id: string) => {
-    if (!window.confirm('Do you want to archive this consultation record?')) return;
-    const fresh = bookings.filter(b => b.id !== id);
-    setBookings(fresh);
-    localStorage.setItem('vxt_bookings', JSON.stringify(fresh));
-  };
+  const handleSendEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!emailTo || !emailSubject || !emailMessage) {
+      showNotice('Please complete recipient, subject, and message.', 'error');
+      return;
+    }
 
-  const handleDeleteContact = (id: string) => {
-    if (!window.confirm('Do you want to archive this message inquiry?')) return;
-    const fresh = contacts.filter(c => c.id !== id);
-    setContacts(fresh);
-    localStorage.setItem('vxt_contacts', JSON.stringify(fresh));
-  };
+    setIsSendingEmail(true);
+    const formData = new FormData();
+    formData.append('to', emailTo);
+    formData.append('subject', emailSubject);
+    formData.append('message', emailMessage);
+    if (emailAttachment) formData.append('attachment', emailAttachment);
 
-  const handleDeleteAudit = (id: string) => {
-    if (!window.confirm('Do you want to archive this audit submission?')) return;
-    const fresh = audits.filter(a => a.id !== id);
-    setAudits(fresh);
-    localStorage.setItem('vxt_audits', JSON.stringify(fresh));
-  };
-
-  const handleCopyToClipboard = () => {
-    if (subscribers.length === 0) return;
-    navigator.clipboard.writeText(subscribers.join(', '));
-    setCopiedSubscribers(true);
-    setTimeout(() => setCopiedSubscribers(false), 2000);
+    try {
+      const response = await fetch('/api/send-email', { method: 'POST', body: formData });
+      const result = await response.json();
+      if (response.ok && result.success) {
+        showNotice('Email dispatched via Resend.');
+        setEmailTo('');
+        setEmailSubject('');
+        setEmailMessage('');
+        setEmailAttachment(null);
+      } else {
+        showNotice(result.error || 'Failed to send email.', 'error');
+      }
+    } catch {
+      showNotice('Network error while sending email.', 'error');
+    } finally {
+      setIsSendingEmail(false);
+    }
   };
 
   const handleCreateBlogPost = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newBlog.title || !newBlog.slug || !newBlog.content) {
-      alert('Please fill in the title, slug, and markdown content.');
+      showNotice('Fill in article title, slug, and content.', 'error');
       return;
     }
 
-    const tagsArray = newBlog.tags
-      ? newBlog.tags.split(',').map(tag => tag.trim()).filter(Boolean)
-      : ['Web Tech'];
-
-    const formattedBlog = {
+    const updated = saveBlog({
       title: newBlog.title,
       slug: newBlog.slug.replace(/\s+/g, '-').toLowerCase(),
-      excerpt: newBlog.excerpt || 'Learn more about building fast web experiences.',
+      excerpt: newBlog.excerpt || 'Engineering insights and web strategy.',
       content: newBlog.content,
       category: newBlog.category,
       readTime: newBlog.readTime || '4 min read',
-      image: newBlog.image || 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97',
-      tags: tagsArray,
-      date: new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })
-    };
-
-    saveBlog(formattedBlog);
-    alert('Excellent! New high-fidelity blog post published live on the website feed.');
-    
-    // Clear Form inputs
+      image: newBlog.image || GENERATED_ASSETS.portfolioFintech,
+      tags: newBlog.tags
+        ? newBlog.tags.split(',').map((t) => t.trim()).filter(Boolean)
+        : ['Web Engineering'],
+      date: new Date().toLocaleDateString('en-US', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      }),
+    });
+    setBlogs(updated);
     setNewBlog({
       title: '',
       slug: '',
@@ -214,734 +312,1338 @@ export default function ClientDashboard() {
       category: 'Web Design',
       readTime: '',
       image: '',
-      tags: ''
+      tags: '',
     });
+    showNotice('Blog post published.');
   };
 
-  const handleUpdateAssets = (e: React.FormEvent) => {
+  const handleCreatePortfolio = (e: React.FormEvent) => {
     e.preventDefault();
-    saveSiteSettings(siteSettings);
-    alert('Site assets settings saved successfully!');
+    if (!newCase.client || !newCase.title || !newCase.solution) {
+      showNotice('Client name, title, and solution are required.', 'error');
+      return;
+    }
+
+    const updated = saveCaseStudy({
+      client: newCase.client.trim(),
+      title: newCase.title.trim(),
+      industry: newCase.industry.trim() || 'Digital Engineering',
+      problem: newCase.problem.trim() || 'Needed a custom responsive web platform.',
+      solution: newCase.solution.trim(),
+      technology: newCase.technology
+        ? newCase.technology.split(',').map((t) => t.trim()).filter(Boolean)
+        : ['React', 'TypeScript', 'Tailwind CSS'],
+      deliverables: newCase.deliverables
+        ? newCase.deliverables.split(',').map((d) => d.trim()).filter(Boolean)
+        : ['Custom UI Architecture', 'Responsive Frontend'],
+      image: GENERATED_ASSETS.portfolioSecurity,
+      liveUrl: newCase.liveUrl.trim() || 'https://udochukwu.com.ng',
+      summaryNote: newCase.summaryNote.trim() || 'Engineered for performance and clarity.',
+    });
+    setPortfolio(updated);
+    setNewCase({
+      title: '',
+      client: '',
+      industry: '',
+      problem: '',
+      solution: '',
+      technology: '',
+      deliverables: '',
+      liveUrl: '',
+      summaryNote: '',
+    });
+    showNotice('Portfolio project added.');
+  };
+
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-[82vh] bg-[#1b243b] flex items-center justify-center px-6 py-20 text-white">
+        <div className="w-full max-w-md bg-[#141a2b]/85 border border-white/25 p-8 sm:p-10 space-y-6">
+          <div className="space-y-3 text-left">
+            <div className="h-11 w-11 bg-white/10 border border-white/25 flex items-center justify-center text-white">
+              <Lock className="w-5 h-5" />
+            </div>
+            <h1 className="text-3xl font-sans font-semibold text-white tracking-tight">
+              Admin Console
+            </h1>
+            <div className="w-24 h-[1px] bg-white/80" />
+            <p className="text-xs text-white/80 font-mono uppercase tracking-[0.14em] leading-relaxed">
+              Sign in to manage Buyfromudochukwu inventory, orders, leads, and articles.
+            </p>
+          </div>
+
+          {errorText && (
+            <div className="bg-rose-950/40 border border-rose-400/50 p-3 text-xs font-mono text-rose-200 flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <span>{errorText}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleAdminLogin} className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-mono text-white/80 uppercase tracking-wider block">
+                Administrator Email
+              </label>
+              <input
+                type="email"
+                required
+                placeholder="hello@udochukwu.com.ng"
+                value={emailInput}
+                onChange={(e) => setEmailInput(e.target.value)}
+                className="w-full bg-[#181d2c] border border-white/25 px-4 py-3 text-xs font-mono text-white focus:border-white focus:outline-none"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-mono text-white/80 uppercase tracking-wider block">
+                Access Key
+              </label>
+              <input
+                type="password"
+                required
+                placeholder="••••••••"
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+                className="w-full bg-[#181d2c] border border-white/25 px-4 py-3 text-xs font-mono text-white focus:border-white focus:outline-none"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full border border-white bg-white text-slate-950 hover:bg-transparent hover:text-white py-3.5 font-mono text-xs font-semibold uppercase tracking-[0.18em] flex items-center justify-center gap-2 cursor-pointer transition-colors"
+            >
+              <KeyRound className="w-4 h-4" />
+              <span>Sign In</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  const sidebarItems: { id: AdminPage; label: string; icon: any; count?: number }[] = [
+    { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    {
+      id: 'marketplace',
+      label: 'Buyfromudochukwu',
+      icon: Package,
+      count: orders.filter((o) => o.status === 'Pending Confirmation').length,
+    },
+    {
+      id: 'leads',
+      label: 'Leads & Inbox',
+      icon: Inbox,
+      count: bookings.length + contacts.length + audits.length,
+    },
+    { id: 'content', label: 'Content & Portfolio', icon: FileEdit },
+    { id: 'analytics', label: 'Analytics & Tools', icon: LineChart },
+  ];
+
+  const sectionTitles: Record<AdminPage, string> = {
+    overview: 'Operations Overview',
+    marketplace: 'Buyfromudochukwu Storefront',
+    leads: 'Leads, Bookings & Inquiries',
+    content: 'Articles, Portfolio & Site Media',
+    analytics: 'Visitor Analytics & Tools',
   };
 
   return (
-    <div className="py-12 md:py-20 bg-[#131620] transition-colors duration-300 min-h-[80vh]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <AnimatePresence mode="wait">
-          {!isLoggedIn ? (
-            /* SECURE ACCESS LOCK SCREEN */
-            <motion.div
-              key="auth-gate"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              className="max-w-md mx-auto bg-white dark:bg-slate-800 p-8 sm:p-10 rounded-3xl border border-slate-200 dark:border-slate-700/50 shadow-2xl space-y-8"
-            >
-              <div className="text-center space-y-3">
-                <div className="h-14 w-14 bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center mx-auto shadow-sm">
-                  <Lock className="w-6 h-6" />
-                </div>
-                <h2 className="text-2xl font-serif text-slate-900 dark:text-white font-medium">VXT Master Command</h2>
-                <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm">
-                  Please securely authenticate with your registered administrator credentials.
-                </p>
-              </div>
+    <div className="min-h-[85vh] bg-[#1b243b] text-white">
+      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row min-h-[85vh]">
+        {/* LEFT SIDEBAR NAVIGATION */}
+        <aside className="lg:w-64 shrink-0 bg-[#141a2b] border-b lg:border-b-0 lg:border-r border-white/15 p-6 flex flex-col justify-between gap-6">
+          <div className="space-y-6">
+            <div className="border-b border-white/15 pb-4">
+              <span className="text-[10px] font-mono text-white/70 uppercase tracking-[0.18em] block">
+                Udochukwu Console
+              </span>
+              <h1 className="text-xl font-sans font-semibold text-white mt-1">Admin Dashboard</h1>
+              <p className="text-[11px] font-mono text-white/65 truncate mt-0.5">
+                hello@udochukwu.com.ng
+              </p>
+            </div>
 
-              {errorText && (
-                <div className="bg-red-50 dark:bg-red-950/40 p-3.5 rounded-xl text-red-700 dark:text-red-400 text-xs flex items-center gap-2 border border-red-150">
-                  <AlertCircle className="w-4 h-4 shrink-0" />
-                  <span>{errorText}</span>
-                </div>
-              )}
-
-              <form onSubmit={handleAdminLogin} className="space-y-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-mono text-slate-400 dark:text-slate-500 font-extrabold tracking-widest block uppercase">ADMINISTRATIVE EMAIL</label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="hello@udochukwu.com.ng"
-                    value={emailInput}
-                    onChange={(e) => setEmailInput(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-mono text-slate-400 dark:text-slate-500 font-extrabold tracking-widest block uppercase font-bold">SECURITY ACCESS KEY</label>
-                  <input
-                    type="password"
-                    required
-                    placeholder="••••••••"
-                    value={passwordInput}
-                    onChange={(e) => setPasswordInput(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full bg-slate-900 hover:bg-slate-950 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-md text-xs sm:text-sm cursor-pointer flex items-center justify-center gap-2"
-                >
-                  <ShieldCheck className="w-5 h-5 text-emerald-400" />
-                  <span>Unlock Workspace</span>
-                </button>
-              </form>
-            </motion.div>
-          ) : (
-            /* MAIN ADMIN COMMAND CONSOLE WRAPPER */
-            <motion.div
-              key="dashboard-frame"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="space-y-8"
-            >
-              {/* Dashboard Console Header */}
-              <div className="bg-[#1E2333] text-white p-6 sm:p-8 border border-white/10 space-y-4">
-                <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                  <div className="space-y-1 text-center md:text-left">
-                    <span className="text-[10px] font-mono text-blue-400 tracking-widest font-extrabold uppercase mb-2 block">VXT SECURE MASTER CONSOLE</span>
-                    <h2 className="text-xl sm:text-2xl font-serif text-white font-medium">Welcome Back, Administrator</h2>
-                    <p className="text-xs text-slate-400 font-mono">LOGGED IN SENDER AS: <strong className="text-blue-400">hello@udochukwu.com.ng</strong></p>
-                  </div>
-
+            <nav className="flex lg:flex-col gap-1.5 overflow-x-auto pb-1 lg:pb-0">
+              {sidebarItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeSection === item.id;
+                return (
                   <button
-                    onClick={handleAdminLogout}
-                    className="inline-flex items-center gap-2 border border-white text-white font-mono text-xs font-bold tracking-[0.2em] uppercase px-6 py-2.5 hover:bg-white hover:text-slate-950 transition-all cursor-pointer rounded-none"
+                    key={item.id}
+                    type="button"
+                    onClick={() => setActiveSection(item.id)}
+                    className={`flex items-center justify-between gap-3 px-3.5 py-2.5 text-xs font-mono font-semibold uppercase tracking-wider transition-colors cursor-pointer whitespace-nowrap shrink-0 border ${
+                      isActive
+                        ? 'bg-white text-slate-950 border-white'
+                        : 'text-white/80 border-transparent hover:border-white/20 hover:text-white'
+                    }`}
                   >
-                    <LogOut className="w-4 h-4" />
-                    <span>LOGOUT</span>
+                    <span className="flex items-center gap-2.5">
+                      <Icon className="w-4 h-4 shrink-0" />
+                      <span>{item.label}</span>
+                    </span>
+                    {item.count !== undefined && item.count > 0 && (
+                      <span
+                        className={`text-[10px] tabular-nums px-1.5 py-0.5 ${
+                          isActive ? 'bg-slate-950 text-white' : 'bg-white/15 text-white'
+                        }`}
+                      >
+                        {item.count}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleAdminLogout}
+            className="hidden lg:flex items-center justify-center gap-2 border border-white/25 hover:border-white hover:bg-white hover:text-slate-950 text-white py-2.5 px-4 text-xs font-mono font-semibold uppercase tracking-wider cursor-pointer transition-colors"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Sign Out</span>
+          </button>
+        </aside>
+
+        {/* MAIN CONTENT VIEWPORT */}
+        <div className="flex-1 p-6 sm:p-8 lg:p-10 space-y-8 min-w-0">
+          {/* Top Header Strip */}
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/20 pb-5">
+            <div>
+              <h2 className="text-2xl font-sans font-semibold text-white tracking-tight">
+                {sectionTitles[activeSection]}
+              </h2>
+              <div className="w-24 h-[1px] bg-white/75 mt-3" />
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={toggleWhatsApp}
+                className={`px-3.5 py-2 text-xs font-mono font-semibold uppercase border cursor-pointer transition-colors ${
+                  isWhatsAppEnabled
+                    ? 'border-white bg-white/10 text-white'
+                    : 'border-white/25 bg-[#141a2b] text-white/65'
+                }`}
+              >
+                WhatsApp: {isWhatsAppEnabled ? 'Visible' : 'Hidden'}
+              </button>
+              <button
+                type="button"
+                onClick={handleAdminLogout}
+                className="lg:hidden border border-white/30 px-3.5 py-2 text-xs font-mono font-semibold uppercase text-white cursor-pointer"
+              >
+                Sign Out
+              </button>
+            </div>
+          </div>
+
+          {/* Inline Notification */}
+          {notice && (
+            <div
+              className={`p-4 border text-xs font-mono ${
+                notice.type === 'success'
+                  ? 'bg-emerald-950/40 border-emerald-400/50 text-emerald-200'
+                  : 'bg-rose-950/40 border-rose-400/50 text-rose-200'
+              }`}
+            >
+              {notice.text}
+            </div>
+          )}
+
+          {/* PAGE 1: OVERVIEW */}
+          {activeSection === 'overview' && (
+            <div className="space-y-8">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="bg-[#141a2b]/75 border border-white/20 p-5">
+                  <span className="text-[11px] font-mono text-white/75 uppercase block">
+                    Marketplace Products
+                  </span>
+                  <p className="text-3xl font-sans font-semibold text-white mt-2 tabular-nums">
+                    {products.length}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveSection('marketplace');
+                      setMarketSubTab('products');
+                    }}
+                    className="text-xs font-mono text-white/85 hover:underline underline-offset-4 mt-3 cursor-pointer"
+                  >
+                    Manage inventory →
+                  </button>
+                </div>
+
+                <div className="bg-[#141a2b]/75 border border-white/20 p-5">
+                  <span className="text-[11px] font-mono text-white/75 uppercase block">
+                    Store Orders
+                  </span>
+                  <p className="text-3xl font-sans font-semibold text-white mt-2 tabular-nums">
+                    {orders.length}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveSection('marketplace');
+                      setMarketSubTab('orders');
+                    }}
+                    className="text-xs font-mono text-white/85 hover:underline underline-offset-4 mt-3 cursor-pointer"
+                  >
+                    View Enugu COD orders →
+                  </button>
+                </div>
+
+                <div className="bg-[#141a2b]/75 border border-white/20 p-5">
+                  <span className="text-[11px] font-mono text-white/75 uppercase block">
+                    Consultations
+                  </span>
+                  <p className="text-3xl font-sans font-semibold text-white mt-2 tabular-nums">
+                    {bookings.length}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveSection('leads');
+                      setLeadsSubTab('bookings');
+                    }}
+                    className="text-xs font-mono text-white/85 hover:underline underline-offset-4 mt-3 cursor-pointer"
+                  >
+                    Open bookings →
+                  </button>
+                </div>
+
+                <div className="bg-[#141a2b]/75 border border-white/20 p-5">
+                  <span className="text-[11px] font-mono text-white/75 uppercase block">
+                    Inbox Inquiries
+                  </span>
+                  <p className="text-3xl font-sans font-semibold text-white mt-2 tabular-nums">
+                    {contacts.length}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveSection('leads');
+                      setLeadsSubTab('contacts');
+                    }}
+                    className="text-xs font-mono text-white/85 hover:underline underline-offset-4 mt-3 cursor-pointer"
+                  >
+                    Read messages →
+                  </button>
+                </div>
+
+                <div className="bg-[#141a2b]/75 border border-white/20 p-5">
+                  <span className="text-[11px] font-mono text-white/75 uppercase block">
+                    Audit Requests
+                  </span>
+                  <p className="text-3xl font-sans font-semibold text-white mt-2 tabular-nums">
+                    {audits.length}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveSection('leads');
+                      setLeadsSubTab('audits');
+                    }}
+                    className="text-xs font-mono text-white/85 hover:underline underline-offset-4 mt-3 cursor-pointer"
+                  >
+                    Review audits →
+                  </button>
+                </div>
+
+                <div className="bg-[#141a2b]/75 border border-white/20 p-5">
+                  <span className="text-[11px] font-mono text-white/75 uppercase block">
+                    Newsletter Emails
+                  </span>
+                  <p className="text-3xl font-sans font-semibold text-white mt-2 tabular-nums">
+                    {subscribers.length}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveSection('leads');
+                      setLeadsSubTab('subscribers');
+                    }}
+                    className="text-xs font-mono text-white/85 hover:underline underline-offset-4 mt-3 cursor-pointer"
+                  >
+                    Export list →
                   </button>
                 </div>
               </div>
 
-              {/* Console Navigation Tabs */}
-              <div className="flex flex-wrap gap-0 border-b border-white/10">
-                {[
-                  { id: 'overview', label: 'Console Overview', icon: Activity },
-                  { id: 'visitorTracker', label: 'Monitor Live', icon: Eye },
-                  { id: 'aiMonitor', label: 'AI Analytics Insights', icon: Brain },
-                  { id: 'bookings', label: 'Consultations booked', icon: Calendar, badge: bookings.length },
-                  { id: 'contacts', label: 'Inbox Inquiries', icon: Mail, badge: contacts.length },
-                  { id: 'audits', label: 'Audit Submissions', icon: FileText, badge: audits.length },
-                  { id: 'subscribers', label: 'Newsletter Users', icon: Users, badge: subscribers.length },
-                  { id: 'emailSender', label: 'Send Mail', icon: Send },
-                  { id: 'blogPost', label: 'Post New Blog', icon: BookOpen },
-                  { id: 'siteAssets', label: 'Site Assets', icon: Sparkles },
-                  { id: 'settings', label: 'CRM Alerts Hooks', icon: Sliders },
-                ].map((tab) => {
-                  const Icon = tab.icon;
-                  const isActive = adminTab === tab.id;
-                  return (
-                    <button
-                      key={tab.id}
-                      onClick={() => setAdminTab(tab.id as any)}
-                      className={`flex items-center gap-2 px-6 py-4 text-xs font-bold tracking-widest uppercase transition-all cursor-pointer ${
-                        isActive 
-                          ? 'bg-[#1E2333] text-white border-t border-r border-l border-white/10' 
-                          : 'bg-[#131620] text-slate-500 hover:text-white hover:bg-[#191d2d] border border-transparent'
-                      }`}
-                    >
-                      <Icon className="w-4 h-4" />
-                      <span>{tab.label}</span>
-                      {tab.badge !== undefined && tab.badge > 0 && (
-                        <span className={`text-[9px] rounded-full px-2 py-0.5 font-bold font-mono ${
-                          isActive ? 'bg-white/20 text-white' : 'bg-white/10 text-slate-400'
-                        }`}>
-                          {tab.badge}
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Console Active Panel Screen */}
-              {/* VISITOR TRACKER LIVE MONITOR TAB (Always mounted outside AnimatePresence to run background audio persistently) */}
-              <div className={adminTab === 'visitorTracker' ? 'block' : 'hidden'}>
-                <VisitorTracker />
-              </div>
-
-              <AnimatePresence mode="wait">
-                {adminTab !== 'visitorTracker' && (
-                  <motion.div
-                    key={adminTab}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="space-y-6"
+              <div className="bg-[#141a2b]/75 border border-white/20 p-6 space-y-4">
+                <h3 className="text-xs font-mono font-semibold uppercase tracking-[0.18em] text-white">
+                  Quick Actions
+                </h3>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveSection('marketplace');
+                      setMarketSubTab('addProduct');
+                    }}
+                    className="border border-white bg-white text-slate-950 hover:bg-transparent hover:text-white px-5 py-2.5 text-xs font-mono font-semibold uppercase tracking-wider cursor-pointer transition-colors"
                   >
-                  
-                  {/* OVERVIEW TAB */}
-                  {adminTab === 'overview' && (
-                    <div className="space-y-6">
-                      {/* System Control Panel */}
-                      <div className="bg-[#1E2333] border border-white/10 p-6 rounded-3xl">
-                        <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4">Live System Controls</h4>
-                        <div className="flex items-center justify-between gap-4">
-                           <p className="text-xs text-slate-400 font-mono">Floating WhatsApp Icon</p>
-                           <button
-                             onClick={toggleWhatsApp}
-                             className={`px-4 py-2 font-mono text-xs font-bold transition-all border cursor-pointer ${isWhatsAppEnabled ? 'bg-emerald-600 text-white border-emerald-500' : 'bg-slate-800 text-slate-400 border-slate-700'}`}
-                           >
-                             {isWhatsAppEnabled ? 'ENABLED' : 'DISABLED'}
-                           </button>
-                        </div>
-                      </div>
+                    Post New Product
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveSection('content');
+                      setContentSubTab('blog');
+                    }}
+                    className="border border-white/30 hover:border-white text-white px-5 py-2.5 text-xs font-mono font-semibold uppercase tracking-wider cursor-pointer transition-colors"
+                  >
+                    Write Blog Article
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveSection('analytics');
+                      setAnalyticsSubTab('email');
+                    }}
+                    className="border border-white/30 hover:border-white text-white px-5 py-2.5 text-xs font-mono font-semibold uppercase tracking-wider cursor-pointer transition-colors"
+                  >
+                    Send Client Email
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveSection('analytics');
+                      setAnalyticsSubTab('visitors');
+                    }}
+                    className="border border-white/30 hover:border-white text-white px-5 py-2.5 text-xs font-mono font-semibold uppercase tracking-wider cursor-pointer transition-colors"
+                  >
+                    Live Visitor Monitor
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div className="bg-[#1E2333] p-6 border border-white/10">
-                          <p className="text-[10px] font-mono font-bold text-blue-400 uppercase tracking-widest">Consultations</p>
-                          <p className="text-3xl font-bold text-white mt-1.5">{bookings.length}</p>
-                          <span className="text-[9px] text-slate-400 font-mono block mt-1">● Synced with local storage</span>
-                        </div>
-                        <div className="bg-[#1E2333] p-6 border border-white/10">
-                          <p className="text-[10px] font-mono font-bold text-blue-400 uppercase tracking-widest">Inbox Inquiries</p>
-                          <p className="text-3xl font-bold text-white mt-1.5">{contacts.length}</p>
-                          <span className="text-[9px] text-slate-400 font-mono block mt-1">● Live form listener active</span>
-                        </div>
-                        <div className="bg-[#1E2333] p-6 border border-white/10">
-                          <p className="text-[10px] font-mono font-bold text-blue-400 uppercase tracking-widest">Audit Requests</p>
-                          <p className="text-3xl font-bold text-white mt-1.5">{audits.length}</p>
-                          <span className="text-[9px] text-slate-400 font-mono block mt-1">● Landing audit active</span>
-                        </div>
-                        <div className="bg-[#1E2333] p-6 border border-white/10">
-                          <p className="text-[10px] font-mono font-bold text-blue-400 uppercase tracking-widest">Subscribers</p>
-                          <p className="text-3xl font-bold text-white mt-1.5">{subscribers.length}</p>
-                          <span className="text-[9px] text-slate-400 font-mono block mt-1">● Newsletter leads</span>
-                        </div>
-                      </div>
+          {/* PAGE 2: MARKETPLACE */}
+          {activeSection === 'marketplace' && (
+            <div className="space-y-6">
+              <div className="flex flex-wrap gap-1 bg-[#141a2b] p-1 border border-white/20 w-fit">
+                {[
+                  { id: 'orders', label: `Customer Orders (${orders.length})` },
+                  { id: 'products', label: `Products (${products.length})` },
+                  { id: 'addProduct', label: 'Post New Product' },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setMarketSubTab(tab.id as any)}
+                    className={`px-4 py-2 text-xs font-mono font-semibold uppercase tracking-wider cursor-pointer transition-colors ${
+                      marketSubTab === tab.id ? 'bg-white text-slate-950' : 'text-white/75 hover:text-white'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
 
-                      {/* Diagnostic Status Box */}
-                      <div className="bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-3 font-mono">
-                        <div className="flex items-center gap-2">
-                          <span className="h-2 w-2 bg-emerald-500 rounded-full animate-ping"></span>
-                          <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">Console System Diagnostics</h4>
-                        </div>
-                        <div className="text-xs text-slate-400 space-y-1">
-                          <p>● Live Platform State: <span className="text-emerald-400 font-semibold">Active & Healthy</span></p>
-                          <p>● DB Client Hooks: <span className="text-blue-400">LocalStorage Engine</span></p>
-                          <p>● Server Node Connection: <span className="text-slate-200">Production Bundle API</span></p>
-                          <p>● Admin Session Token: <span className="text-yellow-400 font-bold">Secure Local Key Established</span></p>
-                        </div>
-                      </div>
+              {marketSubTab === 'orders' && (
+                <div className="space-y-4">
+                  {orders.length === 0 ? (
+                    <div className="bg-[#141a2b]/75 border border-white/20 p-10 text-center text-xs font-mono text-white/70">
+                      No orders placed on Buyfromudochukwu yet.
                     </div>
-                  )}
-
-                  {/* AI MONITOR TAB */}
-                  {adminTab === 'aiMonitor' && (
-                    <AIConversionMonitor />
-                  )}
-
-                  {/* BOOKINGS CORNER TAB */}
-                  {adminTab === 'bookings' && (
-                    <div className="bg-[#1E2333] border border-white/10 overflow-hidden">
-                      <div className="p-6 border-b border-white/10">
-                        <h3 className="text-base font-serif font-black text-white">Active Strategic Consultation Bookings</h3>
-                        <p className="text-xs text-slate-400 mt-1">These leads requested live calendar discussions regarding project overhauls.</p>
-                      </div>
-
-                      <div className="p-6 space-y-4">
-                        {bookings.length === 0 ? (
-                          <p className="text-xs text-slate-400 italic py-4 text-center">No active direct consultations booked found in database.</p>
-                        ) : (
-                          bookings.map((b: any) => (
-                            <div key={b.id} className="p-5 border border-slate-150 dark:border-slate-800 rounded-2xl hover:border-blue-500/30 transition-all space-y-3 dark:bg-slate-900/40">
-                              <div className="flex justify-between items-start gap-4">
-                                <div className="space-y-1">
-                                  <h4 className="font-semibold text-sm text-slate-900 dark:text-white">{b.name}</h4>
-                                  <p className="text-xs text-slate-500 font-mono">{b.email}</p>
-                                </div>
-                                <button 
-                                  onClick={() => handleDeleteBooking(b.id)} 
-                                  className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/40 p-2 rounded-xl transition-all cursor-pointer border border-transparent hover:border-red-100"
-                                >
-                                  <Trash2 className="w-4 h-4"/>
-                                </button>
-                              </div>
-
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 text-xs border-t border-slate-100 dark:border-slate-800/60">
-                                <div>
-                                  <span className="font-mono text-[9px] text-slate-400 uppercase tracking-wider block">Scheduled Slot</span>
-                                  <span className="font-medium text-slate-850 dark:text-slate-200 block mt-0.5">Date: {b.date}</span>
-                                  <span className="font-medium text-slate-850 dark:text-slate-200 block mt-0.5">Time: {b.timeSlot}</span>
-                                </div>
-                                <div>
-                                  <span className="font-mono text-[9px] text-slate-400 uppercase tracking-wider block">Submission Timestamp</span>
-                                  <span className="font-mono text-slate-500 block mt-0.5">{b.createdAt || 'N/A'}</span>
-                                </div>
-                              </div>
-
-                              {b.notes && (
-                                <div className="bg-slate-50 dark:bg-slate-900/65 p-3.5 rounded-xl text-xs border border-slate-150 dark:border-slate-800/60">
-                                  <strong className="font-bold text-slate-450 uppercase text-[9px] font-mono tracking-wider block mb-1">PROSPECT CUSTOM NOTES / COMMENTS</strong>
-                                  <p className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{b.notes}</p>
-                                </div>
-                              )}
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* INBOX INQUIRIES TAB */}
-                  {adminTab === 'contacts' && (
-                    <div className="bg-[#1E2333] border border-white/10 overflow-hidden">
-                      <div className="p-6 border-b border-white/10">
-                        <h3 className="text-base font-serif font-black text-white">General Inquiries & Messages Inbox</h3>
-                        <p className="text-xs text-slate-400 mt-1">General questions or custom project messages received via the Contact Form.</p>
-                      </div>
-
-                      <div className="p-6 space-y-4">
-                        {contacts.length === 0 ? (
-                          <p className="text-xs text-slate-400 italic py-4 text-center">No messages available in inbox database.</p>
-                        ) : (
-                          contacts.map((c: any) => (
-                            <div key={c.id} className="p-5 border border-slate-150 dark:border-slate-800 rounded-2xl hover:border-blue-500/30 transition-all dark:bg-slate-900/40 space-y-4">
-                              <div className="flex justify-between items-start gap-4">
-                                <div className="space-y-1">
-                                  <span className="bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 text-[10px] font-mono px-2 py-0.5 rounded-sm font-bold uppercase">
-                                    {c.subject || 'Website Inquiry'}
-                                  </span>
-                                  <h4 className="font-semibold text-sm text-slate-900 dark:text-white pt-1">{c.name}</h4>
-                                  <p className="text-xs text-slate-500 font-mono">Email: {c.email} {c.phone && `• Tel: ${c.phone}`}</p>
-                                </div>
-                                
-                                <button 
-                                  onClick={() => handleDeleteContact(c.id)} 
-                                  className="text-red-500 hover:text-red-705 hover:bg-rose-50 dark:hover:bg-red-950/40 p-2 rounded-xl transition-all cursor-pointer border border-transparent hover:border-red-100"
-                                >
-                                  <Trash2 className="w-4 h-4"/>
-                                </button>
-                              </div>
-
-                              <div className="bg-slate-50 dark:bg-slate-900/65 p-4 rounded-xl text-xs sm:text-sm text-slate-700 dark:text-slate-300 border font-normal leading-relaxed whitespace-pre-wrap">
-                                {c.message}
-                              </div>
-
-                              <div className="text-right">
-                                <span className="text-[10px] font-mono text-slate-400">Received At: {c.submittedAt || 'N/A'}</span>
-                              </div>
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* AUDIT REQUESTS TAB */}
-                  {adminTab === 'audits' && (
-                    <div className="bg-[#1E2333] border border-white/10 overflow-hidden">
-                      <div className="p-6 border-b border-white/10">
-                        <h3 className="text-base font-serif font-black text-white">Lead Magnet: Audit Submission Form Logs</h3>
-                        <p className="text-xs text-slate-400 mt-1">High conversion prospects looking for diagnostic analysis on their business speed parameters.</p>
-                      </div>
-
-                      <div className="p-6 space-y-4">
-                        {audits.length === 0 ? (
-                          <p className="text-xs text-slate-400 italic py-4 text-center">No audit responses found in database.</p>
-                        ) : (
-                          audits.map((a: any) => (
-                            <div key={a.id} className="p-5 border border-slate-150 dark:border-slate-800 rounded-2xl hover:border-blue-500/30 transition-all dark:bg-slate-900/40 space-y-3">
-                              <div className="flex justify-between items-start gap-4">
-                                <div className="space-y-1">
-                                  <h4 className="font-semibold text-sm text-slate-900 dark:text-white">{a.businessName}</h4>
-                                  <p className="text-xs text-blue-600 dark:text-blue-400 underline font-mono">
-                                    <a href={a.website.startsWith('http') ? a.website : `https://${a.website}`} target="_blank" rel="noopener noreferrer">
-                                      {a.website}
-                                    </a>
-                                  </p>
-                                </div>
-                                <button 
-                                  onClick={() => handleDeleteAudit(a.id)} 
-                                  className="text-red-500 hover:text-red-750 p-2 rounded-xl transition-all cursor-pointer"
-                                >
-                                  <Trash2 className="w-4 h-4"/>
-                                </button>
-                              </div>
-
-                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs pt-1">
-                                <div>
-                                  <span className="text-[9px] font-mono text-slate-400 uppercase tracking-widest block">Industry Profile</span>
-                                  <span className="font-medium text-slate-800 dark:text-slate-200">{a.industry || 'General Business'}</span>
-                                </div>
-                                <div>
-                                  <span className="text-[9px] font-mono text-slate-400 uppercase tracking-widest block">Contact Details</span>
-                                  <span className="font-mono text-slate-800 dark:text-slate-200 block">{a.email}</span>
-                                  {a.phone && <span className="font-mono text-slate-800 dark:text-slate-200 block">{a.phone}</span>}
-                                </div>
-                                <div>
-                                  <span className="text-[9px] font-mono text-slate-400 uppercase tracking-widest block">Audit Status</span>
-                                  <span className="inline-block bg-yellow-100 dark:bg-yellow-905 text-yellow-800 dark:text-yellow-400 px-1.5 py-0.5 rounded text-[10px] font-semibold mt-0.5">
-                                    {a.status || 'Pending Analysis'}
-                                  </span>
-                                </div>
-                              </div>
-
-                              {a.challenges && (
-                                <div className="bg-slate-50 dark:bg-slate-900/65 p-3 rounded-xl text-xs border">
-                                  <strong className="font-bold text-slate-450 uppercase text-[9px] font-mono tracking-wider block mb-1">PROSPECT CORE CHALLENGES</strong>
-                                  <p className="text-slate-700 dark:text-slate-350">{a.challenges}</p>
-                                </div>
-                              )}
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* NEWSLETTER SUBSCRIBERS TAB */}
-                  {adminTab === 'subscribers' && (
-                    <div className="bg-[#1E2333] p-6 border border-white/10 space-y-6">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-white/10">
-                        <div>
-                          <h3 className="text-base font-serif font-black text-white">Newsletter Leads list ({subscribers.length})</h3>
-                          <p className="text-xs text-slate-400 mt-1">Export list containing emails of subscribers signed up for premium blueprints.</p>
-                        </div>
-
-                        {subscribers.length > 0 && (
-                          <button 
-                            onClick={handleCopyToClipboard} 
-                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
-                          >
-                            {copiedSubscribers ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                            <span>{copiedSubscribers ? 'Formatted Emails Copied!' : 'Copy to Clipboard'}</span>
-                          </button>
-                        )}
-                      </div>
-
-                      {subscribers.length === 0 ? (
-                        <p className="text-xs text-slate-400 italic text-center py-4">No subscribers currently logged in system storage.</p>
-                      ) : (
-                        <div className="space-y-4">
-                          <div className="text-xs font-mono p-4 bg-slate-50 dark:bg-slate-900 border text-slate-700 dark:text-slate-350 rounded-2xl break-all leading-relaxed whitespace-pre-line shadow-xs">
-                            {subscribers.join(', ')}
+                  ) : (
+                    orders.map((ord) => (
+                      <div key={ord.id} className="bg-[#141a2b]/75 border border-white/20 p-5 space-y-4">
+                        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/15 pb-3">
+                          <div>
+                            <span className="text-xs font-mono text-white/75 font-bold">
+                              {ord.orderNumber}
+                            </span>
+                            <h3 className="text-base font-sans font-semibold text-white mt-0.5">
+                              {ord.customerName} · {ord.phone}
+                            </h3>
+                            <p className="text-xs font-mono text-white/70">
+                              {ord.city} — {ord.address}
+                            </p>
                           </div>
 
-                          <div className="border border-slate-100 dark:border-slate-800 rounded-2xl divide-y">
-                            {subscribers.map((email, idx) => (
-                              <div key={idx} className="p-3 text-sm text-slate-800 dark:text-slate-200 flex items-center justify-between font-mono">
-                                <span>{email}</span>
-                                <span className="text-[10px] text-slate-400 font-mono">Lead ID: #{idx + 1}</span>
+                          <div className="flex items-center gap-2">
+                            <select
+                              value={ord.status}
+                              onChange={(e) => {
+                                const updated = updateMarketplaceOrderStatus(
+                                  ord.id,
+                                  e.target.value as MarketplaceOrder['status']
+                                );
+                                setOrders(updated);
+                                showNotice(`Order ${ord.orderNumber} status updated.`);
+                              }}
+                              className="bg-[#181d2c] border border-white/25 px-3 py-1.5 text-xs font-mono text-white"
+                            >
+                              <option value="Pending Confirmation">Pending Confirmation</option>
+                              <option value="Out for Delivery">Out for Delivery</option>
+                              <option value="Delivered">Delivered</option>
+                              <option value="Cancelled">Cancelled</option>
+                            </select>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setOrders(deleteMarketplaceOrder(ord.id));
+                                showNotice(`Order ${ord.orderNumber} removed.`);
+                              }}
+                              className="p-2 text-rose-300 hover:bg-rose-950/40 border border-white/20 cursor-pointer"
+                              title="Delete order"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap justify-between items-center gap-4 text-xs font-mono">
+                          <div className="space-y-1 text-white/85">
+                            {ord.items.map((it, idx) => (
+                              <div key={idx}>
+                                {it.title} × {it.quantity} — ₦{(it.price * it.quantity).toLocaleString()}
                               </div>
                             ))}
                           </div>
+                          <div className="text-right">
+                            <span className="text-white/70 block">{ord.paymentMethod}</span>
+                            <span className="text-lg font-bold text-white tabular-nums">
+                              Total: ₦{ord.totalAmount.toLocaleString()}
+                            </span>
+                          </div>
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    ))
                   )}
+                </div>
+              )}
 
-                  {/* POST NEW BLOG TAB */}
-                  {adminTab === 'blogPost' && (
-                    <div className="bg-white dark:bg-slate-850 p-6 rounded-3xl border border-slate-200/50 dark:border-slate-800/40 shadow-xs space-y-6">
-                      <div>
-                        <h3 className="text-base font-serif font-black text-slate-950 dark:text-white">Publish New Dynamic Blog</h3>
-                        <p className="text-xs text-slate-500 mt-1">Draft articles with rich markdown features directly loaded on the main Blog feeds.</p>
+              {marketSubTab === 'products' && (
+                <div className="space-y-4">
+                  <div className="bg-[#141a2b]/75 border border-white/20 p-4 text-xs font-mono text-white/80 flex flex-wrap items-center justify-between gap-3">
+                    <span>
+                      Admin-Only Catalog: Click any product on Buyfromudochukwu while logged in as Admin to edit full item details directly on its preview page, or toggle stock here.
+                    </span>
+                  </div>
+                  {products.map((prod) => (
+                    <div
+                      key={prod.id}
+                      className="bg-[#141a2b]/75 border border-white/20 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                    >
+                      <div className="flex items-center gap-4 min-w-0">
+                        <img
+                          src={prod.images[0] || GENERATED_ASSETS.marketplaceHeroCollection}
+                          alt={prod.title}
+                          className="w-16 h-12 object-cover border border-white/20 shrink-0"
+                        />
+                        <div className="min-w-0">
+                          <h4 className="text-sm font-sans font-semibold text-white truncate">
+                            {prod.title}
+                          </h4>
+                          <p className="text-xs font-mono text-white/70 tabular-nums">
+                            ₦{prod.price.toLocaleString()} · {prod.category} ·{' '}
+                            {prod.inStock ? 'In Stock' : 'Out of Stock'}
+                          </p>
+                        </div>
                       </div>
 
-                      <form onSubmit={handleCreateBlogPost} className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-1.5">
-                            <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest block uppercase">Article Title *</label>
-                            <input 
-                              type="text" 
-                              required
-                              placeholder="e.g. 5 Crucial SEO Paradigms for 2026" 
-                              className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden" 
-                              value={newBlog.title} 
-                              onChange={(e) => setNewBlog({...newBlog, title: e.target.value})} 
-                            />
-                          </div>
-
-                          <div className="space-y-1.5">
-                            <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest block uppercase font-bold">Post URL Slug *</label>
-                            <input 
-                              type="text" 
-                              required
-                              placeholder="e.g. five-seo-paradigms-2026" 
-                              className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden" 
-                              value={newBlog.slug} 
-                              onChange={(e) => setNewBlog({...newBlog, slug: e.target.value})} 
-                            />
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div className="space-y-1.5">
-                            <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest block uppercase font-bold">Post Category</label>
-                            <select 
-                              className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden" 
-                              value={newBlog.category} 
-                              onChange={(e) => setNewBlog({...newBlog, category: e.target.value as any})}
-                            >
-                              <option value="Web Design">Web Design</option>
-                              <option value="Business Growth">Business Growth</option>
-                              <option value="SEO">SEO</option>
-                              <option value="Marketing">Marketing</option>
-                              <option value="Branding">Branding</option>
-                              <option value="AI">AI</option>
-                              <option value="Technology">Technology</option>
-                            </select>
-                          </div>
-
-                          <div className="space-y-1.5">
-                            <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest block uppercase font-bold">Read Duration Estimate *</label>
-                            <input 
-                              type="text" 
-                              required
-                              placeholder="e.g. 5 min read" 
-                              className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden" 
-                              value={newBlog.readTime} 
-                              onChange={(e) => setNewBlog({...newBlog, readTime: e.target.value})} 
-                            />
-                          </div>
-
-                          <div className="space-y-1.5">
-                            <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest block uppercase font-bold">Article Tags (comma-separated)</label>
-                            <input 
-                              type="text" 
-                              placeholder="e.g. Web Speed, performance, UX" 
-                              className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden" 
-                              value={newBlog.tags} 
-                              onChange={(e) => setNewBlog({...newBlog, tags: e.target.value})} 
-                            />
-                          </div>
-                        </div>
-
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest block uppercase font-bold">Cover Photo Illustration URL</label>
-                          <input 
-                            type="text" 
-                            placeholder="e.g. https://images.unsplash.com/photo-..." 
-                            className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden" 
-                            value={newBlog.image} 
-                            onChange={(e) => setNewBlog({...newBlog, image: e.target.value})} 
-                          />
-                        </div>
-
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest block uppercase font-bold">Post Excerpt Paragraph Summary *</label>
-                          <textarea 
-                            required
-                            placeholder="A concise, enticing summary of the blog post. This will serve as the card meta details on listings." 
-                            className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden h-20 resize-none" 
-                            value={newBlog.excerpt} 
-                            onChange={(e) => setNewBlog({...newBlog, excerpt: e.target.value})} 
-                          />
-                        </div>
-
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest block uppercase font-bold">Full Markdown Body Content *</label>
-                          <textarea 
-                            required
-                            placeholder="Write your beautiful post body here using standard Markdown markup templates... (e.g., # Header, ## Subhead, **bold**)" 
-                            className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white p-4 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden h-72 font-mono leading-relaxed" 
-                            value={newBlog.content} 
-                            onChange={(e) => setNewBlog({...newBlog, content: e.target.value})} 
-                          />
-                        </div>
-
-                        <button 
-                          type="submit" 
-                          className="bg-blue-600 hover:bg-blue-750 text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl cursor-pointer shadow-md shadow-blue-500/10 transition-colors"
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = updateMarketplaceProduct({
+                              ...prod,
+                              inStock: !prod.inStock,
+                            });
+                            setProducts(updated);
+                            showNotice('Product stock status updated.');
+                          }}
+                          className="border border-white/25 hover:border-white px-3 py-1.5 text-xs font-mono text-white cursor-pointer"
                         >
-                          Publish Premium Post Live
+                          {prod.inStock ? 'Mark Sold Out' : 'Mark In Stock'}
                         </button>
-                      </form>
-                    </div>
-                  )}
-
-                  {/* SITE ASSETS & IMAGES TAB */}
-                  {adminTab === 'siteAssets' && (
-                    <div className="bg-white dark:bg-slate-850 p-6 rounded-3xl border border-slate-200/50 dark:border-slate-800/40 shadow-xs space-y-6">
-                      <div>
-                        <h3 className="text-base font-serif font-black text-slate-950 dark:text-white">Site Assets Config</h3>
-                        <p className="text-xs text-slate-500 mt-1">Configure layout illustration URLs across the primary website screens dynamically.</p>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setProducts(deleteMarketplaceProduct(prod.id));
+                            showNotice('Product removed.');
+                          }}
+                          className="border border-rose-400/40 text-rose-300 hover:bg-rose-950/40 px-3 py-1.5 text-xs font-mono cursor-pointer"
+                        >
+                          Delete
+                        </button>
                       </div>
-
-                      <form onSubmit={handleUpdateAssets} className="space-y-4">
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest block uppercase font-bold">Hero Portait Illustration URL</label>
-                          <input 
-                            type="text" 
-                            className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden" 
-                            value={siteSettings.heroImageUrl} 
-                            onChange={(e) => setSiteSettings({...siteSettings, heroImageUrl: e.target.value})} 
-                          />
-                        </div>
-
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest block uppercase font-bold">About Section Illustration URL</label>
-                          <input 
-                            type="text" 
-                            className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden" 
-                            value={siteSettings.aboutImageUrl} 
-                            onChange={(e) => setSiteSettings({...siteSettings, aboutImageUrl: e.target.value})} 
-                          />
-                        </div>
-
-                        <button 
-                          type="submit" 
-                          className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl transition-all cursor-pointer"
-                        >
-                          Save Layout Assets
-                        </button>
-                      </form>
                     </div>
-                  )}
+                  ))}
+                </div>
+              )}
 
-                  {/* EMAIL SENDER TAB */}
-                  {adminTab === 'emailSender' && (
-                    <div className="bg-white dark:bg-slate-850 p-6 rounded-3xl border border-slate-200/50 dark:border-slate-800/40 shadow-xs space-y-6">
-                      <div>
-                        <h3 className="text-base font-serif font-black text-slate-950 dark:text-white">Direct Email Dispatch</h3>
-                        <p className="text-xs text-slate-500 mt-1">Send branded, beautifully formatted emails explicitly via Resend API. Supports PDF and document attachments.</p>
-                      </div>
+              {marketSubTab === 'addProduct' && (
+                <form
+                  onSubmit={handleCreateProduct}
+                  className="bg-[#141a2b]/75 border border-white/20 p-6 sm:p-8 space-y-4 max-w-3xl"
+                >
+                  <h3 className="text-lg font-sans font-semibold text-white">
+                    Post Product to Buyfromudochukwu
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <input
+                      type="text"
+                      required
+                      placeholder="Product Title *"
+                      value={newProd.title}
+                      onChange={(e) => setNewProd({ ...newProd, title: e.target.value })}
+                      className="bg-[#181d2c] border border-white/25 px-4 py-3 text-xs font-mono text-white focus:border-white focus:outline-none"
+                    />
+                    <select
+                      value={newProd.category}
+                      onChange={(e) => setNewProd({ ...newProd, category: e.target.value as any })}
+                      className="bg-[#181d2c] border border-white/25 px-4 py-3 text-xs font-mono text-white focus:border-white focus:outline-none"
+                    >
+                      <option value="Power & Solar">Power &amp; Solar</option>
+                      <option value="Gadgets & Tech">Gadgets &amp; Tech</option>
+                      <option value="Office Systems">Office Systems</option>
+                      <option value="Accessories">Accessories</option>
+                    </select>
+                  </div>
 
-                      {emailStatus && (
-                        <div className={`p-4 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2 ${emailStatus.type === 'success' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 border border-emerald-200/50' : 'bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400 border border-red-200/50'}`}>
-                          {emailStatus.type === 'success' ? <Check className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
-                          {emailStatus.message}
-                        </div>
-                      )}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <input
+                      type="number"
+                      required
+                      placeholder="Price in NGN (e.g. 550000) *"
+                      value={newProd.price}
+                      onChange={(e) => setNewProd({ ...newProd, price: e.target.value })}
+                      className="bg-[#181d2c] border border-white/25 px-4 py-3 text-xs font-mono text-white focus:border-white focus:outline-none"
+                    />
+                    <input
+                      type="number"
+                      placeholder="Compare Price (Optional)"
+                      value={newProd.compareAtPrice}
+                      onChange={(e) => setNewProd({ ...newProd, compareAtPrice: e.target.value })}
+                      className="bg-[#181d2c] border border-white/25 px-4 py-3 text-xs font-mono text-white focus:border-white focus:outline-none"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Warranty"
+                      value={newProd.warranty}
+                      onChange={(e) => setNewProd({ ...newProd, warranty: e.target.value })}
+                      className="bg-[#181d2c] border border-white/25 px-4 py-3 text-xs font-mono text-white focus:border-white focus:outline-none"
+                    />
+                  </div>
 
-                      <form onSubmit={handleSendEmail} className="space-y-5">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-1.5">
-                            <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest block uppercase">Recipient Email</label>
-                            <input 
-                              type="email" 
-                              required
-                              className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden" 
-                              value={emailTo} 
-                              onChange={(e) => setEmailTo(e.target.value)} 
-                              placeholder="client@company.com"
-                            />
-                          </div>
+                  <input
+                    type="text"
+                    placeholder="Short Subtitle"
+                    value={newProd.subtitle}
+                    onChange={(e) => setNewProd({ ...newProd, subtitle: e.target.value })}
+                    className="w-full bg-[#181d2c] border border-white/25 px-4 py-3 text-xs font-mono text-white focus:border-white focus:outline-none"
+                  />
 
-                          <div className="space-y-1.5">
-                            <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest block uppercase">Subject Line</label>
-                            <input 
-                              type="text" 
-                              required
-                              className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden" 
-                              value={emailSubject} 
-                              onChange={(e) => setEmailSubject(e.target.value)} 
-                              placeholder="Project Proposal & Next Steps"
-                            />
-                          </div>
-                        </div>
+                  <textarea
+                    rows={3}
+                    required
+                    placeholder="Full Product Description *"
+                    value={newProd.description}
+                    onChange={(e) => setNewProd({ ...newProd, description: e.target.value })}
+                    className="w-full bg-[#181d2c] border border-white/25 px-4 py-3 text-xs font-mono text-white focus:border-white focus:outline-none resize-none"
+                  />
 
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest block uppercase">Message Content (Appears formatted naturally)</label>
-                          <textarea 
-                            required
-                            rows={8}
-                            className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white p-4 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden resize-y" 
-                            value={emailMessage} 
-                            onChange={(e) => setEmailMessage(e.target.value)} 
-                            placeholder="Hello, I have attached the documents..."
-                          />
-                        </div>
+                  <textarea
+                    rows={2}
+                    placeholder="Specs (comma or newline separated)"
+                    value={newProd.specs}
+                    onChange={(e) => setNewProd({ ...newProd, specs: e.target.value })}
+                    className="w-full bg-[#181d2c] border border-white/25 px-4 py-3 text-xs font-mono text-white focus:border-white focus:outline-none resize-none"
+                  />
 
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest block uppercase">Attach File (PDF, DOCX, ZIP)</label>
-                          <div className="flex items-center gap-4">
-                            <label className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-medium cursor-pointer transition-colors border border-slate-200 dark:border-slate-700">
-                              <Paperclip className="w-4 h-4" />
-                              <span>{emailAttachment ? 'Change File' : 'Browse File'}</span>
-                              <input 
-                                type="file" 
-                                className="hidden"
-                                onChange={(e) => setEmailAttachment(e.target.files ? e.target.files[0] : null)}
-                              />
-                            </label>
-                            {emailAttachment && (
-                              <div className="flex items-center justify-between gap-3 text-xs px-3 py-1.5 bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-lg border border-blue-200/50 dark:border-blue-800/40">
-                                <span className="truncate max-w-[200px]">{emailAttachment.name}</span>
-                                <button type="button" onClick={() => setEmailAttachment(null)} className="opacity-70 hover:opacity-100">
-                                  <X className="w-3.5 h-3.5" />
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        <button 
-                          type="submit" 
-                          disabled={isSendingEmail}
-                          className="bg-slate-900 hover:bg-black dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 w-full md:w-auto"
-                        >
-                          {isSendingEmail ? (
-                            <>
-                              <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                              <span>Dispatching...</span>
-                            </>
-                          ) : (
-                            <>
-                              <Send className="w-4 h-4" />
-                              <span>Send Branded Email</span>
-                            </>
-                          )}
-                        </button>
-                      </form>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="Image URL or upload →"
+                        value={newProd.imageUrl}
+                        onChange={(e) => setNewProd({ ...newProd, imageUrl: e.target.value })}
+                        className="flex-1 bg-[#181d2c] border border-white/25 px-3 py-2.5 text-xs font-mono text-white focus:border-white focus:outline-none"
+                      />
+                      <label className="border border-white/25 px-3 py-2.5 text-xs font-mono text-white cursor-pointer hover:bg-white hover:text-slate-950 transition-colors">
+                        Upload
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleProductImageUpload}
+                        />
+                      </label>
                     </div>
-                  )}
+                    <input
+                      type="text"
+                      placeholder="Promo Video URL (.mp4)"
+                      value={newProd.promoVideoUrl}
+                      onChange={(e) => setNewProd({ ...newProd, promoVideoUrl: e.target.value })}
+                      className="bg-[#181d2c] border border-white/25 px-3 py-2.5 text-xs font-mono text-white focus:border-white focus:outline-none"
+                    />
+                  </div>
 
-                  {/* CRM SYSTEM ALERTS SETTINGS TAB */}
-                  {adminTab === 'settings' && (
-                    <div className="bg-white dark:bg-slate-850 p-6 rounded-3xl border border-slate-200/50 dark:border-slate-800/40 shadow-xs space-y-6">
-                      <div>
-                        <h3 className="text-base font-serif font-black text-slate-950 dark:text-white">CRM Live Action Alerts Hooks</h3>
-                        <p className="text-xs text-slate-500 mt-1">Receive webhook pings directly to Discord when users book consultations or complete contact forms.</p>
-                      </div>
+                  <div className="flex flex-wrap gap-6 text-xs font-mono text-white/85">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={newProd.freeDeliveryEnugu}
+                        onChange={(e) =>
+                          setNewProd({ ...newProd, freeDeliveryEnugu: e.target.checked })
+                        }
+                        className="accent-white"
+                      />
+                      <span>Free Delivery in Enugu Cities</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={newProd.paymentOnDeliveryEnugu}
+                        onChange={(e) =>
+                          setNewProd({ ...newProd, paymentOnDeliveryEnugu: e.target.checked })
+                        }
+                        className="accent-white"
+                      />
+                      <span>Payment on Delivery in Enugu</span>
+                    </label>
+                  </div>
 
-                      <form onSubmit={handleSaveDiscordSettings} className="space-y-4">
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-mono text-slate-400 font-extrabold tracking-widest block uppercase font-bold">Discord webhook API endpoint</label>
-                          <input 
-                            type="url" 
-                            placeholder="https://discord.com/api/webhooks/..."
-                            className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden" 
-                            value={discordWebhookUrl} 
-                            onChange={(e) => setDiscordWebhookUrl(e.target.value)} 
-                          />
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          <input 
-                            type="checkbox" 
-                            id="discord-enable-toggle" 
-                            className="rounded border-slate-300 dark:border-slate-700 text-blue-600 focus:ring-blue-500 h-4 w-4 bg-slate-50 dark:bg-slate-900 cursor-pointer"
-                            checked={discordEnabled} 
-                            onChange={(e) => setDiscordEnabled(e.target.checked)} 
-                          />
-                          <label htmlFor="discord-enable-toggle" className="text-xs text-slate-755 dark:text-slate-300 font-medium select-none cursor-pointer">
-                            Enable active Discord live stream alerts
-                          </label>
-                        </div>
-
-                        <button 
-                          type="submit" 
-                          className="bg-blue-600 hover:bg-blue-750 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl cursor-pointer"
-                        >
-                          Synchronize Alerts Hook
-                        </button>
-                      </form>
-                    </div>
-                  )}
-
-                </motion.div>
-                )}
-              </AnimatePresence>
-
-            </motion.div>
+                  <button
+                    type="submit"
+                    className="border border-white bg-white text-slate-950 hover:bg-transparent hover:text-white px-6 py-3 font-mono text-xs font-semibold uppercase tracking-[0.16em] cursor-pointer transition-colors"
+                  >
+                    Publish Product
+                  </button>
+                </form>
+              )}
+            </div>
           )}
-        </AnimatePresence>
 
+          {/* PAGE 3: LEADS & INBOX */}
+          {activeSection === 'leads' && (
+            <div className="space-y-6">
+              <div className="flex flex-wrap gap-1 bg-[#141a2b] p-1 border border-white/20 w-fit">
+                {[
+                  { id: 'bookings', label: `Bookings (${bookings.length})` },
+                  { id: 'contacts', label: `Inquiries (${contacts.length})` },
+                  { id: 'audits', label: `Audits (${audits.length})` },
+                  { id: 'subscribers', label: `Subscribers (${subscribers.length})` },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setLeadsSubTab(tab.id as any)}
+                    className={`px-4 py-2 text-xs font-mono font-semibold uppercase tracking-wider cursor-pointer transition-colors ${
+                      leadsSubTab === tab.id ? 'bg-white text-slate-950' : 'text-white/75 hover:text-white'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              {leadsSubTab === 'bookings' && (
+                <div className="space-y-3">
+                  {bookings.length === 0 ? (
+                    <div className="bg-[#141a2b]/75 border border-white/20 p-10 text-center text-xs font-mono text-white/70">
+                      No consultation bookings found.
+                    </div>
+                  ) : (
+                    bookings.map((b) => (
+                      <div
+                        key={b.id}
+                        className="bg-[#141a2b]/75 border border-white/20 p-5 flex justify-between items-start gap-4"
+                      >
+                        <div className="space-y-1">
+                          <h4 className="text-sm font-sans font-semibold text-white">{b.name}</h4>
+                          <p className="text-xs font-mono text-white/70">{b.email}</p>
+                          <p className="text-xs font-mono text-white/90">
+                            {b.date} · {b.timeSlot}
+                          </p>
+                          {b.notes && <p className="text-xs text-white/80 pt-2">{b.notes}</p>}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const next = bookings.filter((x) => x.id !== b.id);
+                            setBookings(next);
+                            localStorage.setItem('vxt_bookings', JSON.stringify(next));
+                            showNotice('Booking removed.');
+                          }}
+                          className="p-2 text-rose-300 hover:bg-rose-950/40 border border-white/20 cursor-pointer"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+
+              {leadsSubTab === 'contacts' && (
+                <div className="space-y-3">
+                  {contacts.length === 0 ? (
+                    <div className="bg-[#141a2b]/75 border border-white/20 p-10 text-center text-xs font-mono text-white/70">
+                      No inbox inquiries found.
+                    </div>
+                  ) : (
+                    contacts.map((c) => (
+                      <div key={c.id} className="bg-[#141a2b]/75 border border-white/20 p-5 space-y-3">
+                        <div className="flex justify-between items-start gap-4">
+                          <div>
+                            <span className="text-[11px] font-mono text-white/75 uppercase">
+                              {c.subject || 'Inquiry'}
+                            </span>
+                            <h4 className="text-sm font-sans font-semibold text-white">{c.name}</h4>
+                            <p className="text-xs font-mono text-white/70">
+                              {c.email} {c.phone ? `· ${c.phone}` : ''}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const next = contacts.filter((x) => x.id !== c.id);
+                              setContacts(next);
+                              localStorage.setItem('vxt_contacts', JSON.stringify(next));
+                              showNotice('Inquiry removed.');
+                            }}
+                            className="p-2 text-rose-300 hover:bg-rose-950/40 border border-white/20 cursor-pointer"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <p className="text-xs text-white/85 bg-[#181d2c] p-3.5 border border-white/15">
+                          {c.message}
+                        </p>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+
+              {leadsSubTab === 'audits' && (
+                <div className="space-y-3">
+                  {audits.length === 0 ? (
+                    <div className="bg-[#141a2b]/75 border border-white/20 p-10 text-center text-xs font-mono text-white/70">
+                      No audit requests found.
+                    </div>
+                  ) : (
+                    audits.map((a) => (
+                      <div
+                        key={a.id}
+                        className="bg-[#141a2b]/75 border border-white/20 p-5 flex justify-between items-start gap-4"
+                      >
+                        <div className="space-y-1">
+                          <h4 className="text-sm font-sans font-semibold text-white">
+                            {a.businessName}
+                          </h4>
+                          <p className="text-xs font-mono text-white/90">{a.website}</p>
+                          <p className="text-xs font-mono text-white/70">
+                            {a.email} · {a.phone} · {a.industry}
+                          </p>
+                          {a.challenges && <p className="text-xs text-white/80 pt-1">{a.challenges}</p>}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const next = audits.filter((x) => x.id !== a.id);
+                            setAudits(next);
+                            localStorage.setItem('vxt_audits', JSON.stringify(next));
+                            showNotice('Audit request removed.');
+                          }}
+                          className="p-2 text-rose-300 hover:bg-rose-950/40 border border-white/20 cursor-pointer"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+
+              {leadsSubTab === 'subscribers' && (
+                <div className="bg-[#141a2b]/75 border border-white/20 p-6 space-y-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <h3 className="text-sm font-mono font-semibold text-white uppercase">
+                      Newsletter Subscribers ({subscribers.length})
+                    </h3>
+                    {subscribers.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(subscribers.join(', '));
+                          showNotice('Subscriber emails copied to clipboard.');
+                        }}
+                        className="inline-flex items-center gap-2 border border-white bg-white text-slate-950 px-4 py-2 text-xs font-mono font-semibold uppercase cursor-pointer"
+                      >
+                        <Copy className="w-3.5 h-3.5" />
+                        <span>Copy All</span>
+                      </button>
+                    )}
+                  </div>
+                  {subscribers.length === 0 ? (
+                    <p className="text-xs font-mono text-white/70">No subscribers recorded yet.</p>
+                  ) : (
+                    <div className="divide-y divide-white/15 border border-white/15">
+                      {subscribers.map((email, idx) => (
+                        <div key={idx} className="p-3 text-xs font-mono text-white/85 flex justify-between">
+                          <span>{email}</span>
+                          <span className="text-white/50 tabular-nums">#{idx + 1}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* PAGE 4: CONTENT & PORTFOLIO */}
+          {activeSection === 'content' && (
+            <div className="space-y-6">
+              <div className="flex flex-wrap gap-1 bg-[#141a2b] p-1 border border-white/20 w-fit">
+                {[
+                  { id: 'blog', label: `Blog (${blogs.length})` },
+                  { id: 'portfolio', label: `Portfolio (${portfolio.length})` },
+                  { id: 'reviews', label: `Reviews (${reviews.length})` },
+                  { id: 'assets', label: 'Site Images' },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setContentSubTab(tab.id as any)}
+                    className={`px-4 py-2 text-xs font-mono font-semibold uppercase tracking-wider cursor-pointer transition-colors ${
+                      contentSubTab === tab.id ? 'bg-white text-slate-950' : 'text-white/75 hover:text-white'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              {contentSubTab === 'blog' && (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                  <form
+                    onSubmit={handleCreateBlogPost}
+                    className="lg:col-span-7 bg-[#141a2b]/75 border border-white/20 p-6 space-y-4"
+                  >
+                    <h3 className="text-lg font-sans font-semibold text-white">
+                      Publish Blog Article
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <input
+                        type="text"
+                        required
+                        placeholder="Title *"
+                        value={newBlog.title}
+                        onChange={(e) => setNewBlog({ ...newBlog, title: e.target.value })}
+                        className="bg-[#181d2c] border border-white/25 px-3 py-2.5 text-xs font-mono text-white"
+                      />
+                      <input
+                        type="text"
+                        required
+                        placeholder="URL Slug *"
+                        value={newBlog.slug}
+                        onChange={(e) => setNewBlog({ ...newBlog, slug: e.target.value })}
+                        className="bg-[#181d2c] border border-white/25 px-3 py-2.5 text-xs font-mono text-white"
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <select
+                        value={newBlog.category}
+                        onChange={(e) => setNewBlog({ ...newBlog, category: e.target.value as any })}
+                        className="bg-[#181d2c] border border-white/25 px-3 py-2.5 text-xs font-mono text-white"
+                      >
+                        <option value="Web Design">Web Design</option>
+                        <option value="Business Growth">Business Growth</option>
+                        <option value="SEO">SEO</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Branding">Branding</option>
+                        <option value="Technology">Technology</option>
+                      </select>
+                      <input
+                        type="text"
+                        placeholder="Read time (e.g. 4 min read)"
+                        value={newBlog.readTime}
+                        onChange={(e) => setNewBlog({ ...newBlog, readTime: e.target.value })}
+                        className="bg-[#181d2c] border border-white/25 px-3 py-2.5 text-xs font-mono text-white"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Tags (comma separated)"
+                        value={newBlog.tags}
+                        onChange={(e) => setNewBlog({ ...newBlog, tags: e.target.value })}
+                        className="bg-[#181d2c] border border-white/25 px-3 py-2.5 text-xs font-mono text-white"
+                      />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Excerpt *"
+                      value={newBlog.excerpt}
+                      onChange={(e) => setNewBlog({ ...newBlog, excerpt: e.target.value })}
+                      className="w-full bg-[#181d2c] border border-white/25 px-3 py-2.5 text-xs font-mono text-white"
+                    />
+                    <textarea
+                      rows={6}
+                      required
+                      placeholder="Markdown Content *"
+                      value={newBlog.content}
+                      onChange={(e) => setNewBlog({ ...newBlog, content: e.target.value })}
+                      className="w-full bg-[#181d2c] border border-white/25 px-3 py-2.5 text-xs font-mono text-white"
+                    />
+                    <button
+                      type="submit"
+                      className="border border-white bg-white text-slate-950 hover:bg-transparent hover:text-white px-6 py-3 font-mono text-xs font-semibold uppercase tracking-wider cursor-pointer transition-colors"
+                    >
+                      Publish Article
+                    </button>
+                  </form>
+
+                  <div className="lg:col-span-5 bg-[#141a2b]/75 border border-white/20 p-6 space-y-3">
+                    <h4 className="text-xs font-mono font-semibold uppercase text-white/75">
+                      Published Articles
+                    </h4>
+                    <div className="divide-y divide-white/15">
+                      {blogs.map((b) => (
+                        <div key={b.id} className="py-3 flex justify-between items-start gap-3">
+                          <div>
+                            <p className="text-xs font-semibold text-white">{b.title}</p>
+                            <span className="text-[11px] font-mono text-white/65">{b.date}</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setBlogs(deleteBlog(b.id));
+                              showNotice('Blog article removed.');
+                            }}
+                            className="text-rose-300 text-xs font-mono cursor-pointer shrink-0"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {contentSubTab === 'portfolio' && (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                  <form
+                    onSubmit={handleCreatePortfolio}
+                    className="lg:col-span-7 bg-[#141a2b]/75 border border-white/20 p-6 space-y-4"
+                  >
+                    <h3 className="text-lg font-sans font-semibold text-white">
+                      Add Real Portfolio Project
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <input
+                        type="text"
+                        required
+                        placeholder="Client Name *"
+                        value={newCase.client}
+                        onChange={(e) => setNewCase({ ...newCase, client: e.target.value })}
+                        className="bg-[#181d2c] border border-white/25 px-3 py-2.5 text-xs font-mono text-white"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Industry"
+                        value={newCase.industry}
+                        onChange={(e) => setNewCase({ ...newCase, industry: e.target.value })}
+                        className="bg-[#181d2c] border border-white/25 px-3 py-2.5 text-xs font-mono text-white"
+                      />
+                    </div>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Project Title *"
+                      value={newCase.title}
+                      onChange={(e) => setNewCase({ ...newCase, title: e.target.value })}
+                      className="w-full bg-[#181d2c] border border-white/25 px-3 py-2.5 text-xs font-mono text-white"
+                    />
+                    <input
+                      type="url"
+                      placeholder="Live URL (https://...)"
+                      value={newCase.liveUrl}
+                      onChange={(e) => setNewCase({ ...newCase, liveUrl: e.target.value })}
+                      className="w-full bg-[#181d2c] border border-white/25 px-3 py-2.5 text-xs font-mono text-white"
+                    />
+                    <textarea
+                      rows={2}
+                      placeholder="Project Brief / Problem"
+                      value={newCase.problem}
+                      onChange={(e) => setNewCase({ ...newCase, problem: e.target.value })}
+                      className="w-full bg-[#181d2c] border border-white/25 px-3 py-2.5 text-xs font-mono text-white"
+                    />
+                    <textarea
+                      rows={3}
+                      required
+                      placeholder="Engineering Solution *"
+                      value={newCase.solution}
+                      onChange={(e) => setNewCase({ ...newCase, solution: e.target.value })}
+                      className="w-full bg-[#181d2c] border border-white/25 px-3 py-2.5 text-xs font-mono text-white"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Tech Stack (comma separated)"
+                      value={newCase.technology}
+                      onChange={(e) => setNewCase({ ...newCase, technology: e.target.value })}
+                      className="w-full bg-[#181d2c] border border-white/25 px-3 py-2.5 text-xs font-mono text-white"
+                    />
+                    <button
+                      type="submit"
+                      className="border border-white bg-white text-slate-950 hover:bg-transparent hover:text-white px-6 py-3 font-mono text-xs font-semibold uppercase tracking-wider cursor-pointer transition-colors"
+                    >
+                      Save Project
+                    </button>
+                  </form>
+
+                  <div className="lg:col-span-5 bg-[#141a2b]/75 border border-white/20 p-6 space-y-3">
+                    <h4 className="text-xs font-mono font-semibold uppercase text-white/75">
+                      Active Portfolio Projects
+                    </h4>
+                    <div className="divide-y divide-white/15">
+                      {portfolio.map((p) => (
+                        <div key={p.id} className="py-3 flex justify-between items-start gap-3">
+                          <div>
+                            <p className="text-xs font-semibold text-white">{p.client}</p>
+                            <span className="text-[11px] font-mono text-white/65">{p.industry}</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setPortfolio(deleteCaseStudy(p.id));
+                              showNotice('Portfolio project removed.');
+                            }}
+                            className="text-rose-300 text-xs font-mono cursor-pointer shrink-0"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {contentSubTab === 'reviews' && (
+                <div className="bg-[#141a2b]/75 border border-white/20 p-6 space-y-4">
+                  <h3 className="text-lg font-sans font-semibold text-white">
+                    Submitted Client Reviews ({reviews.length})
+                  </h3>
+                  {reviews.length === 0 ? (
+                    <p className="text-xs font-mono text-white/70">
+                      No client reviews have been submitted yet.
+                    </p>
+                  ) : (
+                    <div className="divide-y divide-white/15">
+                      {reviews.map((rev) => (
+                        <div key={rev.id} className="py-4 flex justify-between items-start gap-4">
+                          <div className="space-y-1">
+                            <p className="text-sm font-semibold text-white">
+                              {rev.name} — {rev.role}, {rev.company}
+                            </p>
+                            <p className="text-xs text-white/80">{rev.comment}</p>
+                            <span className="text-[11px] font-mono text-white/65">
+                              Rating: {rev.rating}/5 · {rev.submittedAt}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setReviews(deleteClientReview(rev.id));
+                              showNotice('Review deleted.');
+                            }}
+                            className="text-rose-300 text-xs font-mono cursor-pointer shrink-0"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {contentSubTab === 'assets' && (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    saveSiteSettings(siteSettings);
+                    showNotice('Site image URLs saved.');
+                  }}
+                  className="bg-[#141a2b]/75 border border-white/20 p-6 space-y-4 max-w-2xl"
+                >
+                  <h3 className="text-lg font-sans font-semibold text-white">
+                    Site Portrait Image URLs
+                  </h3>
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-mono text-white/80 uppercase block">
+                      Hero Portrait URL
+                    </label>
+                    <input
+                      type="text"
+                      value={siteSettings.heroImageUrl}
+                      onChange={(e) =>
+                        setSiteSettings({ ...siteSettings, heroImageUrl: e.target.value })
+                      }
+                      className="w-full bg-[#181d2c] border border-white/25 px-4 py-3 text-xs font-mono text-white"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-mono text-white/80 uppercase block">
+                      About Portrait URL
+                    </label>
+                    <input
+                      type="text"
+                      value={siteSettings.aboutImageUrl}
+                      onChange={(e) =>
+                        setSiteSettings({ ...siteSettings, aboutImageUrl: e.target.value })
+                      }
+                      className="w-full bg-[#181d2c] border border-white/25 px-4 py-3 text-xs font-mono text-white"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="border border-white bg-white text-slate-950 hover:bg-transparent hover:text-white px-6 py-3 font-mono text-xs font-semibold uppercase tracking-wider cursor-pointer transition-colors"
+                  >
+                    Save Media URLs
+                  </button>
+                </form>
+              )}
+            </div>
+          )}
+
+          {/* PAGE 5: ANALYTICS & TOOLS */}
+          {activeSection === 'analytics' && (
+            <div className="space-y-6">
+              <div className="flex flex-wrap gap-1 bg-[#141a2b] p-1 border border-white/20 w-fit">
+                {[
+                  { id: 'visitors', label: 'Live Visitors' },
+                  { id: 'funnel', label: 'Funnel Insights' },
+                  { id: 'email', label: 'Send Email' },
+                  { id: 'webhooks', label: 'Discord Alerts' },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setAnalyticsSubTab(tab.id as any)}
+                    className={`px-4 py-2 text-xs font-mono font-semibold uppercase tracking-wider cursor-pointer transition-colors ${
+                      analyticsSubTab === tab.id ? 'bg-white text-slate-950' : 'text-white/75 hover:text-white'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className={analyticsSubTab === 'visitors' ? 'block' : 'hidden'}>
+                <VisitorTracker />
+              </div>
+
+              {analyticsSubTab === 'funnel' && <AIConversionMonitor />}
+
+              {analyticsSubTab === 'email' && (
+                <form
+                  onSubmit={handleSendEmail}
+                  className="bg-[#141a2b]/75 border border-white/20 p-6 space-y-4 max-w-2xl"
+                >
+                  <h3 className="text-lg font-sans font-semibold text-white">
+                    Send Branded Email (Resend)
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <input
+                      type="email"
+                      required
+                      placeholder="Recipient Email *"
+                      value={emailTo}
+                      onChange={(e) => setEmailTo(e.target.value)}
+                      className="bg-[#181d2c] border border-white/25 px-4 py-3 text-xs font-mono text-white"
+                    />
+                    <input
+                      type="text"
+                      required
+                      placeholder="Subject *"
+                      value={emailSubject}
+                      onChange={(e) => setEmailSubject(e.target.value)}
+                      className="bg-[#181d2c] border border-white/25 px-4 py-3 text-xs font-mono text-white"
+                    />
+                  </div>
+                  <textarea
+                    rows={6}
+                    required
+                    placeholder="Email message *"
+                    value={emailMessage}
+                    onChange={(e) => setEmailMessage(e.target.value)}
+                    className="w-full bg-[#181d2c] border border-white/25 px-4 py-3 text-xs font-mono text-white"
+                  />
+                  <div className="flex items-center gap-3">
+                    <label className="inline-flex items-center gap-2 border border-white/25 px-4 py-2 text-xs font-mono text-white cursor-pointer hover:border-white">
+                      <Paperclip className="w-4 h-4" />
+                      <span>{emailAttachment ? emailAttachment.name : 'Attach File'}</span>
+                      <input
+                        type="file"
+                        className="hidden"
+                        onChange={(e) => setEmailAttachment(e.target.files?.[0] || null)}
+                      />
+                    </label>
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={isSendingEmail}
+                    className="border border-white bg-white text-slate-950 hover:bg-transparent hover:text-white px-6 py-3 font-mono text-xs font-semibold uppercase tracking-wider cursor-pointer disabled:opacity-50 transition-colors"
+                  >
+                    {isSendingEmail ? 'Sending...' : 'Send Email'}
+                  </button>
+                </form>
+              )}
+
+              {analyticsSubTab === 'webhooks' && (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    localStorage.setItem('vxt_discord_webhook_url', discordWebhookUrl);
+                    localStorage.setItem(
+                      'vxt_discord_webhook_enabled',
+                      discordEnabled ? 'true' : 'false'
+                    );
+                    showNotice('Discord alert settings saved.');
+                  }}
+                  className="bg-[#141a2b]/75 border border-white/20 p-6 space-y-4 max-w-2xl"
+                >
+                  <h3 className="text-lg font-sans font-semibold text-white">
+                    Discord Webhook Alerts
+                  </h3>
+                  <input
+                    type="url"
+                    placeholder="https://discord.com/api/webhooks/..."
+                    value={discordWebhookUrl}
+                    onChange={(e) => setDiscordWebhookUrl(e.target.value)}
+                    className="w-full bg-[#181d2c] border border-white/25 px-4 py-3 text-xs font-mono text-white"
+                  />
+                  <label className="flex items-center gap-2 text-xs font-mono text-white/85 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={discordEnabled}
+                      onChange={(e) => setDiscordEnabled(e.target.checked)}
+                      className="accent-white"
+                    />
+                    <span>Enable Discord webhook notifications</span>
+                  </label>
+                  <button
+                    type="submit"
+                    className="border border-white bg-white text-slate-950 hover:bg-transparent hover:text-white px-6 py-3 font-mono text-xs font-semibold uppercase tracking-wider cursor-pointer transition-colors"
+                  >
+                    Save Webhook Settings
+                  </button>
+                </form>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

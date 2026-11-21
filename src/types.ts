@@ -12,7 +12,8 @@ export type PageView =
   | 'faq'
   | 'contact'
   | 'dashboard'
-  | 'calculator';
+  | 'calculator'
+  | 'buyfromudochukwu';
 
 export interface ContactPreFill {
   subject?: string;
@@ -33,7 +34,7 @@ export interface AuditSubmission {
   industry: string;
   challenges: string;
   submittedAt: string;
-  status: 'Pending Analysis' | 'Analysis Started' | 'Completed';
+  status: 'Pending Review' | 'In Review' | 'Completed';
   reportId?: string;
 }
 
@@ -71,7 +72,7 @@ export interface BlogPost {
   slug: string;
   excerpt: string;
   content: string;
-  category: 'Web Design' | 'Business Growth' | 'SEO' | 'Marketing' | 'Branding' | 'AI' | 'Technology';
+  category: 'Web Design' | 'Business Growth' | 'SEO' | 'Marketing' | 'Branding' | 'Systems' | 'Technology';
   readTime: string;
   date: string;
   image: string;
@@ -89,16 +90,10 @@ export interface CaseStudy {
   problem: string;
   solution: string;
   technology: string[];
-  results: {
-    conversionIncrease: string;
-    speedImprovement: string;
-    trafficIncrease: string;
-    revenueGrowth: string;
-  };
-  beforeImage: string;
-  afterImage: string;
+  deliverables: string[];
+  image: string;
   liveUrl: string;
-  highlightText: string;
+  summaryNote: string;
 }
 
 export interface ServicePackage {
@@ -123,37 +118,70 @@ export interface ResourceItem {
   downloadCount: number;
 }
 
-export interface ClientDashboardProgress {
-  projectTitle: string;
-  clientName: string;
-  currentPhase: 'Discovery' | 'UI/UX Design' | 'Development' | 'SEO & Launch' | 'Support & Handover';
-  completionPercent: number;
-  timeline: {
-    phase: string;
-    date: string;
-    status: 'completed' | 'current' | 'pending';
-    description: string;
-  }[];
-  files: {
-    id: string;
-    name: string;
-    size: string;
-    url: string;
-    uploadedAt: string;
-    uploadedBy: 'Client' | 'Udochukwu';
-  }[];
-  invoices: {
-    id: string;
-    invoiceNumber: string;
-    amount: string;
-    status: 'Paid' | 'Outstanding';
-    issuedDate: string;
-    dueDate: string;
-  }[];
-  messages: {
-    id: string;
-    sender: 'Client' | 'Udochukwu';
-    content: string;
-    sentAt: string;
-  }[];
+export interface ClientReview {
+  id: string;
+  name: string;
+  role: string;
+  company: string;
+  rating: number;
+  comment: string;
+  projectUrl?: string;
+  submittedAt: string;
 }
+
+export interface MarketplaceProduct {
+  id: string;
+  title: string;
+  subtitle: string;
+  category: 'Power & Solar' | 'Gadgets & Tech' | 'Office Systems' | 'Accessories';
+  price: number;
+  compareAtPrice?: number;
+  description: string;
+  specs: string[];
+  images: string[];
+  promoVideoUrl?: string;
+  promoType: 'itel-motion-ad' | 'custom-video' | 'showcase';
+  inStock: boolean;
+  isFeatured: boolean;
+  freeDeliveryEnugu: boolean;
+  paymentOnDeliveryEnugu: boolean;
+  warranty: string;
+  createdAt: string;
+}
+
+export interface MarketplaceOrder {
+  id: string;
+  orderNumber: string;
+  customerName: string;
+  phone: string;
+  email?: string;
+  city: string;
+  address: string;
+  deliveryNotes?: string;
+  paymentMethod:
+    | 'Payment on Delivery (Enugu - itel Power Tank)'
+    | 'Payment on Delivery (Enugu)'
+    | 'Bank Transfer'
+    | 'Verified Card / Instant Transfer';
+  items: {
+    productId: string;
+    title: string;
+    price: number;
+    quantity: number;
+  }[];
+  deliveryFee: number;
+  totalAmount: number;
+  status: 'Pending Confirmation' | 'Out for Delivery' | 'Delivered' | 'Cancelled';
+  createdAt: string;
+}
+
+export interface ProductReview {
+  id: string;
+  productId: string;
+  authorName: string;
+  city?: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+}
+

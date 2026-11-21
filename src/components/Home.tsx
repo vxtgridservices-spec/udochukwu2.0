@@ -1,428 +1,270 @@
-import Testimonials from './Testimonials';
-import Learn from './Learn';
-import { useState, useMemo, useEffect } from 'react';
-import { motion } from 'motion/react';
+import { useState, useEffect } from 'react';
 import { PageView } from '../types';
 import { getSiteSettings } from '../utils/storage';
-import { useCurrency } from '../context/CurrencyContext';
-import { trackAction } from '../utils/tracker';
-import { 
-  ArrowRight, 
-  Sparkles, 
-  CheckCircle, 
-  Smartphone, 
-  Layers, 
-  Award, 
-  Users, 
-  Heart, 
-  Building2, 
-  Flame, 
-  Navigation, 
-  ShieldCheck, 
-  Gauge, 
-  ChevronRight,
-  MonitorSmartphone,
-  Repeat,
-  ShoppingCart,
-  Bot,
-  SearchCheck,
-  LineChart
-} from 'lucide-react';
+import { GENERATED_ASSETS } from '../utils/generatedAssets';
+import { ArrowRight, ShoppingBag } from 'lucide-react';
 
 interface HomeProps {
   onNavigate: (page: PageView) => void;
 }
 
 export default function Home({ onNavigate }: HomeProps) {
-  const [heroImageUrl, setHeroImageUrl] = useState('https://res.cloudinary.com/drghjqbak/image/upload/q_auto/f_auto/v1781921383/20260620_030810_tod4tg.jpg');
-  const { formatCurrency, currencySymbol } = useCurrency();
+  const [heroImageUrl, setHeroImageUrl] = useState(
+    'https://res.cloudinary.com/drghjqbak/image/upload/q_auto/f_auto/v1781921383/20260620_030810_tod4tg.jpg'
+  );
+  const [aboutImageUrl, setAboutImageUrl] = useState(
+    'https://res.cloudinary.com/drghjqbak/image/upload/q_auto/f_auto/v1781913441/1781783831624_3_a1uctp.jpg'
+  );
 
   useEffect(() => {
     const settings = getSiteSettings();
-    setHeroImageUrl(settings.heroImageUrl);
+    if (settings.heroImageUrl) setHeroImageUrl(settings.heroImageUrl);
+    if (settings.aboutImageUrl) setAboutImageUrl(settings.aboutImageUrl);
   }, []);
 
+  const scrollToOverview = () => {
+    const target = document.getElementById('who-is-udochukwu');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      onNavigate('about');
+    }
+  };
+
   return (
-    <div className="bg-slate-950 transition-colors duration-300">
-      
-      {/* 1. HERO MAIN FLAGSHIP ROW */}
-      <section className="relative min-h-screen flex flex-col justify-center items-start">
-        {/* Background Image & Overlays */}
+    <div className="bg-[#181d2c] text-white">
+      {/* 1. HERO BAND (Deep Navy Wash — InvestInMusk Style) */}
+      <section className="relative min-h-[78vh] sm:min-h-[85vh] flex flex-col justify-center items-start bg-[#1b243b] overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img 
-            src={heroImageUrl} 
-            alt="Udochukwu" 
-            className="w-full h-full object-cover object-top filter opacity-60 mix-blend-luminosity"
+          <img
+            src={heroImageUrl}
+            alt="Udochukwu"
+            className="w-full h-full object-cover object-top opacity-70"
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-blue-950/40 mix-blend-multiply" />
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-transparent to-slate-950/90" />
+          <div className="absolute inset-0 bg-[#1a2540]/55" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#141c30]/85 via-[#1a2540]/45 to-transparent" />
         </div>
 
-        {/* Hero Content */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-32 text-left">
-          
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-sans font-bold text-white tracking-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.85)] [text-shadow:_0_3px_8px_rgba(0,0,0,0.8)]">
-            Udochukwu Official <br /> Website
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14 py-28 text-left">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-sans font-semibold text-white tracking-tight">
+            Udochukwu
           </h1>
-          
-          <div className="w-full max-w-3xl h-[1px] bg-white/30 my-8"></div>
-          
-          <p className="text-white text-xs sm:text-sm md:text-base tracking-[0.18em] font-mono leading-relaxed max-w-3xl font-normal uppercase opacity-90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-            Udochukwu is a Web Designer, Digital Strategist, Founder of VXTGrid Services, aiming to change the digital landscape of African businesses through innovations in design, AI, and systems engineering.
+
+          <div className="w-full max-w-2xl h-[1px] bg-white/80 my-6" />
+
+          <p className="text-white text-xs sm:text-sm tracking-[0.18em] font-mono leading-relaxed max-w-2xl uppercase">
+            OFFICIAL RESOURCE ABOUT UDOCHUKWU, VXTGRID SERVICES, AND THE BUYFROMUDOCHUKWU MARKETPLACE.
           </p>
 
-          <button
-            onClick={() => onNavigate('about')}
-            className="mt-12 border border-white text-white font-mono uppercase tracking-[0.2em] px-6 py-2.5 hover:bg-white hover:text-slate-950 transition-all flex items-center justify-center gap-3.5 cursor-pointer font-bold text-[11px] sm:text-xs w-auto whitespace-nowrap"
-          >
-            LET'S GO <ArrowRight className="w-4 h-4" />
-          </button>
-          
+          <p className="text-white/90 text-[11px] sm:text-xs tracking-[0.18em] font-mono uppercase mt-6">
+            VXTGRID SERVICES · BUYFROMUDOCHUKWU · WEB DESIGN · NIGERIA &amp; REMOTE
+          </p>
+
+          <div className="mt-8 flex flex-wrap items-center gap-4">
+            <button
+              type="button"
+              onClick={scrollToOverview}
+              className="border border-white text-white font-mono uppercase tracking-[0.18em] px-6 py-3 hover:bg-white hover:text-slate-950 transition-colors inline-flex items-center gap-4 cursor-pointer font-semibold text-xs whitespace-nowrap"
+            >
+              <span>LET&apos;S GO</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('buyfromudochukwu')}
+              className="border border-white/40 bg-white/10 hover:bg-white hover:text-slate-950 text-white font-mono uppercase tracking-[0.16em] px-5 py-3 transition-colors inline-flex items-center gap-2.5 cursor-pointer font-semibold text-xs whitespace-nowrap"
+            >
+              <ShoppingBag className="w-4 h-4" />
+              <span>BUYFROMUDOCHUKWU</span>
+            </button>
+          </div>
         </div>
       </section>
 
-      {/* 2. HOW I HELP BUSINESSES GROW */}
-      <section className="relative min-h-[80vh] flex flex-col justify-center items-start">
-        {/* Background Image & Overlays */}
+      {/* 2. WHO IS UDOCHUKWU (Teal Wash) */}
+      <section
+        id="who-is-udochukwu"
+        onClick={() => onNavigate('about')}
+        className="relative min-h-[42vh] flex flex-col justify-center items-start bg-[#3c7b8c] hover:brightness-105 transition-all cursor-pointer overflow-hidden"
+      >
         <div className="absolute inset-0 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1920&q=80" 
-            alt="Coding background" 
-            className="w-full h-full object-cover object-center filter opacity-50 mix-blend-luminosity"
+          <img
+            src={aboutImageUrl}
+            alt="Udochukwu Portrait"
+            className="w-full h-full object-cover object-top opacity-25 mix-blend-luminosity"
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-blue-500/80 mix-blend-multiply" />
-          <div className="absolute inset-0 bg-gradient-to-t from-blue-900/90 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-[#2f6778]/55" />
         </div>
 
-        {/* Content Container */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-24 text-left">
-          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-sans font-bold text-white tracking-tight">
-            I help African businesses build brands people trust online
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14 py-16 text-left">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-sans font-semibold text-white tracking-tight">
+            Who is Udochukwu
           </h2>
-          
-          <div className="w-full max-w-3xl h-0.5 bg-white/40 my-8"></div>
-          
-          <p className="text-white text-sm sm:text-base md:text-lg tracking-[0.15em] font-mono leading-relaxed max-w-3xl font-bold uppercase">
-            EVERY BUSINESS IS UNIQUE, BUT THE GOAL IS THE SAME—BUILD TRUST, ATTRACT CUSTOMERS, AND GROW ONLINE. I COMBINE PREMIUM DESIGN, AI, AND STRATEGY FOR MEASURABLE RESULTS.
+          <div className="w-full max-w-2xl h-[1px] bg-white/80 my-5" />
+          <p className="text-white/95 text-xs sm:text-sm tracking-[0.16em] font-mono leading-relaxed max-w-2xl uppercase">
+            A WEB DESIGNER AND DIGITAL STRATEGIST BUILDING CLEAN, RELIABLE WEB SYSTEMS AND HARDWARE COMMERCE FOR NIGERIAN BUSINESSES.
           </p>
-
-          <div className="mt-12 flex flex-col sm:flex-row gap-4">
-            <button
-              onClick={() => onNavigate('services')}
-              className="border-2 border-white text-white font-mono uppercase tracking-[0.2em] px-8 py-5 hover:bg-white hover:text-blue-900 transition-colors flex items-center justify-center gap-6 cursor-pointer font-bold text-sm w-full sm:w-auto"
-            >
-              EXPLORE SERVICES <ArrowRight className="w-6 h-6" />
-            </button>
-            <button
-              onClick={() => onNavigate('contact')}
-              className="border-2 border-white bg-white text-blue-900 font-mono uppercase tracking-[0.2em] px-8 py-5 hover:bg-transparent hover:text-white transition-colors flex items-center justify-center gap-6 cursor-pointer font-bold text-sm w-full sm:w-auto"
-            >
-              BOOK FREE STRATEGY CALL <ArrowRight className="w-6 h-6" />
-            </button>
-          </div>
         </div>
       </section>
 
-      {/* 4. EXECUTIVE SERVICES PITCH PANEL (Case Studies) - IN ELON MUSK STYLE */}
-      <section className="py-20 sm:py-28 bg-[#1E2333] border-b border-white/10 text-slate-100">
-        <div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-16">
-          
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-            
-            {/* Case Highlight Display Box */}
-            <div className="lg:col-span-5 relative h-64 sm:h-[420px] rounded-none overflow-hidden border border-white/15 shadow-2xl order-last lg:order-first">
-              <img 
-                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" 
-                alt="Case Study Showcase Mockup" 
-                className="absolute inset-0 w-full h-full object-cover filter grayscale contrast-125 brightness-[0.4] opacity-40 mix-blend-luminosity"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-[#6B6899]/30 mix-blend-multiply"></div>
-              <div className="absolute bottom-8 left-8 text-white text-xs font-mono">
-                <span className="bg-white text-slate-950 px-3 py-1 font-black uppercase tracking-widest text-[9px] rounded-none">
-                  CASE HIGHLIGHT
-                </span>
-                <p className="text-lg font-serif mt-3 font-medium text-white tracking-wide uppercase">
-                  Eko Haven Bedsides Overhaul
-                </p>
-                <p className="text-slate-300 font-mono text-[10px] mt-1.5 uppercase tracking-wider">
-                  Direct booking increased by +295% in Lagos
-                </p>
-              </div>
-            </div>
+      {/* 3. BUYFROMUDOCHUKWU MARKETPLACE (Warm Coral-Rose Wash — Marketplace Introduction) */}
+      <section
+        onClick={() => onNavigate('buyfromudochukwu')}
+        className="relative min-h-[44vh] flex flex-col justify-center items-start bg-[#9e5356] hover:brightness-105 transition-all cursor-pointer overflow-hidden"
+      >
+        <div className="absolute inset-0 z-0">
+          <img
+            src={GENERATED_ASSETS.marketplaceHeroCollection}
+            alt="Buyfromudochukwu Marketplace Collection"
+            className="w-full h-full object-cover object-center opacity-25 mix-blend-luminosity"
+          />
+          <div className="absolute inset-0 bg-[#8d4548]/55" />
+        </div>
 
-            {/* Case Studies Description Column */}
-            <div className="lg:col-span-7 space-y-8">
-              <div>
-                <span className="text-[10px] font-mono text-blue-400 tracking-[0.25em] block uppercase font-bold mb-2">
-                  THE DIRECT OUTCOMES
-                </span>
-                <div className="border-b border-white/20 pb-4 mb-6">
-                  <h2 className="text-2xl sm:text-3xl font-serif text-white tracking-wide uppercase relative inline-block pb-3 whitespace-normal">
-                    An Elite Partner to Help You outrank and Outsell
-                    <span className="absolute bottom-0 left-0 w-full h-[2px] bg-white"></span>
-                  </h2>
-                </div>
-                <p className="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-xl font-light font-sans">
-                  I do not sell commodity web files or low-end layouts. Every solution VXTGrid Services deploys is fully tailored around premium user experiences and conversion rates optimizations.
-                </p>
-              </div>
-
-              {/* Minimal Dark Cards for Key Highlights */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
-                <div className="space-y-2 bg-[#23293D] p-5 border border-white/5 rounded-none hover:border-white/20 transition-all font-sans">
-                  <h4 className="text-[10px] font-mono font-bold text-blue-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                    <span className="h-2 w-2 bg-blue-400"></span>
-                    Premium Layout Design
-                  </h4>
-                  <p className="text-slate-300 text-xs leading-relaxed font-light">
-                    Awwwards-style typography-rich interfaces styled for absolute corporate authority and luxury. No typical pre-made generic layouts.
-                  </p>
-                </div>
-
-                <div className="space-y-2 bg-[#23293D] p-5 border border-white/5 rounded-none hover:border-white/20 transition-all font-sans">
-                  <h4 className="text-[10px] font-mono font-bold text-blue-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                    <span className="h-2 w-2 bg-blue-400"></span>
-                    Advanced MTN Speed SLA
-                  </h4>
-                  <p className="text-slate-300 text-xs leading-relaxed font-light">
-                    React and CDN edge configurations to raise mobile loading times to standard milliseconds speed.
-                  </p>
-                </div>
-
-                <div className="space-y-2 bg-[#23293D] p-5 border border-white/5 rounded-none hover:border-white/20 transition-all font-sans">
-                  <h4 className="text-[10px] font-mono font-bold text-blue-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                    <span className="h-2 w-2 bg-blue-400"></span>
-                    High-Intensive SEO Maps
-                  </h4>
-                  <p className="text-slate-300 text-xs leading-relaxed font-light">
-                    Micro JSON-LD Schema structures, ranking your locational landing pages on target corporate terms.
-                  </p>
-                </div>
-
-                <div className="space-y-2 bg-[#23293D] p-5 border border-white/5 rounded-none hover:border-white/20 transition-all font-sans">
-                  <h4 className="text-[10px] font-mono font-bold text-blue-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                    <span className="h-2 w-2 bg-blue-400"></span>
-                    Full Milestones Dash
-                  </h4>
-                  <p className="text-slate-300 text-xs leading-relaxed font-light">
-                    Track timeline details, print invoices bills, message Udochukwu, and upload outlines transparently.
-                  </p>
-                </div>
-              </div>
-
-              {/* Elegant Sharp Button */}
-              <div className="pt-4">
-                <button
-                  onClick={() => onNavigate('portfolio')}
-                  className="inline-flex items-center justify-center gap-3 border border-white bg-white text-slate-950 font-mono text-xs font-bold tracking-[0.2em] uppercase px-8 py-3.5 hover:bg-transparent hover:text-white transition-all cursor-pointer rounded-none"
-                >
-                  <span>VIEW MORE CASE STUDIES</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-
-            </div>
-
-          </div>
-
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14 py-16 text-left">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-sans font-semibold text-white tracking-tight">
+            Buyfromudochukwu
+          </h2>
+          <div className="w-full max-w-2xl h-[1px] bg-white/80 my-5" />
+          <p className="text-white/95 text-xs sm:text-sm tracking-[0.16em] font-mono leading-relaxed max-w-2xl uppercase">
+            A PREMIUM MULTI-CATEGORY MARKETPLACE FOR VERIFIED TECH GEAR, WORKSTATIONS, POWER HARDWARE, AND SEASONAL DISCOUNT DEALS.
+          </p>
         </div>
       </section>
 
-      {/* 3. INTERACTIVE CONVERSION ENGINE & SALES MACHINE CALCULATOR - REDESIGNED IN ELON TECH MINIMALISM */}
-      <section className="relative flex flex-col justify-center items-start border-b border-white/10 py-24 sm:py-32 bg-[#131620] text-slate-100 transition-colors">
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 text-left">
-          
-          <span className="text-[10px] font-mono text-blue-400 tracking-[0.25em] block uppercase font-bold mb-2">
-            REVENUE PROJECTION ENGINE
-          </span>
-          <div className="border-b border-white/20 pb-4 mb-8">
-            <h2 className="text-3xl sm:text-5xl md:text-6xl font-serif text-white tracking-wide uppercase relative inline-block pb-3 whitespace-normal">
-              The Revenue Calculator
-              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-white"></span>
-            </h2>
-          </div>
-          
-          <p className="text-slate-400 text-xs sm:text-sm tracking-[0.12em] font-mono leading-relaxed max-w-3xl font-bold uppercase mb-12">
-            Click below to calculate and project what the VXT-System captures for your business across different categories.
+      {/* 4. VXTGRID SERVICES (Warm Sand-Amber Wash — Zero AI Claims) */}
+      <section
+        onClick={() => onNavigate('services')}
+        className="relative min-h-[42vh] flex flex-col justify-center items-start bg-[#8f6f47] hover:brightness-105 transition-all cursor-pointer overflow-hidden"
+      >
+        <div className="absolute inset-0 z-0">
+          <img
+            src={GENERATED_ASSETS.portfolioFintech}
+            alt="Web Engineering Architecture"
+            className="w-full h-full object-cover object-center opacity-20 mix-blend-luminosity"
+          />
+          <div className="absolute inset-0 bg-[#7f6039]/55" />
+        </div>
+
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14 py-16 text-left">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-sans font-semibold text-white tracking-tight">
+            VXTGrid Services
+          </h2>
+          <div className="w-full max-w-2xl h-[1px] bg-white/80 my-5" />
+          <p className="text-white/95 text-xs sm:text-sm tracking-[0.16em] font-mono leading-relaxed max-w-2xl uppercase">
+            CUSTOM REACT WEBSITES, MOBILE SPEED OPTIMIZATION, SEO FOUNDATIONS, AND CLEAN E-COMMERCE ARCHITECTURE.
           </p>
-
-          <div className="pt-4">
-            <button
-              onClick={() => onNavigate('calculator')}
-              className="inline-flex items-center justify-center gap-3 border border-white bg-white text-slate-950 font-mono text-xs font-bold tracking-[0.2em] uppercase px-8 py-3.5 hover:bg-transparent hover:text-white transition-all cursor-pointer rounded-none"
-            >
-              <span>ACCESS REVENUE CALCULATOR</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-
         </div>
       </section>
 
-      {/* Learn with Udochukwu */}
-      <section className="relative flex flex-col justify-center items-start border-b border-white/10 py-24 sm:py-32 bg-[#1E2333] text-slate-100 transition-colors">
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 text-left">
-          
-          <span className="text-[10px] font-mono text-blue-400 tracking-[0.25em] block uppercase font-bold mb-2">
-            ACADEMY & CURRICULUM
-          </span>
-          <div className="border-b border-white/20 pb-4 mb-4">
-            <h2 className="text-3xl sm:text-5xl md:text-6xl font-serif text-white tracking-wide uppercase relative inline-block pb-3 whitespace-normal">
-              LEARN WITH UDOCHUKWU
-              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-white"></span>
-            </h2>
-          </div>
-          
-          <p className="text-slate-400 text-xs sm:text-sm tracking-[0.12em] font-mono leading-relaxed max-w-3xl font-bold uppercase mb-12">
-            Master the art of premium web design. Get access to exclusive curricula, strategies, and workflows used to build high-performing digital systems across Africa.
+      {/* 5. PORTFOLIO & LIVE PROJECTS (Steel Blue Wash) */}
+      <section
+        onClick={() => onNavigate('portfolio')}
+        className="relative min-h-[42vh] flex flex-col justify-center items-start bg-[#4a628d] hover:brightness-105 transition-all cursor-pointer overflow-hidden"
+      >
+        <div className="absolute inset-0 z-0">
+          <img
+            src={GENERATED_ASSETS.portfolioSecurity}
+            alt="Live Client Systems"
+            className="w-full h-full object-cover object-center opacity-20 mix-blend-luminosity"
+          />
+          <div className="absolute inset-0 bg-[#3d537b]/55" />
+        </div>
+
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14 py-16 text-left">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-sans font-semibold text-white tracking-tight">
+            Portfolio &amp; Live Systems
+          </h2>
+          <div className="w-full max-w-2xl h-[1px] bg-white/80 my-5" />
+          <p className="text-white/95 text-xs sm:text-sm tracking-[0.16em] font-mono leading-relaxed max-w-2xl uppercase">
+            TRUISPAY.CO · OMNIXMARKET.ONLINE · GLOBAL SENTINEL GROUP — ENGINEERED DIGITAL PLATFORMS BUILT FOR REAL BUSINESS USE.
           </p>
-
-          <div className="pt-4">
-            <button
-              onClick={() => onNavigate('learn')}
-              className="inline-flex items-center justify-center gap-3 border border-white bg-white text-slate-950 font-mono text-xs font-bold tracking-[0.2em] uppercase px-8 py-3.5 hover:bg-transparent hover:text-white transition-all cursor-pointer rounded-none"
-            >
-              <span>EXPLORE MODULES</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-
         </div>
       </section>
 
-      {/* Latest Articles (Articles Redirect Block) */}
-      <section className="relative flex flex-col justify-center items-start border-b border-white/10 py-24 sm:py-32 bg-[#131620] text-slate-100 transition-colors">
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 text-left">
-          
-          <span className="text-[10px] font-mono text-blue-400 tracking-[0.25em] block uppercase font-bold mb-2">
-            HIGH-TRACTION WRITTEN INSIGHTS
-          </span>
-          <div className="border-b border-white/20 pb-4 mb-4">
-            <h2 className="text-3xl sm:text-5xl md:text-6xl font-serif text-white tracking-wide uppercase relative inline-block pb-3 whitespace-normal">
-              UDOCHUKWU LATEST ARTICLES
-              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-white"></span>
-            </h2>
-          </div>
-          
-          <p className="text-slate-400 text-xs sm:text-sm tracking-[0.12em] font-mono leading-relaxed max-w-3xl font-bold uppercase mb-12">
-            Deep-dive business blueprints, SEO frameworks, performance checklists, and design tactics written for African business builders.
+      {/* 6. LATEST ARTICLES (Slate-Cyan Wash) */}
+      <section
+        onClick={() => onNavigate('blog')}
+        className="relative min-h-[40vh] flex flex-col justify-center items-start bg-[#3b6e82] hover:brightness-105 transition-all cursor-pointer overflow-hidden"
+      >
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14 py-16 text-left">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-sans font-semibold text-white tracking-tight">
+            Udochukwu Latest Articles
+          </h2>
+          <div className="w-full max-w-2xl h-[1px] bg-white/80 my-5" />
+          <p className="text-white/95 text-xs sm:text-sm tracking-[0.16em] font-mono leading-relaxed max-w-2xl uppercase">
+            PRACTICAL NOTES ON WEBSITE LOADING SPEED, SEARCH VISIBILITY, AND STRUCTURING CLEAR BUSINESS PORTALS.
           </p>
-
-          <div className="pt-4">
-            <button
-              onClick={() => onNavigate('blog')}
-              className="inline-flex items-center justify-center gap-3 border border-white bg-white text-slate-950 font-mono text-xs font-bold tracking-[0.2em] uppercase px-8 py-3.5 hover:bg-transparent hover:text-white transition-all cursor-pointer rounded-none animate-pulse"
-            >
-              <span>VIEW ALL ARTICLES</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-
         </div>
       </section>
 
-      {/* Testimonials (Ratings Redirect Block) */}
-      <section className="relative flex flex-col justify-center items-start border-b border-white/10 py-24 sm:py-32 bg-[#1E2333] text-slate-100 transition-colors">
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 text-left">
-          
-          <span className="text-[10px] font-mono text-blue-400 tracking-[0.25em] block uppercase font-bold mb-2">
-            CLIENT ATTESTATIONS & FEEDBACK
-          </span>
-          <div className="border-b border-white/20 pb-4 mb-4">
-            <h2 className="text-3xl sm:text-5xl md:text-6xl font-serif text-white tracking-wide uppercase relative inline-block pb-3 whitespace-normal">
-              Verified Client Ratings
-              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-white"></span>
-            </h2>
-          </div>
-          
-          <p className="text-slate-400 text-xs sm:text-sm tracking-[0.12em] font-mono leading-relaxed max-w-3xl font-bold uppercase mb-12">
-            Explore sincere success stories and verified ratings from managing directors and founders across Africa.
+      {/* 7. REVIEWS, AUDIT & LEARN (Muted Violet Wash) */}
+      <section
+        onClick={() => onNavigate('testimonials')}
+        className="relative min-h-[40vh] flex flex-col justify-center items-start bg-[#52497a] hover:brightness-105 transition-all cursor-pointer overflow-hidden"
+      >
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14 py-16 text-left">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-sans font-semibold text-white tracking-tight">
+            Client Reviews &amp; Audit
+          </h2>
+          <div className="w-full max-w-2xl h-[1px] bg-white/80 my-5" />
+          <p className="text-white/95 text-xs sm:text-sm tracking-[0.16em] font-mono leading-relaxed max-w-2xl uppercase">
+            READ REAL CLIENT FEEDBACK, SHARE YOUR EXPERIENCE, OR REQUEST A FREE WEBSITE PERFORMANCE AUDIT.
           </p>
-
-          <div className="pt-4">
+          <div
+            className="mt-6 flex flex-wrap gap-6 text-xs font-mono uppercase tracking-[0.16em] text-white/90"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
+              type="button"
               onClick={() => onNavigate('testimonials')}
-              className="inline-flex items-center justify-center gap-3 border border-white bg-white text-slate-950 font-mono text-xs font-bold tracking-[0.2em] uppercase px-8 py-3.5 hover:bg-transparent hover:text-white transition-all cursor-pointer rounded-none animate-pulse"
+              className="underline underline-offset-4 hover:text-white cursor-pointer"
             >
-              <span>VIEW ALL RATINGS</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-
-        </div>
-      </section>
-
-      {/* FAQs (FAQ Redirect Block) */}
-      <section className="relative flex flex-col justify-center items-start border-b border-white/10 py-24 sm:py-32 bg-[#131620] text-slate-100 transition-colors">
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 text-left">
-          
-          <span className="text-[10px] font-mono text-blue-400 tracking-[0.25em] block uppercase font-bold mb-2">
-            RESOLVING OBJECTIONS & DETAILS
-          </span>
-          <div className="border-b border-white/20 pb-4 mb-4">
-            <h2 className="text-3xl sm:text-5xl md:text-6xl font-serif text-white tracking-wide uppercase relative inline-block pb-3 whitespace-normal">
-              FREQUENTLY ASKED QUESTIONS
-              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-white"></span>
-            </h2>
-          </div>
-          
-          <p className="text-slate-400 text-xs sm:text-sm tracking-[0.12em] font-mono leading-relaxed max-w-3xl font-bold uppercase mb-12">
-            Pricing benchmarks, development timelines, CMS access, search engine optimization support, and SLA post-launch agreements.
-          </p>
-
-          <div className="pt-4">
-            <button
-              onClick={() => onNavigate('faq')}
-              className="inline-flex items-center justify-center gap-3 border border-white bg-white text-slate-950 font-mono text-xs font-bold tracking-[0.2em] uppercase px-8 py-3.5 hover:bg-transparent hover:text-white transition-all cursor-pointer rounded-none animate-pulse"
-            >
-              <span>EXPLORE VXT KNOWLEDGE BASE [FAQ]</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-
-        </div>
-      </section>
-
-      {/* Final CTA SECTION */}
-      <section className="relative min-h-[60vh] flex flex-col justify-center items-start border-t border-white/10 py-24 sm:py-32 bg-slate-950 text-slate-100 transition-colors">
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 text-left">
-          
-          <span className="text-[10px] font-mono text-blue-400 tracking-[0.25em] block uppercase font-bold mb-2">
-            CONVERSION ENGINEERING ONBOARDING
-          </span>
-          <div className="border-b border-white/20 pb-4 mb-8">
-            <h2 className="text-3xl sm:text-5xl md:text-6xl font-serif text-white tracking-wide uppercase relative inline-block pb-3 whitespace-normal">
-              READY TO BUILD?
-              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-white"></span>
-            </h2>
-          </div>
-          
-          <p className="text-slate-400 text-xs sm:text-sm tracking-[0.12em] font-mono leading-relaxed max-w-3xl font-bold uppercase mb-12">
-            Let's create a modular, sub-millisecond production system that builds compound consumer trust, captures elite conversions, and cements growth across your business sectors.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 pt-4">
-            <button
-              onClick={() => onNavigate('contact')}
-              className="inline-flex items-center justify-center gap-3 border border-white bg-white text-slate-950 font-mono text-xs font-bold tracking-[0.2em] uppercase px-8 py-4 hover:bg-transparent hover:text-white transition-all cursor-pointer rounded-none"
-            >
-              <span>BOOK CONSULTATION</span>
-              <ArrowRight className="w-4 h-4" />
+              Client Reviews
             </button>
             <button
+              type="button"
               onClick={() => onNavigate('audit')}
-              className="inline-flex items-center justify-center gap-3 border border-white/25 bg-[#11141d] text-white font-mono text-xs font-bold tracking-[0.2em] uppercase px-8 py-4 hover:border-white hover:bg-white hover:text-slate-950 transition-all cursor-pointer rounded-none"
+              className="underline underline-offset-4 hover:text-white cursor-pointer"
             >
-              <span>GET FREE SYSTEM AUDIT</span>
+              Website Audit
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('learn')}
+              className="underline underline-offset-4 hover:text-white cursor-pointer"
+            >
+              Learn Hub
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('faq')}
+              className="underline underline-offset-4 hover:text-white cursor-pointer"
+            >
+              FAQs
             </button>
           </div>
-
         </div>
       </section>
 
+      {/* 8. CONTACT / INQUIRIES (Periwinkle Slate Wash — Matching InvestInMusk Bottom Block) */}
+      <section
+        onClick={() => onNavigate('contact')}
+        className="relative min-h-[36vh] flex flex-col justify-center items-start bg-[#485180] hover:brightness-105 transition-all cursor-pointer overflow-hidden"
+      >
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14 py-16 text-left">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-sans font-semibold text-white tracking-tight">
+            Contact / Inquiries
+          </h2>
+          <div className="w-48 h-[1px] bg-white/80 my-5" />
+          <p className="text-white/95 text-xs sm:text-sm tracking-[0.18em] font-mono uppercase">
+            HELLO@UDOCHUKWU.COM.NG · +234 705 219 9651
+          </p>
+        </div>
+      </section>
     </div>
   );
 }

@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { BookOpen, Sparkles, Users, Video, FileText, Calendar, Check, Mail, Heart, ArrowRight } from 'lucide-react';
+import {
+  Layers,
+  Video,
+  FolderKanban,
+  Code2,
+  Users,
+  AtSign,
+  Verified,
+} from 'lucide-react';
 import { saveNewsletterSubscriber } from '../utils/storage';
 
 interface LearnProps {
@@ -26,198 +34,226 @@ export default function Learn({ onNavigate, isHome }: LearnProps) {
       setErrorText('');
       setSubEmail('');
     } else {
-      setErrorText('Your email is already registered on our master list!');
+      setErrorText('Your email is already registered on the list.');
     }
   };
 
   if (isHome) {
     return (
-      <section className="relative min-h-[60vh] flex flex-col justify-center items-center text-center px-6 border-b border-white/20 bg-slate-900">
-          <div className="relative z-10 w-full max-w-4xl mx-auto py-24">
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-sans font-bold text-white tracking-tight uppercase">
-              Learn With Udochukwu
-            </h2>
-            <div className="w-24 h-1 bg-blue-600 my-8 mx-auto"></div>
-            <p className="text-slate-300 text-xs sm:text-sm tracking-[0.1em] font-mono leading-relaxed mx-auto font-bold uppercase mb-12 max-w-2xl">
-              MASTER THE ART OF PREMIUM WEB DESIGN. GET ACCESS TO EXCLUSIVE CURRICULA, STRATEGIES, AND WORKFLOWS USED TO BUILD HIGH-PERFORMING DIGITAL SYSTEMS ACROSS AFRICA.
-            </p>
+      <section className="relative min-h-[42vh] flex flex-col justify-center items-start bg-[#4a628d] overflow-hidden">
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14 py-16 text-left">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-sans font-semibold text-white tracking-tight">
+            Learn With Udochukwu
+          </h2>
+          <div className="w-full max-w-2xl h-[1px] bg-white/80 my-5" />
+          <p className="text-white/95 text-xs sm:text-sm tracking-[0.16em] font-mono leading-relaxed max-w-2xl uppercase">
+            STRUCTURED CURRICULA COVERING REACT FRONTEND ARCHITECTURE, RESPONSIVE TAILWIND SYSTEMS, AND CLIENT WORKFLOWS.
+          </p>
+          <div className="mt-6">
             <button
-               onClick={() => onNavigate('learn')}
-               className="border-2 border-blue-600 text-white font-mono uppercase tracking-[0.2em] px-8 py-5 hover:bg-blue-600 transition-colors flex items-center justify-center gap-4 cursor-pointer font-bold text-sm w-full sm:w-auto mx-auto"
+              type="button"
+              onClick={() => onNavigate('learn')}
+              className="border border-white text-white font-mono uppercase tracking-[0.18em] px-6 py-3 hover:bg-white hover:text-slate-950 transition-colors cursor-pointer font-semibold text-xs"
             >
-              EXPLORE MODULES <ArrowRight className="w-5 h-5 ml-2" />
+              Explore Modules
             </button>
           </div>
+        </div>
       </section>
     );
   }
 
   return (
-    <div className="py-12 md:py-20 bg-white dark:bg-slate-950 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Hero */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-xs font-mono text-blue-600 dark:text-blue-400 uppercase tracking-widest bg-blue-100 dark:bg-blue-950 px-3 py-1.5 rounded-full font-bold">
-            LEARN WITH UDOCHUKWU
-          </span>
-          <h1 className="text-4xl lg:text-6xl font-sans font-bold text-slate-900 dark:text-white mt-6 uppercase tracking-tight">
-            Master the Art of Premium Web Design
+    <div className="bg-[#181d2c] text-white">
+      {/* 1. HERO BAND (Steel Blue Wash) */}
+      <section className="bg-[#4a628d] py-20 sm:py-24">
+        <div className="w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14 text-left">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-sans font-semibold text-white tracking-tight">
+            Learn With Udochukwu
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-6 text-sm sm:text-base leading-relaxed font-mono uppercase tracking-widest">
-            As a practitioner building high-performing digital systems across Africa, I teach the rigorous strategies, workflows, and tools that help brands grow and convert. Elevate your design expertise beyond templates.
+          <div className="w-full max-w-2xl h-[1px] bg-white/80 my-6" />
+          <p className="text-white/95 text-xs sm:text-sm tracking-[0.16em] font-mono leading-relaxed max-w-2xl uppercase">
+            PRACTICAL WEB ENGINEERING — COMPONENT ARCHITECTURE, RESPONSIVE TAILWIND CSS, AND PRODUCTION DELIVERY.
           </p>
         </div>
+      </section>
 
-        {/* Masterclass Flagship */}
-        <div className="mb-20 bg-slate-950 text-white relative shadow-2xl border-b border-t border-slate-800">
-            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12 p-8 sm:p-12 lg:p-16">
-                <div className="space-y-6 md:w-2/3">
-                    <span className="text-[10px] font-mono text-emerald-400 uppercase tracking-widest border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 rounded-sm font-bold">
-                       New Flagship Curriculum
-                    </span>
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-sans font-bold tracking-tight uppercase leading-tight">AI & Enterprise Website Design Masterclass</h2>
-                    <p className="text-slate-400 max-w-xl text-sm sm:text-base leading-relaxed font-mono uppercase tracking-widest">
-                       A comprehensive 6-week intensive designed for ambitious African creators. Learn to combine supreme human strategy with AI workflows. We cover client acquisition, high-ticket pricing psychology, modern React/Vite foundations, and conversion-focused aesthetic design. 
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                      <button 
-                        onClick={() => onNavigate('contact')} 
-                        className="bg-white text-slate-950 hover:bg-slate-200 px-8 py-5 font-mono uppercase tracking-widest font-bold cursor-pointer transition-colors shadow-lg text-sm sm:w-auto w-full text-center"
-                      >
-                        Join the VIP Waitlist
-                      </button>
-                    </div>
-                </div>
-                <div className="bg-transparent border-2 border-slate-800 p-8 w-full md:w-1/3 text-center">
-                    <Sparkles className="w-12 h-12 text-blue-400 mx-auto" />
-                    <p className="mt-4 font-mono text-xs tracking-[0.2em] text-slate-300 uppercase leading-loose">Q3 Masterclass Enrollment cohort strictly limited to 50 slots.</p>
-                </div>
-            </div>
-        </div>
-
-        {/* Robust Modules Section */}
-        <div className="mb-16">
-          <h2 className="text-3xl sm:text-4xl font-sans font-bold mb-12 text-center text-slate-900 dark:text-white uppercase tracking-tight">Curriculum Modules</h2>
-          <div className="w-24 h-1 bg-blue-600 my-8 mx-auto"></div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-16 gap-x-12">
-            
-            {/* Module 1 */}
-            <div className="bg-transparent border-t-2 border-slate-300 dark:border-slate-800 pt-8 flex flex-col gap-4">
-              <div className="flex items-center gap-4 mb-2">
-                <Video className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                <h3 className="text-xl font-sans font-bold uppercase tracking-tight text-slate-900 dark:text-white">Core Video Tutorials</h3>
-              </div>
-              <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed font-mono uppercase tracking-widest">
-                Step-by-step design walk-throughs breaking down live client builds. See exactly how we structure layouts, pick typography, and configure server-side routing.
+      {/* 2. FLAGSHIP TRACK BAND (Deep Navy) */}
+      <section className="bg-[#1b243b] py-16 sm:py-20">
+        <div className="w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14">
+          <div className="border border-white/25 bg-[#141a2b]/75 p-8 sm:p-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-10">
+            <div className="space-y-5 md:w-2/3">
+              <span className="text-xs font-mono text-white/80 uppercase tracking-[0.18em] block">
+                Structured Curriculum
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-sans font-semibold tracking-tight text-white">
+                React, Tailwind &amp; Product Web Design Intensive
+              </h2>
+              <div className="w-40 h-[1px] bg-white/75" />
+              <p className="text-white/85 text-sm leading-relaxed font-sans max-w-xl">
+                A structured 6-week curriculum covering component design, responsive layouts, Express API persistence, and clean client scoping.
               </p>
-              <ul className="space-y-3 mt-4 text-xs font-mono uppercase tracking-widest font-bold text-slate-600 dark:text-slate-400">
-                 <li className="flex gap-3 items-center"><Check className="w-4 h-4 text-blue-500" /> 14 Hours of over-the-shoulder recording</li>
-                 <li className="flex gap-3 items-center"><Check className="w-4 h-4 text-blue-500" /> Vite / React component architecture</li>
-                 <li className="flex gap-3 items-center"><Check className="w-4 h-4 text-blue-500" /> Advanced Tailwind styling guidelines</li>
-              </ul>
-            </div>
-
-            {/* Module 2 */}
-            <div className="bg-transparent border-t-2 border-slate-300 dark:border-slate-800 pt-8 flex flex-col gap-4">
-              <div className="flex items-center gap-4 mb-2">
-                <FileText className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                <h3 className="text-xl font-sans font-bold uppercase tracking-tight text-slate-900 dark:text-white">Agency Asset Vault</h3>
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => onNavigate('contact')}
+                  className="border border-white bg-white text-slate-950 hover:bg-transparent hover:text-white px-6 py-3.5 font-mono uppercase tracking-[0.18em] font-semibold cursor-pointer transition-colors text-xs"
+                >
+                  Request Enrollment Info
+                </button>
               </div>
-              <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed font-mono uppercase tracking-widest">
-                Stop starting from scratch. Get access to the exact client proposals, pricing calculators, contracts, and design briefing documents we use to close ₦2M+ projects.
-              </p>
-              <ul className="space-y-3 mt-4 text-xs font-mono uppercase tracking-widest font-bold text-slate-600 dark:text-slate-400">
-                 <li className="flex gap-3 items-center"><Check className="w-4 h-4 text-blue-500" /> Plug-and-play Notion templates</li>
-                 <li className="flex gap-3 items-center"><Check className="w-4 h-4 text-blue-500" /> Value-based pricing frameworks</li>
-                 <li className="flex gap-3 items-center"><Check className="w-4 h-4 text-blue-500" /> Lead qualification scripts</li>
-              </ul>
             </div>
 
-            {/* Module 3 */}
-            <div className="bg-transparent border-t-2 border-slate-300 dark:border-slate-800 pt-8 flex flex-col gap-4">
-              <div className="flex items-center gap-4 mb-2">
-                <Sparkles className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                <h3 className="text-xl font-sans font-bold uppercase tracking-tight text-slate-900 dark:text-white">The AI Prompt Library</h3>
-              </div>
-              <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed font-mono uppercase tracking-widest">
-                Master the AI Coding era. Dedicated modules on utilizing tools like Gemini and AI Studio to 10x your development speed without compromising on layout quality.
+            <div className="border border-white/25 bg-[#181d2c] p-7 w-full md:w-1/3 text-center space-y-3">
+              <Layers className="w-9 h-9 text-white mx-auto" />
+              <p className="font-mono text-xs tracking-[0.16em] text-white/85 uppercase leading-relaxed">
+                Hands-on React, TypeScript &amp; Vite Production Track
               </p>
-              <ul className="space-y-3 mt-4 text-xs font-mono uppercase tracking-widest font-bold text-slate-600 dark:text-slate-400">
-                 <li className="flex gap-3 items-center"><Check className="w-4 h-4 text-blue-500" /> Prompting for pristine UI/UX structure</li>
-                 <li className="flex gap-3 items-center"><Check className="w-4 h-4 text-blue-500" /> Full-stack backend integration</li>
-                 <li className="flex gap-3 items-center"><Check className="w-4 h-4 text-blue-500" /> Generating copywriting</li>
-              </ul>
             </div>
-
-            {/* Module 4 */}
-            <div className="bg-transparent border-t-2 border-slate-300 dark:border-slate-800 pt-8 flex flex-col gap-4">
-              <div className="flex items-center gap-4 mb-2">
-                <Users className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                <h3 className="text-xl font-sans font-bold uppercase tracking-tight text-slate-900 dark:text-white">VXT Mastermind</h3>
-              </div>
-              <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed font-mono uppercase tracking-widest">
-                Design is not a solo journey. Network with other top-tier African agency owners and digital creators. Request portfolio reviews and exchange high-value referrals.
-              </p>
-              <ul className="space-y-3 mt-4 text-xs font-mono uppercase tracking-widest font-bold text-slate-600 dark:text-slate-400">
-                 <li className="flex gap-3 items-center"><Check className="w-4 h-4 text-blue-500" /> Private Discord community</li>
-                 <li className="flex gap-3 items-center"><Check className="w-4 h-4 text-blue-500" /> Bi-weekly live Q&A sessions</li>
-                 <li className="flex gap-3 items-center"><Check className="w-4 h-4 text-blue-500" /> Verified job opportunity board</li>
-              </ul>
-            </div>
-
           </div>
         </div>
+      </section>
 
-        {/* Newsletter */}
-        <div className="mt-24 text-center bg-slate-50 dark:bg-slate-900 p-12 rounded-3xl border border-slate-200 dark:border-slate-800 max-w-2xl mx-auto">
-            <h2 className="text-2xl font-serif mb-4 text-slate-900 dark:text-white">Stay Informed</h2>
-            <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-sm mx-auto text-sm">Sign up for my newsletter to get strategy, design, and AI insights directly to your inbox.</p>
-            
+      {/* 3. CURRICULUM MODULES BAND (Slate-Cyan Wash) */}
+      <section className="bg-[#3b6e82] py-16 sm:py-24">
+        <div className="w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14">
+          <div className="mb-12">
+            <h2 className="text-3xl sm:text-4xl font-sans font-semibold text-white tracking-tight">
+              Curriculum Modules
+            </h2>
+            <div className="w-full max-w-2xl h-[1px] bg-white/80 my-5" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-[#141a2b]/65 border border-white/25 p-7 flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <Video className="w-5 h-5 text-white" />
+                <h3 className="text-xl font-sans font-semibold text-white">
+                  Architecture Walkthroughs
+                </h3>
+              </div>
+              <p className="text-white/85 text-sm leading-relaxed font-sans">
+                Step-by-step build breakdowns showing how pages, layouts, and API endpoints fit together cleanly.
+              </p>
+              <ul className="space-y-2 mt-1 text-xs font-mono uppercase tracking-wider text-white/80 border-t border-white/15 pt-4">
+                <li>01. Vite &amp; React component structure</li>
+                <li>02. TypeScript state and API typing</li>
+                <li>03. Responsive Tailwind styling systems</li>
+              </ul>
+            </div>
+
+            <div className="bg-[#141a2b]/65 border border-white/25 p-7 flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <FolderKanban className="w-5 h-5 text-white" />
+                <h3 className="text-xl font-sans font-semibold text-white">
+                  Scoping &amp; Documentation Kit
+                </h3>
+              </div>
+              <p className="text-white/85 text-sm leading-relaxed font-sans">
+                Clear templates for project scoping, technical specifications, and launch checklists.
+              </p>
+              <ul className="space-y-2 mt-1 text-xs font-mono uppercase tracking-wider text-white/80 border-t border-white/15 pt-4">
+                <li>01. Project scoping outlines</li>
+                <li>02. Milestone &amp; delivery schedules</li>
+                <li>03. Client onboarding questionnaires</li>
+              </ul>
+            </div>
+
+            <div className="bg-[#141a2b]/65 border border-white/25 p-7 flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <Code2 className="w-5 h-5 text-white" />
+                <h3 className="text-xl font-sans font-semibold text-white">
+                  Modern Tooling Workflows
+                </h3>
+              </div>
+              <p className="text-white/85 text-sm leading-relaxed font-sans">
+                Combine structured human code review with modern developer tooling for reliable production output.
+              </p>
+              <ul className="space-y-2 mt-1 text-xs font-mono uppercase tracking-wider text-white/80 border-t border-white/15 pt-4">
+                <li>01. Clean UI/UX component composition</li>
+                <li>02. Express backend &amp; persistence routes</li>
+                <li>03. Build linting and type verification</li>
+              </ul>
+            </div>
+
+            <div className="bg-[#141a2b]/65 border border-white/25 p-7 flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <Users className="w-5 h-5 text-white" />
+                <h3 className="text-xl font-sans font-semibold text-white">
+                  Peer Code Reviews
+                </h3>
+              </div>
+              <p className="text-white/85 text-sm leading-relaxed font-sans">
+                Collaborate with builders across Nigeria, share live demos, and sharpen your engineering habits.
+              </p>
+              <ul className="space-y-2 mt-1 text-xs font-mono uppercase tracking-wider text-white/80 border-t border-white/15 pt-4">
+                <li>01. Live code review sessions</li>
+                <li>02. Bi-weekly technical Q&amp;A</li>
+                <li>03. Portfolio critique &amp; feedback</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. NEWSLETTER BAND (Muted Violet Wash) */}
+      <section className="bg-[#52497a] py-16 sm:py-20">
+        <div className="w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14 flex flex-col md:flex-row md:items-center justify-between gap-8">
+          <div className="max-w-md space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-sans font-semibold text-white">
+              Stay Informed
+            </h2>
+            <p className="text-white/85 text-sm font-sans">
+              Receive new curriculum notes and engineering updates directly in your inbox.
+            </p>
+          </div>
+
+          <div className="w-full md:max-w-md">
             <AnimatePresence mode="wait">
               {!isSubscribed ? (
-                <motion.form 
+                <motion.form
                   key="learn-newsletter-form"
                   onSubmit={handleSubscribeNewsletter}
-                  className="space-y-3 max-w-md mx-auto"
+                  className="space-y-3"
                 >
                   <div className="flex flex-col sm:flex-row gap-2">
                     <div className="relative flex-1">
-                      <Mail className="absolute left-4 top-3.5 w-5 h-5 text-slate-400" />
-                      <input 
-                        type="email" 
+                      <AtSign className="absolute left-3.5 top-3.5 w-4 h-4 text-white/60" />
+                      <input
+                        type="email"
                         required
                         value={subEmail}
                         onChange={(e) => setSubEmail(e.target.value)}
-                        placeholder="Your professional email" 
-                        className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-11 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-hidden dark:text-white text-sm transition-shadow"
+                        placeholder="Your email address"
+                        className="w-full bg-[#141a2b]/80 border border-white/25 pl-10 pr-4 py-3 text-white text-xs sm:text-sm font-mono focus:border-white focus:outline-hidden"
                       />
                     </div>
-                    <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl transition-all shadow-md shrink-0 cursor-pointer">
+                    <button
+                      type="submit"
+                      className="border border-white bg-white text-slate-950 hover:bg-transparent hover:text-white font-mono text-xs font-semibold uppercase tracking-[0.16em] px-6 py-3 transition-colors shrink-0 cursor-pointer"
+                    >
                       Subscribe
                     </button>
                   </div>
-                  {errorText && <p className="text-red-500 text-xs font-mono">{errorText}</p>}
+                  {errorText && <p className="text-rose-200 text-xs font-mono">{errorText}</p>}
                 </motion.form>
               ) : (
-                <motion.div 
+                <motion.div
                   key="learn-newsletter-success"
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.96 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 p-6 rounded-2xl border border-emerald-200 dark:border-emerald-800/50 max-w-md mx-auto flex items-center justify-center gap-3"
+                  className="bg-[#141a2b]/80 text-white p-5 border border-white/30 flex items-center gap-3"
                 >
-                  <Heart className="w-5 h-5" />
-                  <span className="font-semibold text-sm">Welcome to the inner circle!</span>
+                  <Verified className="w-5 h-5 text-emerald-300 shrink-0" />
+                  <span className="font-mono text-xs uppercase tracking-wider">
+                    Subscribed to curriculum updates.
+                  </span>
                 </motion.div>
               )}
             </AnimatePresence>
-            
-            <p className="text-xs text-slate-400 font-mono mt-6">✓ No spam. Unsubscribe anytime.</p>
+          </div>
         </div>
-
-      </div>
+      </section>
     </div>
   );
 }
-

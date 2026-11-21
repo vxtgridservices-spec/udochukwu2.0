@@ -1,8 +1,16 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getBlogs, saveBlogComment } from '../utils/storage';
-import { BlogPost, BlogComment } from '../types';
-import { Search, Flame, ThumbsUp, Eye, Calendar, MessageSquare, CornerDownRight, User, Send, ArrowLeft, BookOpen, ArrowRight } from 'lucide-react';
+import { BlogPost } from '../types';
+import {
+  FileSearch,
+  Filter,
+  BarChart2,
+  ThumbsUp,
+  ArrowLeft,
+  MessageCircle,
+  Send,
+} from 'lucide-react';
 
 interface BlogProps {
   onNavigate: (page: string) => void;
@@ -15,90 +23,85 @@ export default function Insights({ onNavigate, isHome }: BlogProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [activeBlogPost, setActiveBlogPost] = useState<BlogPost | null>(null);
 
-  // New comment fields
   const [commentName, setCommentName] = useState('');
   const [commentEmail, setCommentEmail] = useState('');
   const [commentContent, setCommentContent] = useState('');
+  const [commentError, setCommentError] = useState('');
 
-  // Categories list
-  const categoriesList = ['All', 'Web Design', 'Business Growth', 'SEO', 'Marketing', 'Branding', 'AI', 'Technology'];
+  const categoriesList = [
+    'All',
+    'Web Design',
+    'Business Growth',
+    'SEO',
+    'Marketing',
+    'Branding',
+    'Systems',
+    'Technology',
+  ];
 
-  // Filtered post calculation
   const filteredBlogs = useMemo(() => {
     if (isHome) {
       return blogs.slice(0, 2);
     }
     return blogs.filter((post) => {
       const matchCategory = selectedCategory === 'All' || post.category === selectedCategory;
-      const matchSearch = 
-        post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      const matchSearch =
+        post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
         post.content.toLowerCase().includes(searchQuery.toLowerCase());
       return matchCategory && matchSearch;
     });
   }, [blogs, selectedCategory, searchQuery, isHome]);
 
-  // Featured article (always grab the first blog item)
-  const featuredArticle = useMemo(() => {
-    return blogs[0];
-  }, [blogs]);
+  const featuredArticle = useMemo(() => blogs[0], [blogs]);
 
-  // Handler for likes
   const handleLikePost = (postId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    const updated = blogs.map(p => {
-      if (p.id === postId) {
-        return { ...p, likes: p.likes + 1 };
-      }
-      return p;
-    });
+    const updated = blogs.map((p) => (p.id === postId ? { ...p, likes: p.likes + 1 } : p));
     setBlogs(updated);
     localStorage.setItem('vxt_blogs', JSON.stringify(updated));
+    if (activeBlogPost && activeBlogPost.id === postId) {
+      const refreshed = updated.find((p) => p.id === postId);
+      if (refreshed) setActiveBlogPost(refreshed);
+    }
   };
 
-  // Handler for submitting a comment
   const handlePostComment = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!activeBlogPost || !commentName || !commentContent) {
-      alert('Please fill out your name and write a comment.');
+    if (!activeBlogPost || !commentName.trim() || !commentContent.trim()) {
+      setCommentError('Please enter your name and comment before submitting.');
       return;
     }
 
+    setCommentError('');
     const updatedBlogsList = saveBlogComment(activeBlogPost.id, {
-      author: commentName,
-      email: commentEmail,
-      content: commentContent
+      author: commentName.trim(),
+      email: commentEmail.trim(),
+      content: commentContent.trim(),
     });
 
     setBlogs(updatedBlogsList);
-    // Refresh currently open blog active parameters
-    const refreshed = updatedBlogsList.find(b => b.id === activeBlogPost.id);
+    const refreshed = updatedBlogsList.find((b) => b.id === activeBlogPost.id);
     if (refreshed) {
       setActiveBlogPost(refreshed);
     }
 
-    // Reset fields
     setCommentName('');
+    setCommentEmail('');
     setCommentContent('');
   };
 
   const handleOpenPost = (post: BlogPost) => {
-    // Increment view count beautifully
-    const updated = blogs.map(p => {
-      if (p.id === post.id) {
-        return { ...p, views: p.views + 1 };
-      }
-      return p;
-    });
+    const updated = blogs.map((p) => (p.id === post.id ? { ...p, views: p.views + 1 } : p));
     setBlogs(updated);
     localStorage.setItem('vxt_blogs', JSON.stringify(updated));
-    
+
     if (isHome) {
       onNavigate('blog');
       return;
     }
 
-    const targetPost = updated.find(p => p.id === post.id);
+    const targetPost = updated.find((p) => p.id === post.id);
     if (targetPost) {
       setActiveBlogPost(targetPost);
     }
@@ -106,274 +109,229 @@ export default function Insights({ onNavigate, isHome }: BlogProps) {
   };
 
   return (
-    <div className={`transition-colors duration-300 ${isHome ? 'py-24 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800' : 'py-12 md:py-20 bg-slate-50 dark:bg-slate-900'}`}>
-      <div className={`${isHome ? 'w-full' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'}`}>
-        
-        <AnimatePresence mode="wait">
-          {!activeBlogPost ? (
-            /* BLOG ARCHIVE SHEET */
-            <motion.div
-              key="archive"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className={`space-y-16 ${isHome ? 'w-full px-6 sm:px-8 lg:px-12' : ''}`}
-            >
-              
-              {/* Intro Title */}
-              <div className={isHome ? "text-center sm:text-left border-b-2 border-slate-800 pb-6 text-slate-900 dark:text-white" : "text-center max-w-3xl mx-auto"}>
-                <span className={`text-xs font-mono uppercase tracking-widest font-bold ${isHome ? 'text-blue-600 dark:text-blue-400' : 'text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-950 px-3 py-1.5 rounded-full'}`}>
-                  {isHome ? 'LATEST ARTICLES' : 'HIGH-TRACTION ARTICLES'}
-                </span>
-                <h1 className={`font-sans font-bold tracking-tight uppercase ${isHome ? 'text-3xl sm:text-5xl mt-2' : 'text-3xl sm:text-4xl lg:text-5xl font-serif mt-4 font-medium'}`}>
-                  Business Growth & Digital Insights
+    <div className="bg-[#181d2c] text-white">
+      <AnimatePresence mode="wait">
+        {!activeBlogPost ? (
+          <motion.div
+            key="archive"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {/* 1. HERO BAND (Slate-Cyan Wash — Matches Home Articles Section) */}
+            <section className="bg-[#3b6e82] py-20 sm:py-24">
+              <div className="w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14 text-left">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-sans font-semibold text-white tracking-tight">
+                  Udochukwu Latest Articles
                 </h1>
-                {!isHome && (
-                  <p className="text-slate-500 dark:text-slate-400 mt-4 text-sm sm:text-base leading-relaxed">
-                    Deep-dive guides written for African business builders to expand market share, master performance, and capture premium digital opportunities.
-                  </p>
-                )}
+                <div className="w-full max-w-2xl h-[1px] bg-white/80 my-6" />
+                <p className="text-white/95 text-xs sm:text-sm tracking-[0.16em] font-mono leading-relaxed max-w-2xl uppercase">
+                  PRACTICAL NOTES ON WEBSITE LOADING SPEED, SEARCH VISIBILITY, AND STRUCTURING CLEAR BUSINESS PORTALS.
+                </p>
               </div>
+            </section>
 
-              {/* Advanced filter & search dock */}
-              {!isHome && (
-                <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-xs flex flex-col md:flex-row items-center gap-4 justify-between">
-                  
-                  {/* Search Bar */}
-                  <div className="relative w-full md:max-w-xs">
-                    <input
-                      type="text"
-                      placeholder="Search masterclasses..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-white pl-10 pr-4 py-2 rounded-xl text-xs border border-slate-200 dark:border-slate-850 focus:ring-2 focus:ring-blue-600 focus:outline-hidden"
-                    />
-                    <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
-                  </div>
-
-                  {/* Categories Scrollbar */}
-                  <div className="flex gap-1.5 overflow-x-auto w-full md:w-auto py-1 scrollbar-none">
-                    {categoriesList.map((cat) => (
-                      <button
-                        key={cat}
-                        onClick={() => setSelectedCategory(cat)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium tracking-tight whitespace-nowrap cursor-pointer ${
-                          selectedCategory === cat
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-900 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800'
-                        }`}
-                      >
-                        {cat}
-                      </button>
-                    ))}
-                  </div>
-
-                </div>
-              )}
-
-              {/* FEATURED ARTICLES FLAGSHIP PANEL */}
-              {!isHome && searchQuery === '' && selectedCategory === 'All' && featuredArticle && (
-                <div 
-                  onClick={() => handleOpenPost(featuredArticle)}
-                  className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200/60 dark:border-slate-750/50 overflow-hidden shadow-sm hover:shadow-xl transition-all cursor-pointer group grid grid-cols-1 lg:grid-cols-12"
-                >
-                  <div className="lg:col-span-6 relative h-64 sm:h-80 lg:h-full min-h-[280px]">
-                    <img 
-                      src={featuredArticle.image} 
-                      alt={featuredArticle.title}
-                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.01] transition-transform duration-500"
-                      referrerPolicy="no-referrer"
-                    />
-                    <div className="absolute top-4 left-4 bg-blue-600 text-white text-[10px] font-mono tracking-widest px-3 py-1 rounded-sm shadow-md uppercase font-bold flex items-center gap-1.5">
-                      <Flame className="w-3.5 h-3.5 animate-pulse" />
-                      FLAGSHIP POST
-                    </div>
-                  </div>
-
-                  <div className="lg:col-span-6 p-8 sm:p-10 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center gap-3 text-slate-400 text-xs font-mono">
-                        <span>{featuredArticle.date}</span>
-                        <span>•</span>
-                        <span className="text-blue-600 dark:text-blue-400 font-bold uppercase">{featuredArticle.category}</span>
-                        <span>•</span>
-                        <span>{featuredArticle.readTime}</span>
-                      </div>
-                      
-                      <h3 className="text-xl sm:text-2xl lg:text-3xl font-serif text-slate-900 dark:text-white mt-4 font-normal leading-tight group-hover:text-blue-600 transition-colors">
-                        {featuredArticle.title}
-                      </h3>
-                      
-                      <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-4 leading-relaxed font-sans font-light">
-                        {featuredArticle.excerpt}
-                      </p>
+            {/* 2. FILTER & FEATURED ARCHIVE BAND (Deep Navy) */}
+            <section className="bg-[#1b243b] py-16 sm:py-24">
+              <div className="w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14 space-y-12">
+                {!isHome && (
+                  <div className="border border-white/25 bg-[#141a2b]/75 p-4 flex flex-col md:flex-row items-stretch md:items-center gap-4 justify-between">
+                    <div className="relative w-full md:max-w-xs">
+                      <input
+                        type="text"
+                        placeholder="Search articles..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full bg-[#181d2c] text-white pl-10 pr-4 py-2.5 text-xs font-mono border border-white/25 focus:border-white focus:outline-hidden"
+                      />
+                      <FileSearch className="absolute left-3 top-2.5 w-4 h-4 text-white/60" />
                     </div>
 
-                    <div className="flex items-center justify-between mt-8 pt-6 border-t border-slate-100 dark:border-slate-705">
-                      {/* Read CTA */}
-                      <span className="text-blue-600 dark:text-blue-400 font-semibold text-xs sm:text-sm flex items-center gap-1.5">
-                        Read Complete Analysis
-                        <CornerDownRight className="w-4 h-4 text-blue-600 animate-bounce" style={{ animationDuration: '3s' }} />
-                      </span>
-
-                      {/* Stat summary */}
-                      <div className="flex gap-4 text-slate-400 text-xs font-mono">
-                        <span className="flex items-center gap-1">
-                          <Eye className="w-3.5 h-3.5" />
-                          {featuredArticle.views}
-                        </span>
-                        <span 
-                          onClick={(e) => handleLikePost(featuredArticle.id, e)}
-                          className="flex items-center gap-1 hover:text-rose-500 transition-colors"
+                    <div className="flex items-center gap-1.5 overflow-x-auto py-0.5">
+                      <Filter className="w-3.5 h-3.5 text-white/70 shrink-0 hidden sm:block mr-1" />
+                      {categoriesList.map((cat) => (
+                        <button
+                          key={cat}
+                          type="button"
+                          onClick={() => setSelectedCategory(cat)}
+                          className={`px-3 py-2 text-[11px] font-mono font-semibold uppercase tracking-wider whitespace-nowrap cursor-pointer border transition-colors ${
+                            selectedCategory === cat
+                              ? 'bg-white text-slate-950 border-white'
+                              : 'bg-transparent text-white/80 border-white/20 hover:border-white hover:text-white'
+                          }`}
                         >
-                          <ThumbsUp className="w-3.5 h-3.5" />
-                          {featuredArticle.likes}
+                          {cat}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Featured Article */}
+                {!isHome && searchQuery === '' && selectedCategory === 'All' && featuredArticle && (
+                  <div
+                    onClick={() => handleOpenPost(featuredArticle)}
+                    className="bg-[#141a2b]/80 border border-white/25 overflow-hidden hover:border-white transition-colors cursor-pointer group grid grid-cols-1 lg:grid-cols-12"
+                  >
+                    <div className="lg:col-span-6 relative h-64 sm:h-80 lg:h-full min-h-[280px] border-b lg:border-b-0 lg:border-r border-white/15">
+                      <img
+                        src={featuredArticle.image}
+                        alt={featuredArticle.title}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                    </div>
+
+                    <div className="lg:col-span-6 p-7 sm:p-10 flex flex-col justify-between space-y-6">
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2.5 text-white/70 text-[11px] font-mono uppercase tracking-wider">
+                          <span>Featured Essay</span>
+                          <span aria-hidden="true">·</span>
+                          <span>{featuredArticle.date}</span>
+                          <span aria-hidden="true">·</span>
+                          <span className="text-white">{featuredArticle.category}</span>
+                          <span aria-hidden="true">·</span>
+                          <span>{featuredArticle.readTime}</span>
+                        </div>
+
+                        <h2 className="text-2xl sm:text-3xl font-sans font-semibold text-white mt-4 leading-tight">
+                          {featuredArticle.title}
+                        </h2>
+
+                        <div className="w-32 h-[1px] bg-white/60 my-4" />
+
+                        <p className="text-white/80 text-sm leading-relaxed font-sans">
+                          {featuredArticle.excerpt}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-5 border-t border-white/15 text-xs font-mono">
+                        <span className="text-white font-semibold uppercase tracking-[0.16em]">
+                          Read Article →
                         </span>
+
+                        <div className="flex items-center gap-4 text-white/70 tabular-nums">
+                          <span className="flex items-center gap-1.5">
+                            <BarChart2 className="w-3.5 h-3.5" />
+                            {featuredArticle.views} reads
+                          </span>
+                          <button
+                            type="button"
+                            onClick={(e) => handleLikePost(featuredArticle.id, e)}
+                            className="hover:text-white transition-colors cursor-pointer"
+                          >
+                            {featuredArticle.likes} likes
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* POSTS GRID LIST */}
-              <div>
+                {/* Articles Grid */}
                 {filteredBlogs.length === 0 ? (
-                  <div className="bg-transparent p-12 text-center border border-slate-300 dark:border-slate-800">
-                    <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                    <p className="text-slate-900 dark:text-white font-medium text-base">No matching diagnostic articles found</p>
-                    <p className="text-slate-500 text-xs mt-1">Try resetting search parameters or browse all categories.</p>
+                  <div className="border border-white/25 bg-[#141a2b]/65 p-12 text-center space-y-2">
+                    <p className="text-white font-sans font-semibold text-base">
+                      No matching articles found
+                    </p>
+                    <p className="text-white/70 text-xs font-mono uppercase tracking-wider">
+                      Try resetting search keywords or selecting All categories.
+                    </p>
                   </div>
                 ) : (
-                  <div className={`grid grid-cols-1 md:grid-cols-2 ${isHome ? 'lg:grid-cols-2 gap-8 lg:mx-auto max-w-5xl' : 'lg:grid-cols-3 gap-8'}`}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredBlogs.map((post) => (
-                      <div
+                      <article
                         key={post.id}
                         id={`blog-card-${post.id}`}
                         onClick={() => handleOpenPost(post)}
-                        className={`cursor-pointer group flex flex-col justify-between ${isHome ? 'bg-transparent' : 'bg-transparent border border-slate-300 dark:border-slate-800 p-6'}`}
+                        className="cursor-pointer group flex flex-col justify-between bg-[#141a2b]/75 border border-white/25 hover:border-white transition-colors p-6"
                       >
                         <div>
-                          {/* Image and categories badge wrapper */}
-                          <div className={`relative ${isHome ? 'h-64 sm:h-80 w-full mb-6 filter grayscale group-hover:grayscale-0 transition-all' : 'h-48 overflow-hidden mb-6'}`}>
-                            <img 
-                              src={post.image} 
+                          <div className="relative h-44 overflow-hidden mb-5 border border-white/15 bg-[#101522]">
+                            <img
+                              src={post.image}
                               alt={post.title}
-                              className={`w-full h-full object-cover ${isHome ? '' : 'group-hover:scale-105 transition-transform duration-500'}`}
-                              referrerPolicy="no-referrer"
+                              className="w-full h-full object-cover"
                             />
-                            {!isHome && (
-                              <div className="absolute top-4 left-4 bg-slate-950/80 backdrop-blur-md text-white text-[9px] font-mono tracking-widest px-2.5 py-1 rounded-sm shadow-md uppercase">
-                                {post.category}
-                              </div>
-                            )}
                           </div>
-                          
-                          {/* Content summary */}
-                          <div className={`${isHome ? '' : ''}`}>
-                            {isHome && (
-                              <div className="mb-4">
-                                <span className="text-[10px] font-mono text-blue-600 dark:text-blue-400 font-bold uppercase tracking-widest">{post.category}</span>
-                              </div>
-                            )}
-                            <div className="flex items-center gap-2.5 text-slate-400 text-[10px] sm:text-xs font-mono uppercase font-semibold">
-                              <span>{post.date}</span>
-                              <span>•</span>
-                              <span>{post.readTime}</span>
-                            </div>
 
-                            <h3 className={`font-sans font-bold text-slate-900 dark:text-white mt-3 group-hover:text-blue-600 transition-colors uppercase ${isHome ? 'text-2xl sm:text-3xl' : 'text-lg sm:text-xl font-serif font-semibold'}`}>
-                              {post.title}
-                            </h3>
-
-                            <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-3 leading-relaxed font-sans line-clamp-3">
-                              {post.excerpt}
-                            </p>
+                          <div className="flex flex-wrap items-center gap-2 text-white/70 text-[11px] font-mono uppercase tracking-wider">
+                            <span className="text-white font-semibold">{post.category}</span>
+                            <span aria-hidden="true">·</span>
+                            <span>{post.date}</span>
+                            <span aria-hidden="true">·</span>
+                            <span>{post.readTime}</span>
                           </div>
+
+                          <h3 className="font-sans font-semibold text-white mt-3 text-lg leading-snug">
+                            {post.title}
+                          </h3>
+
+                          <p className="text-white/80 text-xs sm:text-sm mt-3 leading-relaxed font-sans line-clamp-3">
+                            {post.excerpt}
+                          </p>
                         </div>
 
-                        <div className={`${isHome ? 'mt-8 block' : 'pt-6 border-t border-slate-300 dark:border-slate-800 mt-6'}`}>
-                          <div className="flex items-center justify-between pt-4">
-                            <span className="text-blue-600 dark:text-blue-400 font-bold font-mono tracking-widest uppercase text-[10px] sm:text-xs flex items-center gap-1.5 transition-colors">
-                              READ ANALYSIS <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                            </span>
+                        <div className="pt-4 border-t border-white/15 mt-6 flex items-center justify-between text-xs font-mono">
+                          <span className="text-white font-semibold uppercase tracking-[0.14em]">
+                            Read Article →
+                          </span>
 
-                            <div className="flex gap-3 text-slate-400 text-xs font-mono flex-shrink-0">
-                              <span className="flex items-center gap-1">
-                                <Eye className="w-3 h-3" />
-                                {post.views}
-                              </span>
-                              <span 
-                                onClick={(e) => handleLikePost(post.id, e)}
-                                className="flex items-center gap-1 hover:text-rose-500 transition-colors"
-                              >
-                                <ThumbsUp className="w-3 h-3" />
-                                {post.likes}
-                              </span>
-                            </div>
-                          </div>
+                          <span className="text-white/65 tabular-nums">
+                            {post.views} · {post.likes} likes
+                          </span>
                         </div>
-
-                      </div>
+                      </article>
                     ))}
                   </div>
                 )}
-                
-                {isHome && (
-                  <div className="mt-16 border-t-2 border-slate-800 pt-8 flex justify-center sm:justify-end">
-                    <button
-                      onClick={() => onNavigate('blog')}
-                      className="border-2 border-slate-900 dark:border-white text-slate-900 dark:text-white font-mono uppercase tracking-[0.2em] px-8 py-5 hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-colors flex items-center justify-center gap-4 cursor-pointer font-bold text-sm w-full sm:w-auto"
-                    >
-                      VIEW ALL ARTICLES <ArrowRight className="w-5 h-5 ml-2" />
-                    </button>
-                  </div>
-                )}
               </div>
-
-            </motion.div>
-          ) : (
-            /* BLOG ACTIVE READ SCREEN */
-            <motion.div
-              key="post-view"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="max-w-3xl mx-auto space-y-12"
-            >
-              
-              {/* Back to list */}
+            </section>
+          </motion.div>
+        ) : (
+          /* ARTICLE READER BAND */
+          <motion.section
+            key="post-view"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="bg-[#1b243b] py-16 sm:py-24 min-h-screen"
+          >
+            <div className="max-w-3xl mx-auto px-6 sm:px-10 space-y-10">
               <button
+                type="button"
                 onClick={() => {
                   setActiveBlogPost(null);
                   window.scrollTo({ top: 0, behavior: 'instant' });
                 }}
-                className="text-slate-500 hover:text-slate-900 dark:hover:text-white text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="border border-white/30 px-4 py-2 text-white/85 hover:text-white hover:border-white text-xs font-mono inline-flex items-center gap-2 transition-colors cursor-pointer uppercase tracking-wider"
               >
                 <ArrowLeft className="w-4 h-4" />
-                BACK TO DIAGNOSTIC PAPERS
+                <span>Back to Articles</span>
               </button>
 
-              {/* Cover Header */}
               <div className="space-y-4">
-                <span className="text-xs font-mono bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300 px-3 py-1 rounded-full font-bold uppercase tracking-wider">
+                <span className="text-xs font-mono text-white/80 uppercase tracking-[0.18em] block">
                   {activeBlogPost.category}
                 </span>
-                
-                <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif text-slate-900 dark:text-white font-medium tracking-tight leading-tight">
+
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-sans font-semibold text-white tracking-tight leading-tight">
                   {activeBlogPost.title}
                 </h1>
 
-                {/* Logistics */}
-                <div className="flex items-center gap-4 text-slate-400 text-xs font-mono pt-2 border-b border-slate-205 dark:border-slate-800 pb-4">
+                <div className="w-full max-w-xl h-[1px] bg-white/80 my-4" />
+
+                <div className="flex flex-wrap items-center gap-4 text-white/75 text-xs font-mono tabular-nums uppercase tracking-wider">
                   <span>Posted: {activeBlogPost.date}</span>
-                  <span>•</span>
+                  <span aria-hidden="true">·</span>
                   <span>{activeBlogPost.readTime}</span>
-                  <span>•</span>
-                  <span className="flex items-center gap-1"><Eye className="w-3.5 h-3.5" />{activeBlogPost.views} views</span>
-                  <span>•</span>
-                  <button 
+                  <span aria-hidden="true">·</span>
+                  <span>{activeBlogPost.views} reads</span>
+                  <span aria-hidden="true">·</span>
+                  <button
+                    type="button"
                     onClick={(e) => handleLikePost(activeBlogPost.id, e)}
-                    className="flex items-center gap-1 text-rose-500 hover:text-rose-600 transition-colors cursor-pointer font-bold"
+                    className="flex items-center gap-1.5 text-white border border-white/30 px-3 py-1 hover:bg-white hover:text-slate-950 transition-colors cursor-pointer font-semibold"
                   >
                     <ThumbsUp className="w-3.5 h-3.5 shrink-0" />
                     <span>{activeBlogPost.likes} upvotes</span>
@@ -381,70 +339,88 @@ export default function Insights({ onNavigate, isHome }: BlogProps) {
                 </div>
               </div>
 
-              {/* Main Banner Image */}
-              <div className="h-64 sm:h-96 rounded-3xl overflow-hidden shadow-md">
-                <img 
-                  src={activeBlogPost.image} 
-                  alt={activeBlogPost.title} 
+              <div className="h-64 sm:h-96 border border-white/25 overflow-hidden bg-[#101522]">
+                <img
+                  src={activeBlogPost.image}
+                  alt={activeBlogPost.title}
                   className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
                 />
               </div>
 
-              {/* ARTICLE MARKDOWN-LIKE CONTENT BODY */}
-              <div className="prose dark:prose-invert prose-blue max-w-none text-slate-700 dark:text-slate-300 font-sans text-base leading-relaxed space-y-6">
+              <div className="text-white/90 font-sans text-base leading-relaxed space-y-6">
                 {activeBlogPost.content.split('\n\n').map((para, pIdx) => {
                   if (para.startsWith('## ')) {
-                    return <h2 key={pIdx} className="text-2xl font-serif font-medium text-slate-900 dark:text-white mt-10 mb-4">{para.replace('## ', '')}</h2>;
+                    return (
+                      <h2
+                        key={pIdx}
+                        className="text-2xl font-sans font-semibold text-white mt-10 mb-3"
+                      >
+                        {para.replace('## ', '')}
+                      </h2>
+                    );
                   }
                   if (para.startsWith('### ')) {
-                    return <h3 key={pIdx} className="text-xl font-serif font-semibold text-slate-900 dark:text-white mt-8 mb-3">{para.replace('### ', '')}</h3>;
+                    return (
+                      <h3
+                        key={pIdx}
+                        className="text-xl font-sans font-semibold text-white mt-8 mb-2"
+                      >
+                        {para.replace('### ', '')}
+                      </h3>
+                    );
                   }
                   if (para.startsWith('- ') || para.startsWith('1. ')) {
                     const items = para.split('\n');
                     const isOrdered = para.startsWith('1. ');
                     const Tag = isOrdered ? 'ol' : 'ul';
                     return (
-                      <Tag key={pIdx} className="list-inside list-decimal space-y-2 pl-4 text-sm sm:text-base">
+                      <Tag
+                        key={pIdx}
+                        className="list-inside list-decimal space-y-2 pl-4 text-sm sm:text-base text-white/85"
+                      >
                         {items.map((it, itIdx) => (
-                          <li key={itIdx}>
-                            {it.replace(/^(\d+\.\s*|-\s*)/, '')}
-                          </li>
+                          <li key={itIdx}>{it.replace(/^(\d+\.\s*|-\s*)/, '')}</li>
                         ))}
                       </Tag>
                     );
                   }
-                  return <p key={pIdx} className="leading-relaxed whitespace-pre-line sm:text-lg font-light">{para}</p>;
+                  return (
+                    <p key={pIdx} className="leading-relaxed whitespace-pre-line sm:text-lg">
+                      {para}
+                    </p>
+                  );
                 })}
               </div>
 
-              {/* COMMENTS BLOCK SYSTEM */}
-              <div className="pt-12 border-t border-slate-200 dark:border-slate-800 space-y-8">
-                
-                <h3 className="text-lg sm:text-xl font-serif font-medium text-slate-900 dark:text-white flex items-center gap-2">
-                  <MessageSquare className="w-5 h-5 text-blue-600" />
-                  Reader Feedback ({activeBlogPost.comments?.length || 0})
+              {/* COMMENTS */}
+              <div className="pt-10 border-t border-white/20 space-y-8">
+                <h3 className="text-xl font-sans font-semibold text-white flex items-center gap-2.5">
+                  <MessageCircle className="w-5 h-5" />
+                  <span>Reader Feedback ({activeBlogPost.comments?.length || 0})</span>
                 </h3>
 
-                {/* Composed comments list */}
                 <div className="space-y-4">
                   {!activeBlogPost.comments || activeBlogPost.comments.length === 0 ? (
-                    <p className="text-slate-400 text-xs italic">No comments posted yet. Shape the conversation below!</p>
+                    <p className="text-white/70 text-xs font-mono uppercase tracking-wider">
+                      No comments posted yet. Share your thoughts below.
+                    </p>
                   ) : (
                     activeBlogPost.comments.map((com) => (
-                      <div 
+                      <div
                         key={com.id}
-                        className="bg-slate-100 dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/50 dark:border-slate-800/80 flex gap-4"
+                        className="bg-[#141a2b]/80 p-5 border border-white/20 flex gap-4"
                       >
-                        <div className="h-10 w-10 bg-slate-300 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-full flex items-center justify-center shrink-0">
-                          <User className="w-5 h-5" />
+                        <div className="h-10 w-10 bg-white text-slate-950 flex items-center justify-center shrink-0 text-xs font-mono font-bold uppercase">
+                          {com.author.slice(0, 2)}
                         </div>
                         <div>
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-xs font-bold text-slate-900 dark:text-white">{com.author}</span>
-                            <span className="text-[10px] font-mono text-slate-400">{com.createdAt}</span>
+                            <span className="text-xs font-semibold text-white">{com.author}</span>
+                            <span className="text-[11px] font-mono text-white/60">
+                              {com.createdAt}
+                            </span>
                           </div>
-                          <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm mt-3 leading-relaxed">
+                          <p className="text-white/85 text-sm mt-2 leading-relaxed">
                             {com.content}
                           </p>
                         </div>
@@ -453,69 +429,74 @@ export default function Insights({ onNavigate, isHome }: BlogProps) {
                   )}
                 </div>
 
-                {/* Comment Editor form */}
-                <div className="bg-slate-50 dark:bg-slate-900/40 p-6 sm:p-8 rounded-3xl border border-slate-205 dark:border-slate-800/80">
-                  <h4 className="text-xs font-mono font-bold text-slate-500 uppercase tracking-widest mb-4">LEAVE A COMMENT</h4>
-                  
+                <div className="bg-[#141a2b]/80 p-6 sm:p-8 border border-white/25">
+                  <h4 className="text-xs font-mono font-semibold text-white uppercase tracking-[0.18em] mb-4">
+                    Leave a Comment
+                  </h4>
+
                   <form onSubmit={handlePostComment} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      
                       <div className="space-y-1">
-                        <label className="text-[10px] font-mono text-slate-400">NAME *</label>
+                        <label className="text-[11px] font-mono text-white/80 uppercase block">
+                          Name *
+                        </label>
                         <input
                           type="text"
                           required
                           placeholder="e.g., Segun Adesola"
                           value={commentName}
                           onChange={(e) => setCommentName(e.target.value)}
-                          className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white px-3 py-2 border rounded-xl text-xs sm:text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden"
+                          className="w-full bg-[#181d2c] text-white px-4 py-3 border border-white/25 text-xs font-mono focus:border-white focus:outline-hidden"
                         />
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] font-mono text-slate-400">WORK EMAIL (PRIVATE)</label>
+                        <label className="text-[11px] font-mono text-white/80 uppercase block">
+                          Email (Optional)
+                        </label>
                         <input
                           type="email"
-                          placeholder="segun@realty.ng"
+                          placeholder="name@company.com"
                           value={commentEmail}
                           onChange={(e) => setCommentEmail(e.target.value)}
-                          className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white px-3 py-2 border rounded-xl text-xs sm:text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden"
+                          className="w-full bg-[#181d2c] text-white px-4 py-3 border border-white/25 text-xs font-mono focus:border-white focus:outline-hidden"
                         />
                       </div>
-
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] font-mono text-slate-400">COMMENT *</label>
+                      <label className="text-[11px] font-mono text-white/80 uppercase block">
+                        Comment *
+                      </label>
                       <textarea
                         rows={3}
                         required
-                        placeholder="Write your diagnostic review or constructive commentary..."
+                        placeholder="Write your thoughts..."
                         value={commentContent}
                         onChange={(e) => setCommentContent(e.target.value)}
-                        className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white px-3 py-2 border rounded-xl text-xs sm:text-sm focus:ring-1 focus:ring-blue-600 focus:outline-hidden"
-                      ></textarea>
+                        className="w-full bg-[#181d2c] text-white px-4 py-3 border border-white/25 text-xs font-mono focus:border-white focus:outline-hidden"
+                      />
                     </div>
+
+                    {commentError && (
+                      <p className="text-xs font-mono text-rose-300">{commentError}</p>
+                    )}
 
                     <button
                       type="submit"
                       id="submit-comment-button"
-                      className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer"
+                      className="border border-white bg-white text-slate-950 hover:bg-transparent hover:text-white font-mono text-xs font-semibold uppercase tracking-[0.18em] px-6 py-3 flex items-center gap-2 transition-colors cursor-pointer"
                     >
-                      <span>Post Feedback</span>
+                      <span>Post Comment</span>
                       <Send className="w-3.5 h-3.5" />
                     </button>
-
                   </form>
                 </div>
-
               </div>
-
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-      </div>
+            </div>
+          </motion.section>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

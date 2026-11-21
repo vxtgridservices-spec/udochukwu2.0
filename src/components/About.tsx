@@ -1,6 +1,5 @@
-import { motion } from 'motion/react';
-import { Target, Eye, ShieldCheck, HeartPulse, Award, Sparkles, ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { Target, Eye, ShieldCheck, HeartHandshake, CalendarCheck } from 'lucide-react';
 import { getSiteSettings } from '../utils/storage';
 
 interface AboutProps {
@@ -8,7 +7,9 @@ interface AboutProps {
 }
 
 export default function About({ onNavigate }: AboutProps) {
-  const [aboutImageUrl, setAboutImageUrl] = useState('https://res.cloudinary.com/drghjqbak/image/upload/q_auto/f_auto/v1781913441/1781783831624_3_a1uctp.jpg');
+  const [aboutImageUrl, setAboutImageUrl] = useState(
+    'https://res.cloudinary.com/drghjqbak/image/upload/q_auto/f_auto/v1781913441/1781783831624_3_a1uctp.jpg'
+  );
 
   useEffect(() => {
     const settings = getSiteSettings();
@@ -20,188 +21,182 @@ export default function About({ onNavigate }: AboutProps) {
   const values = [
     {
       icon: Target,
-      title: 'Measurable Outcomes',
-      desc: 'We do not build digital ornaments. Every line of code and visual placement is directly tied to business growth, conversion performance, and revenue impact across African markets.'
+      title: 'Practical Business Outcomes',
+      desc: 'Every interface and workflow is built around clear user tasks—product inquiries, bookings, and hardware purchases.',
     },
     {
       icon: ShieldCheck,
-      title: 'Continental Performance Mastery',
-      desc: 'We optimize for infrastructure diversity. Regardless of connectivity, your platform performs flawlessly, providing a world-class experience to users across the continent.'
+      title: 'Network-Aware Engineering',
+      desc: 'Applications are optimized to load cleanly across varying Nigerian mobile data speeds without bloated dependencies.',
     },
     {
       icon: Eye,
       title: 'Radical Transparency',
-      desc: 'Clear, predictable strategy, verified milestones, and structural honesty. No confusing jargon—just focused business advisory.'
+      desc: 'Honest timelines, plain technical communication, and real project documentation without inflated claims.',
     },
     {
-      icon: HeartPulse,
+      icon: HeartHandshake,
       title: 'Long-Term Partnership',
-      desc: 'Building the platform is Phase 1. We remain your strategic digital partner, ensuring your business scales, evolves, and consistently converts at the highest levels.'
-    }
+      desc: 'Launching the codebase is only step one. Ongoing maintenance, iterations, and store management remain supported.',
+    },
   ];
 
   const milestones = [
     {
       year: '2020',
-      title: 'Vision for African Excellence',
-      company: 'Founding Inspiration',
-      desc: 'Inspired by the immense potential of ambitious African enterprises held back by subpar digital platforms. Set out to master high-stakes conversion science and world-class digital strategy.'
+      title: 'Engineering Foundations',
+      company: 'Early Web Craft',
+      desc: 'Focused on frontend craftsmanship, semantic web standards, and building faster mobile-ready web interfaces.',
     },
     {
       year: '2022',
-      title: 'VXTGrid Services Inception',
-      company: 'Founder & Principal strategist',
-      desc: 'Founded on a single promise: "Results, not just code." Partnered with innovative SMEs transform their customer acquisition, demonstrably increasing trust and revenue.'
+      title: 'VXTGrid Services Established',
+      company: 'Founder & Principal',
+      desc: 'Launched VXTGrid Services to help businesses move beyond slow, generic templates toward bespoke React applications.',
     },
     {
       year: '2024',
-      title: 'Trusted by Ambitious Brands',
-      company: 'Corporate Growth Rollout',
-      desc: 'Partnered with luxury hospitality and real estate leaders across the continent to upgrade mission-critical digital funnels, scaling sales pipelines and fostering investor trust.'
+      title: 'Full-Stack Production Systems',
+      company: 'Fintech & Commerce Builds',
+      desc: 'Delivered production web platforms including wallet interfaces, service marketplaces, and corporate security portals.',
     },
     {
       year: '2026',
-      title: 'Continental Digital Strategist',
-      company: 'Strategic Consultancy Focus',
-      desc: 'Recognized as one of Africa’s premier digital consultants. Committed to helping ambitious African businesses turn their websites into powerful sales engines and brand credibility assets.'
-    }
+      title: 'Buyfromudochukwu Expansion',
+      company: 'Web Engineering & Direct Commerce',
+      desc: 'Expanded operations with Buyfromudochukwu, a multi-category tech and hardware marketplace serving customers nationwide.',
+    },
   ];
 
   return (
-    <div className="bg-[#1E2333] min-h-screen text-slate-100 transition-colors duration-300">
-      
-      {/* 1. ELON-STYLE HEADER SPLASH (Muted Slate-Purple Banner) */}
-      <section className="relative min-h-[50vh] flex flex-col justify-center items-start px-6 sm:px-12 md:px-24 py-20 bg-[#6B6899] overflow-hidden">
-        {/* Grayscale Background portrait overlay */}
+    <div className="bg-[#181d2c] text-white">
+      {/* 1. HERO BAND (Teal Wash — Matches Landing Page) */}
+      <section className="relative min-h-[52vh] flex flex-col justify-center items-start bg-[#3c7b8c] overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img 
-            src={aboutImageUrl} 
-            alt="Udochukwu Background" 
-            className="w-full h-full object-cover object-top filter grayscale contrast-125 brightness-[0.7] opacity-[0.4] mix-blend-luminosity"
+          <img
+            src={aboutImageUrl}
+            alt="Udochukwu Portrait"
+            className="w-full h-full object-cover object-top opacity-25 mix-blend-luminosity"
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-[#6B6899]/30 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-[#2f6778]/55" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#245362]/85 via-[#2f6778]/45 to-transparent" />
         </div>
 
-        {/* Text Area */}
-        <div className="relative z-10 w-full max-w-6xl">
-          <motion.h1 
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-4xl sm:text-5xl md:text-6xl text-white font-serif tracking-[0.01em] leading-tight font-medium"
-          >
-            Who is mister <br className="hidden sm:inline" /> Udochukwu
-          </motion.h1>
-          
-          <div className="w-full max-w-2xl h-[1px] bg-white/40 my-6"></div>
-          
-          <motion.p 
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="text-white text-xs sm:text-sm md:text-base tracking-[0.24em] font-mono uppercase font-bold opacity-95 [text-shadow:_0_1px_2px_rgba(0,0,0,0.4)]"
-          >
-            VISIONARY STRATEGIST REVOLUTIONIZING DIGITAL SYSTEMS
-          </motion.p>
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14 py-20 text-left">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-sans font-semibold text-white tracking-tight">
+            Who is Udochukwu
+          </h1>
+
+          <div className="w-full max-w-2xl h-[1px] bg-white/80 my-6" />
+
+          <p className="text-white/95 text-xs sm:text-sm tracking-[0.16em] font-mono leading-relaxed max-w-2xl uppercase">
+            WEB DESIGNER, DIGITAL STRATEGIST, PRINCIPAL AT VXTGRID SERVICES, AND FOUNDER OF BUYFROMUDOCHUKWU.
+          </p>
         </div>
       </section>
 
-      {/* 2. BIOGRAPHY SECTION WITH WHITE UNDERLINE CONTAINER */}
-      <section className="py-16 sm:py-24 px-6 sm:px-12 md:px-24 max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-          
-          {/* Biography text block */}
-          <div className="lg:col-span-8 space-y-8">
-            <div className="border-b border-white/20 pb-4 mb-8">
-              <h2 className="text-2xl sm:text-3xl font-serif text-white tracking-wide uppercase relative inline-block pb-3 whitespace-nowrap">
-                Udochukwu biography
-                <span className="absolute bottom-0 left-0 w-full h-[2px] bg-white"></span>
-              </h2>
-            </div>
-
-            <div className="space-y-6 text-slate-300 font-sans text-sm sm:text-base leading-relaxed tracking-wide">
-              <p>
-                Udochukwu, a name synonymous with digital systems innovation and forward-thinking engineering, has become an influential figure in the digital landscape of African business. Driven by an insatiable curiosity and a relentless pursuit of high-performance architecture, his journey is marked by a refusal to build standard templates, choosing instead to engineer conversion systems with pristine code structure.
-              </p>
-              <p>
-                From an early age, Udochukwu exhibited an exceptional aptitude for systems thinking, digital strategy, and high-impact web design. This passion led to the founding of VXTGrid Services, a premier consultancy that has revitalized the digital sales pipelines of luxury real estate, hospitality, and B2B corporate enterprises across the continent.
-              </p>
-              <p>
-                Today, he continues to bridge the gap between high-stakes marketing science and clean code execution. His vision remains resolute: to build digital platforms that establish unquestionable authority, command investment trust, and enable African organizations to compete confidently on a global stage.
-              </p>
-            </div>
-
-            <div className="pt-6 flex flex-wrap gap-4">
-              <button 
-                onClick={() => onNavigate('contact')}
-                id="about-cta-book"
-                className="bg-white text-[#1E2333] hover:bg-slate-100 px-6 py-3 font-mono font-bold tracking-widest text-[#1E2333] text-xs uppercase transition-all shadow-md flex items-center gap-2 cursor-pointer border border-white"
-              >
-                BOOK CONSULTATION
-                <Sparkles className="w-4 h-4 text-[#1E2333]" />
-              </button>
-              <button 
-                onClick={() => onNavigate('portfolio')}
-                id="about-cta-portfolio"
-                className="px-6 py-3 border border-white/30 hover:border-white hover:bg-white/5 text-white font-mono font-bold tracking-widest text-xs uppercase transition-all cursor-pointer"
-              >
-                VIEW PORTFOLIO
-              </button>
-            </div>
-          </div>
-
-          {/* Right sidebar profile card */}
-          <div className="lg:col-span-4 lg:sticky lg:top-28">
-            <div className="bg-[#23293D] rounded-2xl border border-white/10 p-6 shadow-xl relative overflow-hidden group">
-              <div className="relative rounded-xl overflow-hidden aspect-[4/5] bg-slate-950 mb-6">
-                <img 
-                  src={aboutImageUrl} 
-                  alt="Udochukwu Portrait" 
-                  className="w-full h-full object-cover object-top filter grayscale contrast-110 brightness-90 transition-transform group-hover:scale-[1.02]"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60"></div>
-              </div>
+      {/* 2. BIOGRAPHY BAND (Deep Navy) */}
+      <section className="bg-[#1b243b] py-16 sm:py-24">
+        <div className="w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            <div className="lg:col-span-7 space-y-6">
               <div>
-                <span className="text-[10px] font-mono text-blue-400 tracking-wider">
-                  FOUNDER & DIGITAL STRATEGIST
-                </span>
-                <p className="text-xl font-serif mt-1 font-medium text-white">Udochukwu</p>
-                <p className="text-xs text-slate-400 mt-1 leading-relaxed">Premium Digital Strategy Consultant & Principal at VXTGrid Services</p>
+                <h2 className="text-2xl sm:text-4xl font-sans font-semibold text-white tracking-tight">
+                  Biography
+                </h2>
+                <div className="w-full max-w-xl h-[1px] bg-white/80 my-5" />
+              </div>
+
+              <div className="space-y-5 text-white/85 font-sans text-sm sm:text-base leading-relaxed">
+                <p>
+                  Udochukwu is a web designer, systems engineer, and Founder of VXTGrid Services focused on building fast, dependable web platforms for ambitious organizations across Nigeria and Africa.
+                </p>
+                <p>
+                  Rather than relying on heavy pre-made templates, his engineering approach emphasizes clean React and TypeScript architecture, mobile performance under everyday cellular data speeds, and clear user conversion journeys.
+                </p>
+                <p>
+                  Alongside client engineering work, Udochukwu operates Buyfromudochukwu—a multi-category marketplace offering curated workstations, studio audio gear, office hardware, and backup power solutions with nationwide dispatch.
+                </p>
+              </div>
+
+              <div className="pt-4 flex flex-wrap gap-4">
+                <button
+                  type="button"
+                  onClick={() => onNavigate('contact')}
+                  id="about-cta-book"
+                  className="border border-white bg-white text-slate-950 hover:bg-transparent hover:text-white px-6 py-3.5 font-mono font-semibold tracking-[0.18em] text-xs uppercase transition-colors inline-flex items-center gap-2.5 cursor-pointer"
+                >
+                  <CalendarCheck className="w-4 h-4" />
+                  <span>Book Consultation</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('portfolio')}
+                  id="about-cta-portfolio"
+                  className="border border-white/40 bg-white/10 hover:bg-white hover:text-slate-950 text-white px-6 py-3.5 font-mono font-semibold tracking-[0.18em] text-xs uppercase transition-colors cursor-pointer"
+                >
+                  View Portfolio
+                </button>
+              </div>
+            </div>
+
+            <div className="lg:col-span-5">
+              <div className="border border-white/20 bg-[#141a2b]/80 overflow-hidden">
+                <div className="aspect-[4/5] bg-[#101522] overflow-hidden border-b border-white/15">
+                  <img
+                    src={aboutImageUrl}
+                    alt="Udochukwu"
+                    className="w-full h-full object-cover object-top"
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+                <div className="p-6 space-y-2">
+                  <span className="text-[11px] font-mono text-white/75 tracking-[0.18em] uppercase block">
+                    Founder &amp; Digital Strategist
+                  </span>
+                  <p className="text-xl font-sans font-semibold text-white">Udochukwu</p>
+                  <p className="text-xs font-mono text-white/75 tracking-wider uppercase leading-relaxed">
+                    VXTGrid Services · Buyfromudochukwu · Nigeria &amp; Remote
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-
         </div>
       </section>
 
-      {/* 3. CORE VALUES SEGMENT */}
-      <section className="bg-[#181C2A] py-16 sm:py-24 border-t border-white/5">
-        <div className="max-w-6xl mx-auto px-6 sm:px-12 md:px-24">
-          <div className="text-left mb-16 max-w-3xl">
-            <span className="text-[10px] font-mono text-blue-400 tracking-[0.25em] uppercase font-bold">
-              OPERATIONAL CODE
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-serif text-white mt-4 font-normal tracking-wide uppercase">
-              Four Core Values That Drive 10x ROI
+      {/* 3. CORE PRINCIPLES BAND (Steel Blue Wash) */}
+      <section className="bg-[#4a628d] py-16 sm:py-24">
+        <div className="w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14">
+          <div className="mb-12">
+            <h2 className="text-2xl sm:text-4xl font-sans font-semibold text-white tracking-tight">
+              Operational Principles
             </h2>
+            <div className="w-full max-w-2xl h-[1px] bg-white/80 my-5" />
+            <p className="text-white/95 text-xs sm:text-sm tracking-[0.16em] font-mono uppercase">
+              FOUR PILLARS GUIDING EVERY BUILD AND CUSTOMER DELIVERY.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {values.map((v, i) => {
               const Icon = v.icon;
               return (
-                <div 
+                <div
                   key={i}
                   id={`value-card-${i}`}
-                  className="bg-[#212739] p-6 rounded-xl border border-white/5 hover:border-white/10 shadow-xs hover:shadow-lg transition-all group hover:-translate-y-1"
+                  className="bg-[#181d2c]/45 border border-white/25 p-6 sm:p-7 space-y-3"
                 >
-                  <div className="h-10 w-10 bg-white/5 group-hover:bg-white group-hover:text-slate-900 text-white rounded-lg flex items-center justify-center transition-colors">
-                    <Icon className="w-5 h-5" />
+                  <div className="h-9 w-9 border border-white/30 bg-white/10 text-white flex items-center justify-center">
+                    <Icon className="w-4 h-4" />
                   </div>
-                  <h4 className="text-base font-serif font-bold text-white mt-4 tracking-wide uppercase">{v.title}</h4>
-                  <p className="text-slate-400 text-xs sm:text-sm mt-3 leading-relaxed font-light">{v.desc}</p>
+                  <h3 className="text-lg font-sans font-semibold text-white tracking-tight">
+                    {v.title}
+                  </h3>
+                  <p className="text-white/85 text-xs sm:text-sm leading-relaxed font-sans">
+                    {v.desc}
+                  </p>
                 </div>
               );
             })}
@@ -209,41 +204,63 @@ export default function About({ onNavigate }: AboutProps) {
         </div>
       </section>
 
-      {/* 4. HISTORIC MILESTONES (CHRONICLE) */}
-      <section className="py-16 sm:py-24 max-w-6xl mx-auto px-6 sm:px-12 md:px-24">
-        <div className="text-left mb-16 max-w-3xl">
-          <span className="text-[10px] font-mono text-blue-400 tracking-[0.25em] uppercase font-bold">
-            THE CHRONICLE
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-serif text-white mt-4 font-normal tracking-wide uppercase">
-            A History of Client Wins & Breakthroughs
-          </h2>
-        </div>
+      {/* 4. TIMELINE BAND (Slate Cyan Wash) */}
+      <section className="bg-[#3b6e82] py-16 sm:py-24">
+        <div className="w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14">
+          <div className="mb-12">
+            <h2 className="text-2xl sm:text-4xl font-sans font-semibold text-white tracking-tight">
+              Engineering &amp; Business Timeline
+            </h2>
+            <div className="w-full max-w-2xl h-[1px] bg-white/80 my-5" />
+          </div>
 
-        <div className="relative border-l border-white/10 ml-4 sm:ml-12">
-          {milestones.map((m, idx) => (
-            <div key={idx} className="mb-10 ml-6 sm:ml-10 relative">
-              {/* Year dot label */}
-              <div className="absolute -left-[35px] sm:-left-[51px] top-1.5 bg-white text-slate-950 text-[10px] font-mono font-bold px-2 py-0.5 shadow-sm">
-                {m.year}
+          <div className="divide-y divide-white/20 border-t border-b border-white/20">
+            {milestones.map((m, idx) => (
+              <div
+                key={idx}
+                className="py-6 sm:py-8 grid grid-cols-1 sm:grid-cols-12 gap-4 sm:gap-8 items-start"
+              >
+                <div className="sm:col-span-3 font-mono">
+                  <span className="inline-block border border-white px-3 py-1 text-xs font-bold tracking-[0.18em] text-white tabular-nums">
+                    {m.year}
+                  </span>
+                  <span className="block text-[11px] uppercase tracking-[0.14em] text-white/80 mt-2">
+                    {m.company}
+                  </span>
+                </div>
+                <div className="sm:col-span-9 space-y-2">
+                  <h3 className="text-lg sm:text-xl font-sans font-semibold text-white">
+                    {m.title}
+                  </h3>
+                  <p className="text-white/85 text-sm leading-relaxed font-sans">{m.desc}</p>
+                </div>
               </div>
-              
-              <div className="bg-[#23293D] p-6 rounded-xl border border-white/5 hover:border-white/20 transition-all">
-                <span className="text-[10px] font-mono font-semibold text-slate-400 inline-block uppercase tracking-wider">
-                  {m.company}
-                </span>
-                <h3 className="text-base sm:text-lg font-serif font-medium text-white mt-1">
-                  {m.title}
-                </h3>
-                <p className="text-slate-400 text-xs sm:text-sm mt-2 leading-relaxed">
-                  {m.desc}
-                </p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
+      {/* 5. BOTTOM INQUIRY BAND (Periwinkle Indigo Wash — Matches Home Contact Strip) */}
+      <section className="bg-[#485180] py-16">
+        <div className="w-full max-w-5xl mx-auto px-6 sm:px-10 lg:px-14 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-sans font-semibold text-white tracking-tight">
+              Work With Udochukwu
+            </h2>
+            <div className="w-40 h-[1px] bg-white/80 my-4" />
+            <p className="text-white/90 text-xs sm:text-sm tracking-[0.16em] font-mono uppercase">
+              CUSTOM WEB PLATFORMS · DIRECT HARDWARE MARKETPLACE
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => onNavigate('contact')}
+            className="border border-white text-white hover:bg-white hover:text-slate-950 font-mono text-xs font-semibold uppercase tracking-[0.18em] px-6 py-3.5 transition-colors cursor-pointer whitespace-nowrap self-start sm:self-auto"
+          >
+            Contact Desk
+          </button>
+        </div>
+      </section>
     </div>
   );
 }

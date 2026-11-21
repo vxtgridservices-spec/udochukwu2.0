@@ -136,7 +136,96 @@ async function startServer() {
   // Use 3000 in AI Studio environments, but allow dynamic PORT for Railway/Heroku deployments
   const PORT = process.env.PORT && !process.env.NG_ALLOWED_HOSTS ? parseInt(process.env.PORT) : 3000;
 
-  app.use(express.json());
+  app.use(express.json({ limit: "15mb" }));
+
+  const MARKETPLACE_PRODUCTS_FILE = path.join(process.cwd(), "marketplace_products.json");
+  const MARKETPLACE_ORDERS_FILE = path.join(process.cwd(), "marketplace_orders.json");
+  const REVIEWS_FILE = path.join(process.cwd(), "client_reviews.json");
+  const PORTFOLIO_FILE = path.join(process.cwd(), "portfolio_projects.json");
+
+  function readJsonFile<T>(filePath: string, fallback: T): T {
+    try {
+      if (fs.existsSync(filePath)) {
+        const raw = fs.readFileSync(filePath, "utf8");
+        if (raw) return JSON.parse(raw) as T;
+      }
+    } catch (e) {
+      console.warn(`Failed reading ${filePath}:`, e);
+    }
+    return fallback;
+  }
+
+  function writeJsonFile<T>(filePath: string, data: T) {
+    try {
+      fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf8");
+    } catch (e) {
+      console.error(`Failed writing ${filePath}:`, e);
+    }
+  }
+
+  // Marketplace Products API
+  app.get("/api/marketplace/products", (_req, res) => {
+    const products = readJsonFile<any[] | null>(MARKETPLACE_PRODUCTS_FILE, null);
+    res.json({ products });
+  });
+
+  app.post("/api/marketplace/products", (req, res) => {
+    const { products } = req.body;
+    if (!Array.isArray(products)) {
+      res.status(400).json({ error: "Invalid products payload" });
+      return;
+    }
+    writeJsonFile(MARKETPLACE_PRODUCTS_FILE, products);
+    res.json({ success: true, count: products.length });
+  });
+
+  // Marketplace Orders API
+  app.get("/api/marketplace/orders", (_req, res) => {
+    const orders = readJsonFile<any[]>(MARKETPLACE_ORDERS_FILE, []);
+    res.json({ orders });
+  });
+
+  app.post("/api/marketplace/orders", (req, res) => {
+    const { orders } = req.body;
+    if (!Array.isArray(orders)) {
+      res.status(400).json({ error: "Invalid orders payload" });
+      return;
+    }
+    writeJsonFile(MARKETPLACE_ORDERS_FILE, orders);
+    res.json({ success: true, count: orders.length });
+  });
+
+  // Client Reviews API
+  app.get("/api/reviews", (_req, res) => {
+    const reviews = readJsonFile<any[]>(REVIEWS_FILE, []);
+    res.json({ reviews });
+  });
+
+  app.post("/api/reviews", (req, res) => {
+    const { reviews } = req.body;
+    if (!Array.isArray(reviews)) {
+      res.status(400).json({ error: "Invalid reviews payload" });
+      return;
+    }
+    writeJsonFile(REVIEWS_FILE, reviews);
+    res.json({ success: true, count: reviews.length });
+  });
+
+  // Portfolio Projects API
+  app.get("/api/portfolio", (_req, res) => {
+    const projects = readJsonFile<any[] | null>(PORTFOLIO_FILE, null);
+    res.json({ projects });
+  });
+
+  app.post("/api/portfolio", (req, res) => {
+    const { projects } = req.body;
+    if (!Array.isArray(projects)) {
+      res.status(400).json({ error: "Invalid portfolio payload" });
+      return;
+    }
+    writeJsonFile(PORTFOLIO_FILE, projects);
+    res.json({ success: true, count: projects.length });
+  });
 
   // 1. API: Heartbeat
   app.get("/api/health", (req, res) => {
