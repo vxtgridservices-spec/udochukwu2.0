@@ -205,20 +205,32 @@ function CloseMark() {
   );
 }
 
+function resolveInitialItemId(): string | null {
+  const params = new URLSearchParams(window.location.search);
+  const queryItem = params.get('item');
+  if (queryItem) return queryItem;
+  const cleanPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
+  if (cleanPath.toLowerCase() === 'ad/itel-enugu') {
+    return 'prod-itel-powertank-full';
+  }
+  if (cleanPath.toLowerCase().startsWith('buyfromudochukwu/')) {
+    return decodeURIComponent(cleanPath.slice('buyfromudochukwu/'.length));
+  }
+  return null;
+}
+
 export default function Buyfromudochukwu() {
   const [products, setProducts] = useState<MarketplaceProduct[]>(() => getMarketplaceProducts());
   const [allReviews, setAllReviews] = useState<ProductReview[]>(() => getProductReviews());
   const [isAdminLogged] = useState(() => localStorage.getItem('vxt_admin_logged') === 'true');
 
   // Navigation View State ('store' | 'item' | 'checkout' | 'policies')
-  const [subView, setSubView] = useState<StoreSubView>(() => {
-    const params = new URLSearchParams(window.location.search);
-    return params.get('item') ? 'item' : 'store';
-  });
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(() => {
-    const params = new URLSearchParams(window.location.search);
-    return params.get('item') || null;
-  });
+  const [subView, setSubView] = useState<StoreSubView>(() =>
+    resolveInitialItemId() ? 'item' : 'store'
+  );
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(() =>
+    resolveInitialItemId()
+  );
 
   // Storefront Filter, Dropdown & Sort
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -235,6 +247,7 @@ export default function Buyfromudochukwu() {
   const [isImageZoomOpen, setIsImageZoomOpen] = useState(false);
   const [previewQty, setPreviewQty] = useState(1);
   const [showRatingForm, setShowRatingForm] = useState(false);
+  const [shareCopiedState, setShareCopiedState] = useState<'idle' | 'link' | 'post'>('idle');
 
   // Admin Inline Edit State
   const [isEditingItem, setIsEditingItem] = useState(false);
@@ -396,6 +409,12 @@ export default function Buyfromudochukwu() {
   const openFullPagePreview = (product: MarketplaceProduct) => {
     setSelectedProductId(product.id);
     setSubView('item');
+    setShareCopiedState('idle');
+    const targetUrl =
+      product.id === 'prod-itel-powertank-full'
+        ? '/ad/itel-enugu'
+        : `/buyfromudochukwu?item=${encodeURIComponent(product.id)}`;
+    window.history.replaceState({}, '', targetUrl);
     window.scrollTo({ top: 0, behavior: 'instant' });
     trackAction(`Viewed Product Page: ${product.title}`);
   };
@@ -415,6 +434,7 @@ export default function Buyfromudochukwu() {
     setSubView('store');
     setIsEditingItem(false);
     setConfirmDeleteStep(false);
+    window.history.replaceState({}, '', '/buyfromudochukwu');
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
@@ -1723,6 +1743,86 @@ export default function Buyfromudochukwu() {
                     </li>
                   </ul>
                 </div>
+
+                {/* Facebook & Social Link Card Sharing */}
+                {(() => {
+                  const sharePath =
+                    selectedProduct.id === 'prod-itel-powertank-full'
+                      ? '/ad/itel-enugu'
+                      : `/buyfromudochukwu?item=${encodeURIComponent(selectedProduct.id)}`;
+                  const shareUrl = `${window.location.origin}${sharePath}`;
+                  const fbCaption =
+                    selectedProduct.id === 'prod-itel-powertank-full'
+                      ? `🔥 21% OFF itel Sponsored Flash Sale — Now ₦${selectedProduct.price.toLocaleString()} (Was ₦696,000, Save ₦146,000)\n\n✅ itel Power Tank 500W Hybrid Inverter + 1,000Wh LiFePO4 Battery\n✅ 300W Monocrystalline Solar Panel + 20m Cable Included\n✅ Free Doorstep Delivery & Pay on Delivery after live testing in Enugu\n\nOrder directly here 👇\n${shareUrl}`
+                      : `${selectedProduct.title} — ₦${selectedProduct.price.toLocaleString()} on Buyfromudochukwu.\n${selectedProduct.subtitle}\n\nInspect full specs & order here 👇\n${shareUrl}`;
+
+                  const handleCopyShare = (mode: 'link' | 'post') => {
+                    navigator.clipboard?.writeText(mode === 'link' ? shareUrl : fbCaption);
+                    setShareCopiedState(mode);
+                    setTimeout(() => setShareCopiedState('idle'), 2600);
+                  };
+
+                  return (
+                    <div className="border-t border-white/10 pt-4 space-y-2.5">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <h2 className="text-xs font-mono text-slate-400 uppercase tracking-wider">
+                          Share on Facebook (Auto Ad &amp; Photo Card)
+                        </h2>
+                        <a
+                          href={`https://developers.facebook.com/tools/debug/?q=${encodeURIComponent(shareUrl)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[11px] font-mono text-sky-400 hover:text-sky-300 underline underline-offset-4"
+                        >
+                          Verify FB Preview ↗
+                        </a>
+                      </div>
+                      <div className="bg-[#191f30] border border-white/10 p-3 space-y-2.5">
+                        <p className="text-[11px] font-mono text-slate-300 break-all select-all">
+                          {shareUrl}
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleCopyShare('link')}
+                            className="bg-white text-slate-950 hover:bg-slate-200 px-3 py-1.5 text-[11px] font-mono font-semibold uppercase tracking-wider inline-flex items-center gap-1.5 cursor-pointer"
+                          >
+                            {shareCopiedState === 'link' ? (
+                              <>
+                                <Check className="w-3.5 h-3.5" />
+                                <span>Link Copied</span>
+                              </>
+                            ) : (
+                              <span>Copy Ad Link</span>
+                            )}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleCopyShare('post')}
+                            className="border border-white/20 text-white hover:bg-white/5 px-3 py-1.5 text-[11px] font-mono font-semibold uppercase tracking-wider inline-flex items-center gap-1.5 cursor-pointer"
+                          >
+                            {shareCopiedState === 'post' ? (
+                              <>
+                                <Check className="w-3.5 h-3.5" />
+                                <span>Post + Link Copied</span>
+                              </>
+                            ) : (
+                              <span>Copy Facebook Caption + Link</span>
+                            )}
+                          </button>
+                          <a
+                            href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="border border-sky-400/40 text-sky-300 hover:bg-sky-500/10 px-3 py-1.5 text-[11px] font-mono font-semibold uppercase tracking-wider inline-flex items-center"
+                          >
+                            Post to Facebook ↗
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           </div>

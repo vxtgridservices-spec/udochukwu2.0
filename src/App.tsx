@@ -46,19 +46,25 @@ const VALID_PAGES: PageView[] = [
   'buyfromudochukwu',
 ];
 
+function resolvePageFromLocation(): PageView {
+  const rawPath = window.location.pathname.replace(/^\/+|\/+$/g, '').toLowerCase();
+  if (!rawPath) return 'home';
+  if (rawPath === 'ad/itel-enugu' || rawPath.startsWith('buyfromudochukwu/')) {
+    return 'buyfromudochukwu';
+  }
+  const firstSegment = rawPath.split('/')[0];
+  return VALID_PAGES.includes(firstSegment as PageView) ? (firstSegment as PageView) : 'home';
+}
+
 export default function App() {
   // Navigation active routed page view state
-  const [activePage, setActivePage] = useState<PageView>(() => {
-    const path = window.location.pathname.replace(/^\/+/, '').toLowerCase() || 'home';
-    return VALID_PAGES.includes(path as PageView) ? (path as PageView) : 'home';
-  });
+  const [activePage, setActivePage] = useState<PageView>(() => resolvePageFromLocation());
   const [contactPreFill, setContactPreFill] = useState<ContactPreFill | undefined>(undefined);
 
   // Auto-sync history on load & back-button pop
   useEffect(() => {
     const handlePopState = () => {
-      const path = window.location.pathname.replace(/^\/+/, '').toLowerCase() || 'home';
-      setActivePage(VALID_PAGES.includes(path as PageView) ? (path as PageView) : 'home');
+      setActivePage(resolvePageFromLocation());
     };
     window.addEventListener('popstate', handlePopState);
     if (window.location.pathname === '/' && activePage === 'home') {

@@ -163,6 +163,269 @@ async function startServer() {
     }
   }
 
+  interface ShareProductFallback {
+    id: string;
+    title: string;
+    subtitle: string;
+    description: string;
+    price: number;
+    compareAtPrice?: number;
+    inStock: boolean;
+    images: string[];
+  }
+
+  const DEFAULT_SHARE_PRODUCTS: ShareProductFallback[] = [
+    {
+      id: "prod-itel-powertank-full",
+      title: "itel Power Tank Full Setup (500W ESS + 300W Solar + 20m Cable)",
+      subtitle: "itel IESS-05K10N 1000Wh LiFePO4 Solar Generator + 300W Panel + 20m Cable",
+      description:
+        "Save ₦146,000 (was ₦696,000). Complete 500W/1000Wh LiFePO4 Power Tank + 300W Solar Panel + 20m Cable. Free Enugu doorstep delivery & Pay on Delivery after live testing!",
+      price: 550000,
+      compareAtPrice: 696000,
+      inStock: true,
+      images: [
+        "/share/itel-enugu-flyer.jpg",
+        "/share/itel-powertank-setup.jpg",
+        "/share/itel-powertank-detail.jpg",
+        "/share/itel-solar-kit.jpg",
+      ],
+    },
+    {
+      id: "prod-probook-studio-16",
+      title: "Udochukwu ProWorkstation 16\" + Mechanical Keyboard Bundle",
+      subtitle: "Flagship Anodized Aluminum Creator & Engineering Laptop Setup",
+      description:
+        "Save ₦170,000. 16-inch anti-glare workstation with 32GB unified memory, 1TB NVMe SSD & wireless tactile mechanical keyboard. Insured nationwide delivery.",
+      price: 1150000,
+      compareAtPrice: 1320000,
+      inStock: true,
+      images: ["/share/workstation-laptop.jpg"],
+    },
+    {
+      id: "prod-aetheris-anc-headset",
+      title: "Aetheris Studio ANC Wireless Headphones",
+      subtitle: "Matte Gunmetal Active Noise-Cancelling Reference Headset",
+      description:
+        "Save ₦40,000. Hybrid -42dB active noise cancellation, 45-hour USB-C battery endurance, and dual-device pairing. Nationwide express dispatch.",
+      price: 145000,
+      compareAtPrice: 185000,
+      inStock: true,
+      images: ["/share/audio-headset.jpg"],
+    },
+    {
+      id: "prod-forge-usbc-dock",
+      title: "Forge Dock Pro 12-in-1 Desktop Hub",
+      subtitle: "CNC Machined Aluminum Thunderbolt / USB-C Workstation Dock",
+      description:
+        "Dual 4K HDMI output, 100W Power Delivery pass-through, Gigabit Ethernet, and UHS-II SD readers in a CNC aluminum chassis.",
+      price: 78000,
+      compareAtPrice: 95000,
+      inStock: true,
+      images: ["/share/usbc-dock.jpg"],
+    },
+  ];
+
+  function mapAssetToPublicShareUrl(rawImg: string, origin: string, productId: string, idx: number): string {
+    if (!rawImg) return `${origin}/share/marketplace-collection.jpg`;
+    if (rawImg.startsWith("http://") || rawImg.startsWith("https://")) return rawImg;
+    if (rawImg.startsWith("/share/")) return `${origin}${rawImg}`;
+    if (rawImg.includes("itel_enugu_flyer")) return `${origin}/share/itel-enugu-flyer.jpg`;
+    if (rawImg.includes("itel_powertank_hero")) return `${origin}/share/itel-powertank-setup.jpg`;
+    if (rawImg.includes("itel_powertank_detail")) return `${origin}/share/itel-powertank-detail.jpg`;
+    if (rawImg.includes("itel_solar_kit")) return `${origin}/share/itel-solar-kit.jpg`;
+    if (rawImg.includes("marketplace_hero_collection")) return `${origin}/share/marketplace-collection.jpg`;
+    if (rawImg.includes("product_workstation_laptop")) return `${origin}/share/workstation-laptop.jpg`;
+    if (rawImg.includes("product_audio_headset")) return `${origin}/share/audio-headset.jpg`;
+    if (rawImg.includes("product_usbc_dock")) return `${origin}/share/usbc-dock.jpg`;
+    if (rawImg.startsWith("data:image/")) {
+      return `${origin}/api/share-image/${encodeURIComponent(productId)}/${idx}.jpg`;
+    }
+    if (rawImg.startsWith("/")) return `${origin}${rawImg}`;
+    return `${origin}/share/marketplace-collection.jpg`;
+  }
+
+  function escapeHtmlAttr(str: string): string {
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/"/g, "&quot;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function getRequestOrigin(req: express.Request): string {
+    const forwardedProto = req.headers["x-forwarded-proto"];
+    const host = (req.headers["x-forwarded-host"] as string) || req.get("host") || "localhost:3000";
+    const proto = Array.isArray(forwardedProto)
+      ? forwardedProto[0]
+      : forwardedProto || (host.includes("localhost") ? req.protocol : "https");
+    return `${proto}://${host}`;
+  }
+
+  function injectOpenGraphMeta(html: string, req: express.Request): string {
+    const origin = getRequestOrigin(req);
+    const cleanPath = req.path.replace(/\/+$/, "").toLowerCase() || "/";
+    const itemQuery = typeof req.query.item === "string" ? req.query.item.trim() : "";
+
+    let requestedItemId = itemQuery;
+    if (!requestedItemId && cleanPath === "/ad/itel-enugu") {
+      requestedItemId = "prod-itel-powertank-full";
+    } else if (!requestedItemId && cleanPath.startsWith("/buyfromudochukwu/")) {
+      requestedItemId = decodeURIComponent(cleanPath.replace("/buyfromudochukwu/", ""));
+    }
+
+    const storedProducts = readJsonFile<any[] | null>(MARKETPLACE_PRODUCTS_FILE, null);
+    const mergedProducts: ShareProductFallback[] = [
+      ...(Array.isArray(storedProducts) ? storedProducts : []),
+      ...DEFAULT_SHARE_PRODUCTS,
+    ];
+
+    let title = "Udochukwu — Web Designer, Digital Strategist & Buyfromudochukwu";
+    let description =
+      "Official platform of Udochukwu (VXTGrid Services) — custom web engineering, strategy, and the Buyfromudochukwu curated marketplace.";
+    let ogType = "website";
+    let ogImages: string[] = [`${origin}/share/marketplace-collection.jpg`];
+    let matchedProduct: ShareProductFallback | undefined;
+
+    if (requestedItemId) {
+      matchedProduct = mergedProducts.find((p) => p.id === requestedItemId);
+      if (matchedProduct) {
+        const discountPct =
+          matchedProduct.compareAtPrice && matchedProduct.compareAtPrice > matchedProduct.price
+            ? Math.round(((matchedProduct.compareAtPrice - matchedProduct.price) / matchedProduct.compareAtPrice) * 100)
+            : 0;
+        const formattedPrice = `₦${Number(matchedProduct.price).toLocaleString()}`;
+        if (matchedProduct.id === "prod-itel-powertank-full") {
+          title = `${discountPct > 0 ? `${discountPct}% OFF Flash Sale: ` : ""}${matchedProduct.title} — ${formattedPrice}`;
+          description =
+            matchedProduct.compareAtPrice && matchedProduct.compareAtPrice > matchedProduct.price
+              ? `Save ₦${(matchedProduct.compareAtPrice - matchedProduct.price).toLocaleString()} (${discountPct}% OFF). Includes 500W/1000Wh itel Power Tank + 300W Solar Panel + 20m Cable. Free Enugu delivery & Pay on Delivery after testing!`
+              : matchedProduct.description;
+          ogImages = [
+            `${origin}/share/itel-enugu-flyer.jpg`,
+            `${origin}/share/itel-powertank-setup.jpg`,
+            `${origin}/share/itel-powertank-detail.jpg`,
+            `${origin}/share/itel-solar-kit.jpg`,
+          ];
+        } else {
+          title = `${matchedProduct.title} — ${formattedPrice} | Buyfromudochukwu`;
+          description = matchedProduct.description || matchedProduct.subtitle;
+          const mapped = (matchedProduct.images || []).map((img, idx) =>
+            mapAssetToPublicShareUrl(img, origin, matchedProduct!.id, idx)
+          );
+          if (mapped.length > 0) ogImages = mapped;
+        }
+        ogType = "product";
+      }
+    } else if (cleanPath === "/buyfromudochukwu") {
+      title = "Buyfromudochukwu Marketplace — itel Power Tank 21% OFF & Verified Tech";
+      description =
+        "Curated tech, workstations, audio, and the itel Power Tank 500W + 300W Solar + 20m Cable Flash Sale (₦550,000, Free Enugu Delivery & Payment on Delivery).";
+      ogImages = [
+        `${origin}/share/itel-enugu-flyer.jpg`,
+        `${origin}/share/itel-powertank-setup.jpg`,
+        `${origin}/share/marketplace-collection.jpg`,
+      ];
+    }
+
+    const canonicalUrl = `${origin}${req.originalUrl}`;
+    const primaryImage = ogImages[0];
+
+    const imageMetaTags = ogImages
+      .slice(0, 4)
+      .map(
+        (imgUrl) => `
+    <meta property="og:image" content="${escapeHtmlAttr(imgUrl)}" />
+    <meta property="og:image:secure_url" content="${escapeHtmlAttr(imgUrl)}" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="900" />`
+      )
+      .join("");
+
+    const productMetaTags = matchedProduct
+      ? `
+    <meta property="product:price:amount" content="${matchedProduct.price}" />
+    <meta property="product:price:currency" content="NGN" />
+    <meta property="product:availability" content="${matchedProduct.inStock ? "in stock" : "out of stock"}" />`
+      : "";
+
+    const jsonLd = matchedProduct
+      ? `<script type="application/ld+json">${JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: matchedProduct.title,
+          description,
+          image: ogImages,
+          brand: { "@type": "Brand", name: matchedProduct.id.includes("itel") ? "itel Energy" : "Buyfromudochukwu" },
+          offers: {
+            "@type": "Offer",
+            url: canonicalUrl,
+            priceCurrency: "NGN",
+            price: String(matchedProduct.price),
+            availability: matchedProduct.inStock
+              ? "https://schema.org/InStock"
+              : "https://schema.org/OutOfStock",
+          },
+        })}</script>`
+      : "";
+
+    const injectedHeadBlock = `
+    <title>${escapeHtmlAttr(title)}</title>
+    <meta name="description" content="${escapeHtmlAttr(description)}" />
+    <link rel="canonical" href="${escapeHtmlAttr(canonicalUrl)}" />
+    <meta property="og:site_name" content="Buyfromudochukwu · Udochukwu" />
+    <meta property="og:type" content="${ogType}" />
+    <meta property="og:url" content="${escapeHtmlAttr(canonicalUrl)}" />
+    <meta property="og:title" content="${escapeHtmlAttr(title)}" />
+    <meta property="og:description" content="${escapeHtmlAttr(description)}" />${imageMetaTags}${productMetaTags}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="${escapeHtmlAttr(canonicalUrl)}" />
+    <meta name="twitter:title" content="${escapeHtmlAttr(title)}" />
+    <meta name="twitter:description" content="${escapeHtmlAttr(description)}" />
+    <meta name="twitter:image" content="${escapeHtmlAttr(primaryImage)}" />
+    ${jsonLd}`;
+
+    const stripped = html
+      .replace(/<title>[\s\S]*?<\/title>/gi, "")
+      .replace(/<meta[^>]+name=["']description["'][^>]*>/gi, "")
+      .replace(/<link[^>]+rel=["']canonical["'][^>]*>/gi, "")
+      .replace(/<meta[^>]+property=["'](?:og|product):[^"']+["'][^>]*>/gi, "")
+      .replace(/<meta[^>]+name=["']twitter:[^"']+["'][^>]*>/gi, "")
+      .replace(/<meta[^>]+property=["']twitter:[^"']+["'][^>]*>/gi, "");
+
+    return stripped.replace("</head>", `${injectedHeadBlock}\n  </head>`);
+  }
+
+  // Binary image endpoint so admin-uploaded base64 product photos also work in Facebook OpenGraph cards
+  app.get("/api/share-image/:productId/:idx.jpg", (req, res) => {
+    const { productId, idx } = req.params;
+    const index = Math.max(0, parseInt(idx, 10) || 0);
+    const storedProducts = readJsonFile<any[] | null>(MARKETPLACE_PRODUCTS_FILE, null);
+    const all = [...(Array.isArray(storedProducts) ? storedProducts : []), ...DEFAULT_SHARE_PRODUCTS];
+    const product = all.find((p) => p.id === productId);
+    const raw = product?.images?.[index] || product?.images?.[0] || "";
+
+    if (raw.startsWith("data:image/")) {
+      const match = raw.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
+      if (match) {
+        const mimeType = match[1];
+        const buffer = Buffer.from(match[2], "base64");
+        res.setHeader("Content-Type", mimeType);
+        res.setHeader("Cache-Control", "public, max-age=86400");
+        res.send(buffer);
+        return;
+      }
+    }
+
+    const fallbackFile = path.join(process.cwd(), "public", "share", "itel-enugu-flyer.jpg");
+    if (fs.existsSync(fallbackFile)) {
+      res.sendFile(fallbackFile);
+      return;
+    }
+    res.status(404).end();
+  });
+
   // Marketplace Products API
   app.get("/api/marketplace/products", (_req, res) => {
     const products = readJsonFile<any[] | null>(MARKETPLACE_PRODUCTS_FILE, null);
@@ -424,20 +687,59 @@ async function startServer() {
     }
   });
 
-  // Vite middleware or production Static File Routing
+  // Vite middleware or production Static File Routing with dynamic OpenGraph injection
+  const isHtmlPageRequest = (req: express.Request) => {
+    if (req.method !== "GET") return false;
+    const reqPath = req.path;
+    if (
+      reqPath.startsWith("/api/") ||
+      reqPath.startsWith("/@") ||
+      reqPath.startsWith("/src/") ||
+      reqPath.startsWith("/node_modules/") ||
+      reqPath.startsWith("/assets/") ||
+      reqPath.startsWith("/share/")
+    ) {
+      return false;
+    }
+    return !/\.[a-zA-Z0-9]+$/.test(reqPath);
+  };
+
   if (process.env.NODE_ENV !== "production") {
     console.log("Mounting Vite developer middlewares...");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
     });
+
+    app.use(async (req, res, next) => {
+      if (!isHtmlPageRequest(req)) {
+        next();
+        return;
+      }
+      try {
+        const rawHtml = fs.readFileSync(path.join(process.cwd(), "index.html"), "utf8");
+        const ogHtml = injectOpenGraphMeta(rawHtml, req);
+        const transformed = await vite.transformIndexHtml(req.originalUrl, ogHtml);
+        res.status(200).set({ "Content-Type": "text/html" }).end(transformed);
+      } catch (err) {
+        vite.ssrFixStacktrace(err as Error);
+        next(err);
+      }
+    });
+
     app.use(vite.middlewares);
   } else {
     console.log("Serving build assets statically in production pipeline...");
     const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
+    app.use(express.static(distPath, { index: false }));
     app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
+      try {
+        const rawHtml = fs.readFileSync(path.join(distPath, "index.html"), "utf8");
+        const ogHtml = injectOpenGraphMeta(rawHtml, req);
+        res.status(200).set({ "Content-Type": "text/html" }).end(ogHtml);
+      } catch {
+        res.sendFile(path.join(distPath, "index.html"));
+      }
     });
   }
 
